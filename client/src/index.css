@@ -1,7 +1,41 @@
-:root {
+/* :root {
   --bg: #282c34;
   --header: #fff;
   --link: #61dafb;
   --text: hsla(0, 0%, 100%, 0.88);
+} */
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
+/* div, header, main, nav {
+  border: 2px solid tomato;
+} */
+
+.nav {
+  display:grid;
+  grid-template-columns: 1fr max-content;
+  background: black;
+}
+
+.nav-link {
+  display: inline-block;
+  box-sizing: content-box;
+  width: auto;
+  padding: 10px;
+  margin: 5px 0 5px;
+  text-decoration: none;
+  text-align: center;
+  font-size: 1.5em;
+  color: white;
+  background: black;
+  border: 2px solid black
+}
+
+.nav-link:hover {
+  color: white;
+  border: 2px solid white;
+}

@@ -9,9 +9,16 @@ import json
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
+    serialize_rules = (
+        '-_password_hash',
+        '-seller.user',
+        '-seller.items',
+        '-customer.user',
+    )
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
-    __password_hash = db.Column(db.String, nullable=False)
+    _password_hash = db.Column(db.String, nullable=False)
     phone = db.Column(db.String)
     email = db.Column(db.String)
     street_1 = db.Column(db.String)
@@ -25,15 +32,16 @@ class User(db.Model, SerializerMixin):
 
     @hybrid_property
     def password_hash(self):
-        return self.__password_hash
+        return self._password_hash
     
     @password_hash.setter
     def password_hash(self, password):
         password_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
-        self.__password_hash = password_hash.decode('utf-8')
+        self._password_hash = password_hash.decode('utf-8')
 
     def authenticate(self, password):
-        bcrypt.check_password_hash(self.__password_hash, password.encode('utf-8'))
+        print('in models authenticate func, password: ', password)
+        return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
 
     def __repr__(self):
         return f'<User {self.id}>'

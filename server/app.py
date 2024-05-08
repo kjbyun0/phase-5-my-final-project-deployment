@@ -3,7 +3,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request, make_response
+from flask import request, session, make_response
 from flask_restful import Resource
 
 # Local imports
@@ -31,6 +31,7 @@ class Authenticate(Resource):
     def post(self):
         req = request.get_json()
         user = User.query.filter_by(username=req.get('username')).first()
+        print('in Authenticate, user: ', user)
         if user and user.authenticate(req.get('password')):
             session['user_id'] = user.id
             return make_response(user.to_dict(), 200)

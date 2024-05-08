@@ -1,10 +1,32 @@
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { Form, Input, Dropdown, Button, Icon } from 'semantic-ui-react';
 
 function NavBar({ user }) {
+    const [ searchKey, setSearchKey ] = useState(null);
+
+    function handleSearchInput(e, d) {
+        console.log('in handleSearchInput, e: ', e, ', d: ', d);
+        setSearchKey(d.value);
+    }
+
+    function handleSearchSubmit(e, d) {
+        console.log('in handleSearchInputClick, e: ', e, ', d: ', d);
+        console.log('searchKey: ', searchKey);
+    }
+
     return (
         <nav className='nav'>
-            {/* The following home link is a temporaray */}
-            <NavLink to='/home'>Home</NavLink>
+            {/* I need to make the with of the search bar fit correctly. */}
+            <Form onSubmit={handleSearchSubmit} 
+                style={{display: 'flex', alignItems: 'center', }} >
+                <Input type='text' action value={searchKey} onChange={handleSearchInput} 
+                    style={{width: '80%', }} >
+                    <Dropdown />
+                    <input />
+                    <Button type='submit' icon='search' />
+                </Input>
+            </Form>
             {
                 user ? 
                 <NavLink to='/signout' className='nav-link'>Sign Out</NavLink> :

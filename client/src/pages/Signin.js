@@ -7,12 +7,13 @@ import { Form, FormField, Input, FormButton, Button, Divider, } from 'semantic-u
 
 function Signin() {
     const { onSetUser } = useOutletContext();
-    const [ signinFail, setSigninFail ] = useState(false);
+    const [ isSigninFail, setIsSigninFail ] = useState(false);
     const navigate = useNavigate();
 
     const formSchema = yup.object().shape({
-        username: yup.string().min(6, 'Username must be at least 6 characters long.'),
-        password: yup.string().min(6, 'Password must be at least 6 characters long.'),
+        username: yup.string().min(5, 'Must be between 5 and 20 characters')
+            .max(20, 'Must be between 5 and 20 characters'),
+        password: yup.string().min(5, 'Must be at least 5 characters long'),
     });
 
     const formik = useFormik({
@@ -38,7 +39,7 @@ function Signin() {
                         navigate('/');
                     } else {
                         console.log('in Signin, error: ', data.message);
-                        setSigninFail(true);
+                        setIsSigninFail(true);
                     }
                 })
             );
@@ -65,12 +66,12 @@ function Signin() {
                             onChange={formik.handleChange} onBlur={formik.handleBlur} />
                         {formik.errors.password && formik.touched.password && <div style={{color: 'red',}}>{formik.errors.password}</div>}
                     </FormField>
-                    <div style={{color: 'red',}}>{signinFail ? 'Invalid username or password. Please, try again.' : null}</div>
+                    <div style={{color: 'red',}}>{isSigninFail ? 'Invalid username or password. Please, try again.' : null}</div>
                     <Button type='submit' color='yellow' style={{width: '100%',}}>Continue</Button>
                 </Form>
                 <Divider horizontal>New to Flatzone</Divider>
                 {/* <hr style={{margin: '20px 0', color: 'red', }}/> */}
-                <Button type='button' onClick={()=> console.log('Click')} 
+                <Button type='button' onClick={()=> navigate('/signup')} 
                     basic style={{width: '100%',}}>Create your account</Button>
             </div>
         </div>

@@ -57,23 +57,28 @@ class Signup(Resource):
                 street_2 = req.get('street_2'),
                 city = req.get('city'),
                 state = req.get('state'),
-                zip_code = req.get('zip_code'),
+                zip_code = req.get('zipCode'),
             )
+            # print('in Signup(post), username: ', user.username)
             db.session.add(user)
 
-            if req.get('is_seller'):
+            # print('in singup(post) isSeller: ', req.get('isSeller'))
+            if req.get('isSeller'):
                 seller = Seller(
                     name = req.get('name'),
                     user = user,
                 )
+                # print('in Signup(post), seller: ', seller)
                 db.session.add(seller)
             else:
+
                 customer = Customer(
-                    first_name = req.get('first_name'),
-                    last_name = req.get('last_name'),
-                    mobiel = req.get('mobile'),
+                    first_name = req.get('firstName'),
+                    last_name = req.get('lastName'),
+                    mobile = req.get('mobile'),
                     user = user,
                 )
+                # print('in Signup(post), customer: ', customer)
                 db.session.add(customer)
             db.session.commit()
         except Exception as exc:

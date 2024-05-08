@@ -2,6 +2,7 @@ import App from './pages/App';
 import Home from './pages/Home';
 import Signin from './pages/Signin';
 import Signout from './pages/Signout';
+import Signup from './pages/Signup';
 
 const routes = [
     {
@@ -20,6 +21,10 @@ const routes = [
             {
                 path: '/signout',
                 element: <Signout />,
+            },
+            {
+                path: '/signup',
+                element: <Signup />,
             },
         ],
     },

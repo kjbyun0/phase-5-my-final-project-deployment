@@ -11,6 +11,7 @@ function App() {
         .then(r => 
             r.json().then(data => {
                 if (r.ok) {
+                    console.log('in App, user: ', data);
                     setUser(data);
                 } else {
                     console.log('In App, error: ', data.message);

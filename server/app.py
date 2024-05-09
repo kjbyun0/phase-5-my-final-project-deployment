@@ -9,7 +9,7 @@ from flask_restful import Resource
 # Local imports
 from config import app, db, api
 # Add your model imports
-from models import User, Seller, Customer, Category, Item, SubItem
+from models import User, Seller, Customer, Category, Item
 
 app.secret_key=b'\xaf\x88\x87_\x1a\xf4\x97\x93f\xf5q\x0b\xad\xef,\xb3'
 
@@ -90,9 +90,20 @@ class Signup(Resource):
         return make_response(user.to_dict(), 201)
                 
 
+class Item_by_id(Resource):
+    def get(self, id):
+        item = Item.query.filter_by(id=id).first()
+        if item: 
+            return make_response(item.to_dict(), 200)
+        return make_response({
+            'message': f'Item {id} not found.',
+        }, 404)
+
+
+
 api.add_resource(Authenticate, '/authenticate')
 api.add_resource(Signup, '/signup')
-
+api.add_resource(Item_by_id, '/items/<int:id>')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

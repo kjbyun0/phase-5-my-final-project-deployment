@@ -91,44 +91,33 @@ class Category(db.Model, SerializerMixin):
 class Item(db.Model, SerializerMixin):
     __tablename__ = 'items'
 
+    serialize_rules = (
+        '-category', 
+        '-seller',
+    )
+
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
     brand = db.Column(db.String)
-    about_item = db.Column(db.String)
-    thumbnail = db.Column(db.String)
-    in_types = db.Column(db.String)
+    default_item = db.Column(db.Integer, nullable=False)
+    prices = db.Column(db.String)   # list: price by package type
+    discount_prices = db.Column(db.String)  # list: discount price by package type
+    amounts = db.Column(db.String)    # list: amount by package type
+    units = db.Column(db.String)    # list: unit by package type
+    packs = db.Column(db.String)    # list: package type
+    about_item = db.Column(db.String)   # object: item characteristics
+    details_1 = db.Column(db.String)    # object: item details
+    details_2 = db.Column(db.String)    # object: item details
+    card_thumbnail = db.Column(db.String)
+    thumbnails = db.Column(db.String)   # list: 
+    images = db.Column(db.String)   # list:
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
-    # default_subitem_id = db.Column(db.Integer, db.ForeignKey('subitems.id'))
     seller_id = db.Column(db.Integer, db.ForeignKey('sellers.id'))
 
     category = db.relationship('Category', back_populates='items')
     seller = db.relationship('Seller', back_populates='items')
-    subitems = db.relationship('SubItem', back_populates='item', cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'<Item {self.id}>'
-
-
-class SubItem(db.Model, SerializerMixin):
-    __tablename__ = 'subitems'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    price = db.Column(db.Float)
-    # discount_rate = db.Column(db.Float)
-    discount_price = db.Column(db.Float)
-    unit_amount = db.Column(db.Float)
-    unit = db.Column(db.String)
-    types = db.Column(db.String)
-    thumbnails = db.Column(db.String)
-    images = db.Column(db.String)
-    details_1 = db.Column(db.String)
-    details_2 = db.Column(db.String)
-
-    item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
-
-    item = db.relationship('Item', back_populates='subitems')
-
-    def __repr__(self):
-        return f'<SubItem {self.id}>'
 
 

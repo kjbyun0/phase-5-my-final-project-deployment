@@ -39,3 +39,31 @@
   color: white;
   border: 2px solid white;
 }
+
+.size-link {
+  width: fit-content;
+  font-size: 1.2em;
+  font-weight: normal;
+  padding: 5px 10px;
+  border: 1px solid darkgrey;
+  margin: 5px 0;
+}
+
+.size-link:hover {
+  background: lightgrey;
+}
+
+.size-link:active {
+  background: white;
+  border: 1px solid tomato;
+  box-shadow: 0 0 2px 1px orange;
+}
+
+.size-active-ink {
+  width: fit-content;
+  font-size: 1.2em;
+  font-weight: bold;
+  padding: 5px 10px;
+  border: 1px solid tomato;
+  margin: 5px 0;
+}

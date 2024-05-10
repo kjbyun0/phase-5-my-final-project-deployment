@@ -10,6 +10,7 @@ from flask_restful import Resource
 from config import app, db, api
 # Add your model imports
 from models import User, Seller, Customer, Category, Item
+import json
 
 app.secret_key=b'\xaf\x88\x87_\x1a\xf4\x97\x93f\xf5q\x0b\xad\xef,\xb3'
 
@@ -94,7 +95,18 @@ class Item_by_id(Resource):
     def get(self, id):
         item = Item.query.filter_by(id=id).first()
         if item: 
-            return make_response(item.to_dict(), 200)
+            item_dict = item.to_dict()
+            item_dict['prices'] = json.loads(item_dict['prices'])
+            item_dict['discount_prices'] = json.loads(item_dict['discount_prices'])
+            item_dict['amounts'] = json.loads(item_dict['amounts'])
+            item_dict['units'] = json.loads(item_dict['units'])
+            item_dict['packs'] = json.loads(item_dict['packs'])
+            item_dict['about_item'] = json.loads(item_dict['about_item'])
+            item_dict['details_1'] = json.loads(item_dict['details_1'])
+            item_dict['details_2'] = json.loads(item_dict['details_2'])
+            item_dict['thumbnails'] = json.loads(item_dict['thumbnails'])
+            item_dict['images'] = json.loads(item_dict['images'])
+            return make_response(item_dict, 200)
         return make_response({
             'message': f'Item {id} not found.',
         }, 404)

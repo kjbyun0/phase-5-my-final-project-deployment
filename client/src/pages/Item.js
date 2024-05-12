@@ -1,12 +1,15 @@
 import { isEmptyArray } from 'formik';
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'; 
-import { Divider, Table, TableBody, TableRow, TableCell, } from 'semantic-ui-react';
+import React, { useEffect, useState } from 'react';
+import { json, useParams } from 'react-router-dom'; 
+import { Divider, Table, TableBody, TableRow, TableCell, 
+    Sticky, Image, Grid, GridRow, GridColumn, Rail, } from 'semantic-ui-react';
+
 
 function Item() {
     const { id } = useParams();
     const [ item, setItem ] = useState(null);
     const [ activeItemIdx, setActiveItemIdx ] = useState(null);
+    const [ activeImageIdx, setActiveImageIdx ] = useState(null);
 
     useEffect(() => {
         fetch(`/items/${id}`)
@@ -16,13 +19,14 @@ function Item() {
                     // console.log('In Istem, fetched item: ', data);
                     setItem(data);
                     setActiveItemIdx(data.default_item);
+                    if (data.thumbnails.length)
+                        setActiveImageIdx(0);
                 } else {
                     console.log('Error: ', data.message);
                 }
             });
         })
     }, []);
-
 
     function dispAllSizes() {
         // console.log('activeItemIdx: ', activeItemIdx);
@@ -83,92 +87,116 @@ function Item() {
         );
     }
 
+    function handleThumnailMouseEnter(idx) {
+        console.log('handleThumnailMouseEnter, idx: ', idx);
+        setActiveImageIdx(idx);
+    }
+
+    function dispThumbnails() {
+        return item.thumbnails.map((thumbnail, i) => 
+            <Image key={i} className='item-thumbnail' 
+                src={thumbnail}
+                onMouseEnter={() => handleThumnailMouseEnter(i)}
+            />
+        );
+    }
+
     if (!item)
         return;
 
     // console.log('item.discount_prices[item.default_item]')
     return (
-        <div style={{display: 'grid', gridTemplateRows: 'auto auto auto', padding: '15px', }}>
-            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', }}>
-                {/* images */}
-                <div>
-                    images
-                </div>
-                {/* Item name and descriptions */}
-                <div style={{padding: '10px', }}>
-                    <h1 style={{fontWeight: 'normal',}}>{item.name}</h1>
-                    <Divider />
-                    {/* Price */}
-                    <div style={{marginTop: '20px', }}>
-                        {
-                            item.prices[activeItemIdx] !== item.discount_prices[activeItemIdx] ?
-                            <span style={{fontSize: '2em', color: 'red', marginRight: '10px', }}>
-                                -{Math.round((1-item.discount_prices[activeItemIdx] / 
-                                    item.prices[activeItemIdx])*100)}%
-                            </span> :
-                            null
-                        }
-                        <span style={{fontSize: '1em', verticalAlign: '50%', }}>$</span>
-                        <span style={{fontSize: '2em', }}>
-                            {Math.floor(item.discount_prices[activeItemIdx])}
-                        </span>
-                        <span style={{fontSize: '1em', verticalAlign: '50%', marginRight: '10px', }}>
-                            {Math.round((item.discount_prices[activeItemIdx] - 
-                                Math.floor(item.discount_prices[activeItemIdx]))*100)}
-                        </span>
-                        <span style={{fontSize: '1em', verticalAlign: '30%', }}>
-                            $({Math.round(item.discount_prices[activeItemIdx] / 
-                                (item.amounts[activeItemIdx] * item.packs[activeItemIdx])*100)/100} 
-                            / {item.units[activeItemIdx]})
-                        </span>
+        <div style={{ padding: '15px', width: '100%', height: '100%', }}>
+            <Grid columns={2} >
+                {/* Images */}
+                <GridColumn >
+                    <div className='sticky'>
+                        <Grid columns={2} style={{width: '100%', height: '100%', margin: '14px', }}>
+                            <GridColumn style={{width: '10%', padding: '14px 0 0 0',}}>
+                                {dispThumbnails()}
+                            </GridColumn>
+                            <GridColumn style={{width: '90%', padding: '0'}}>
+                                <Image src={item.images[activeImageIdx]} />
+                            </GridColumn>
+                        </Grid>
+                        {/* <Image src={item.images[0]} /> */}
                     </div>
-                    <div>
-                        {
-                            item.prices[activeItemIdx] !== item.discount_prices[activeItemIdx] ?
-                            <>
-                                <span style={{marginRight: '5px', }}>List Price:</span>
-                                <span><s>${item.prices[activeItemIdx]}</s></span>
-                            </> :
-                            null
-                        }
-                    </div>
-                    {/* Size options */}
-                    <div style={{margin: '20px 0 0 0', }}>
-                        <span style={{fontSize: '1.2em', marginRight: '10px', }}>Size:</span>
-                        <span style={{fontSize: '1.2em',  fontWeight: 'bold', }}>
-                            {
-                                `${item.amounts[activeItemIdx]} \
-                                ${item.units[activeItemIdx].charAt(0).toUpperCase() + item.units[activeItemIdx].slice(1)} \
-                                (Pack of ${item.packs[activeItemIdx]})`
-                            }
-                        </span>
-                    </div>
-                    <div>
-                        {dispAllSizes()}
-                    </div>
-                    {/* Product details_1 */}
-                    <div style={{marginTop: '20px', }}>
-                        {dispDetail_1()}                
-                    </div>
-                    <Divider />
-                    <div style={{marginTop: '20px', }}>
-                        <div style={{marginBottom: '10px', fontSize: '1.2em', fontWeight: 'bold', }}>About this item</div>
-                        {dispAboutItem()}
-                    </div>
-                </div>
-                
-            </div>
-            {/* Product details_2 */}
-            <div>
-                <Divider />
-                <div style={{fontSize: '1.8em', fontWeight: 'bold', marginTop: '20px'}}>Product details</div>
-                {dispDetail_2()}
-            </div>
-            {/* Customer Reviews */}
-            <div>
-                <Divider />
+                </GridColumn>
 
-            </div>
+                {/* Item name and descriptions */}
+                <GridColumn>
+                    <div style={{padding: '10px', }}>
+                        <h1 style={{fontWeight: 'normal',}}>{item.name}</h1>
+                        <Divider />
+                        {/* Price */}
+                        <div style={{marginTop: '20px', }}>
+                            {
+                                item.prices[activeItemIdx] !== item.discount_prices[activeItemIdx] ?
+                                <span style={{fontSize: '2em', color: 'red', marginRight: '10px', }}>
+                                    -{Math.round((1-item.discount_prices[activeItemIdx] / 
+                                        item.prices[activeItemIdx])*100)}%
+                                </span> :
+                                null
+                            }
+                            <span style={{fontSize: '1em', verticalAlign: '50%', }}>$</span>
+                            <span style={{fontSize: '2em', }}>
+                                {Math.floor(item.discount_prices[activeItemIdx])}
+                            </span>
+                            <span style={{fontSize: '1em', verticalAlign: '50%', marginRight: '10px', }}>
+                                {Math.round((item.discount_prices[activeItemIdx] - 
+                                    Math.floor(item.discount_prices[activeItemIdx]))*100)}
+                            </span>
+                            <span style={{fontSize: '1em', verticalAlign: '30%', }}>
+                                $({Math.round(item.discount_prices[activeItemIdx] / 
+                                    (item.amounts[activeItemIdx] * item.packs[activeItemIdx])*100)/100} 
+                                / {item.units[activeItemIdx]})
+                            </span>
+                        </div>
+                        <div>
+                            {
+                                item.prices[activeItemIdx] !== item.discount_prices[activeItemIdx] ?
+                                <>
+                                    <span style={{marginRight: '5px', }}>List Price:</span>
+                                    <span><s>${item.prices[activeItemIdx]}</s></span>
+                                </> :
+                                null
+                            }
+                        </div>
+                        {/* Size options */}
+                        <div style={{margin: '20px 0 0 0', }}>
+                            <span style={{fontSize: '1.2em', marginRight: '10px', }}>Size:</span>
+                            <span style={{fontSize: '1.2em',  fontWeight: 'bold', }}>
+                                {
+                                    `${item.amounts[activeItemIdx]} \
+                                    ${item.units[activeItemIdx].charAt(0).toUpperCase() + item.units[activeItemIdx].slice(1)} \
+                                    (Pack of ${item.packs[activeItemIdx]})`
+                                }
+                            </span>
+                        </div>
+                        <div>
+                            {dispAllSizes()}
+                        </div>
+                        {/* Product details_1 */}
+                        <div style={{marginTop: '20px', }}>
+                            {dispDetail_1()}                
+                        </div>
+                        <Divider />
+                        <div style={{marginTop: '20px', }}>
+                            <div style={{marginBottom: '10px', fontSize: '1.2em', fontWeight: 'bold', }}>About this item</div>
+                            {dispAboutItem()}
+                        </div>
+                    </div>
+                </GridColumn>
+            </Grid>
+
+            {/* Product details_2 */}
+            <Divider />
+            <div style={{fontSize: '1.8em', fontWeight: 'bold', marginTop: '20px'}}>Product details</div>
+            {dispDetail_2()}
+
+            {/* Customer Reviews */}
+            <Divider />
+
         </div>
     );
 }

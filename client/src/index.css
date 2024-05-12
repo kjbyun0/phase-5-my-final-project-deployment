@@ -67,3 +67,19 @@
   border: 1px solid tomato;
   margin: 5px 0;
 }
+
+.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
+
+.item-thumbnail {
+  border: 1px solid grey;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.item-thumbnail:hover {
+  box-shadow: 0 0 5px aqua;
+} 

@@ -9,6 +9,9 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from flask_bcrypt import Bcrypt
 
+import os
+from elasticsearch import Elasticsearch
+
 # Local imports
 
 # Instantiate app, set attributes
@@ -32,3 +35,10 @@ api = Api(app)
 CORS(app)
 
 bcrypt = Bcrypt(app)
+
+app.config['ELASTICSEARCH_URL'] = os.environ.get('ELASTICSEARCH_URL')
+
+print("app.config[ELASTICSEARCH_URL]: ", app.config['ELASTICSEARCH_URL'])
+
+app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
+    if app.config['ELASTICSEARCH_URL'] else None

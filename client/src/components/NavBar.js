@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Form, Input, Dropdown, Button, Icon } from 'semantic-ui-react';
 
 function NavBar({ user }) {
     const [ searchKey, setSearchKey ] = useState(null);
+    const navigate = useNavigate();
 
     function handleSearchInput(e, d) {
         console.log('in handleSearchInput, e: ', e, ', d: ', d);
@@ -13,6 +14,8 @@ function NavBar({ user }) {
     function handleSearchSubmit(e, d) {
         console.log('in handleSearchInputClick, e: ', e, ', d: ', d);
         console.log('searchKey: ', searchKey);
+
+        navigate(`/search?query=${searchKey}`);
     }
 
     return (

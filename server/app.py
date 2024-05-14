@@ -91,6 +91,14 @@ class Signup(Resource):
         return make_response(user.to_dict(), 201)
                 
 
+class Search(Resource):
+    def get(self, skeys):
+        print(f'skeys: {skeys}')
+        result_obj, count = Item.search(skeys, 1, 100)
+        # result = result_obj.all()
+        print(f'result: {result_obj}, count: {count}')
+
+
 class Item_by_id(Resource):
     def get(self, id):
         item = Item.query.filter_by(id=id).first()
@@ -115,6 +123,7 @@ class Item_by_id(Resource):
 
 api.add_resource(Authenticate, '/authenticate')
 api.add_resource(Signup, '/signup')
+api.add_resource(Search, '/search/<string:skeys>')
 api.add_resource(Item_by_id, '/items/<int:id>')
 
 if __name__ == '__main__':

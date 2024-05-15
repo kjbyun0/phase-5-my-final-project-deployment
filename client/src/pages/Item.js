@@ -32,7 +32,7 @@ function Item() {
         // console.log('activeItemIdx: ', activeItemIdx);
         const packs = item.packs.map((pack, i) => {
             return (
-                <div key={pack} className={i === activeItemIdx ? 'size-active-link' : 'size-link'} 
+                <div key={pack} className={`${i === activeItemIdx ? 'size-active-link' : 'size-link'} link`} 
                     onClick={() => setActiveItemIdx(i)}>
                     {
                         `${item.amounts[i]} \

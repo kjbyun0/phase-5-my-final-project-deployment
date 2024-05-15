@@ -1,9 +1,9 @@
 
 
 function dispPrice(item, idx) {
-    console.log('dispPrice, item: ', item);
-    console.log('dispPrice, idx: ', idx, 'type: ', typeof(idx));
-    console.log('Dollar: ', item.discount_prices[idx]);
+    // console.log('dispPrice, item: ', item);
+    // console.log('dispPrice, idx: ', idx, 'type: ', typeof(idx));
+    // console.log('Dollar: ', item.discount_prices[idx]);
     return (
         <>
             <span style={{fontSize: '1em', verticalAlign: '50%', }}>$</span>

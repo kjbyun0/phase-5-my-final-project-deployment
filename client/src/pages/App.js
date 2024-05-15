@@ -5,6 +5,7 @@ import NavBar from '../components/NavBar';
 
 function App() {
     const [ user, setUser ] = useState(null);
+    const [ searchItems, setSearchItems ] = useState([]);
 
     useEffect(() => {
         fetch('/authenticate')
@@ -20,7 +21,6 @@ function App() {
         )
     }, []);
 
-
     return (
         <div style={{display: 'grid', width: '100%', height: '100%', 
             gridTemplateRows: 'max-content 1fr',}}>
@@ -32,6 +32,8 @@ function App() {
                 <Outlet context={{
                     user: user,
                     onSetUser: setUser,
+                    searchItems: searchItems,
+                    onSetSearchItems: setSearchItems, 
                 }} />
             </main>
         </div>

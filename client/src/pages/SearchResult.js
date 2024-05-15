@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useOutletContext, useNavigate } from 'react-router-dom';
 import { dispPrice, dispListPrice, } from '../components/common';
 import { CardGroup, Card, CardContent, CardHeader, Label, Menu, Dropdown,  } from 'semantic-ui-react';
 
 
 function SearchResult() {
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const [ items, setItems ] = useState([]);
+    const { searchItems, onSetSearchItems } = useOutletContext();
     const [ sort, setSort ] = useState(1);
+    const navigate = useNavigate();
 
     const options = [
         { key: 1, text: 'Featured', value: 1 },
@@ -24,7 +25,7 @@ function SearchResult() {
         .then(r => {
             r.json().then(data => {
                 if (r.ok) 
-                    setItems(data)
+                    onSetSearchItems(data)
                 else
                     console.log('Server error: ', data.message);
                     //add more actions here....
@@ -32,20 +33,24 @@ function SearchResult() {
         });
     }, [searchParams]);
 
+    function handleNavigateItem(id) {
+        navigate(`/items/${id}`);
+    }
+
     let sortedItems;
     switch(sort) {
         case 2:
-            sortedItems = items.toSorted((item1, item2) => item1.discount_prices[item1.default_item] - item2.discount_prices[item2.default_item])
+            sortedItems = searchItems.toSorted((item1, item2) => item1.discount_prices[item1.default_item] - item2.discount_prices[item2.default_item])
             break;
         case 3:
-            sortedItems = items.toSorted((item1, item2) => item2.discount_prices[item2.default_item] - item1.discount_prices[item1.default_item])
+            sortedItems = searchItems.toSorted((item1, item2) => item2.discount_prices[item2.default_item] - item1.discount_prices[item1.default_item])
             break;
         case 4:
             // need to implement it after reviews feature is implemented. the following code is temporary.
-            sortedItems = items;
+            sortedItems = searchItems;
             break;
         default:
-            sortedItems = items;
+            sortedItems = searchItems;
             break;
     };
 
@@ -54,10 +59,12 @@ function SearchResult() {
             <div style={{width: '100%', height: '300px', 
                 backgroundImage: `url(${item.card_thumbnail})`, 
                 backgroundSize: 'contain', backgroundRepeat: 'no-repeat', 
-                backgroundPosition: 'center', }}>
-            </div>
+                backgroundPosition: 'center', }} 
+                className='link' 
+                onClick={() => handleNavigateItem(item.id)}
+            />
             <CardContent>
-                <CardHeader>{item.name}</CardHeader>
+                <CardHeader className='link' onClick={() => handleNavigateItem(item.id)}>{item.name}</CardHeader>
                 <Label>
                     <span style={{fontSize: '1.2em',  fontWeight: 'bold', }}>
                         {
@@ -67,10 +74,10 @@ function SearchResult() {
                         }
                     </span>
                 </Label>
-                <div>
+                <div className='link' onClick={() => handleNavigateItem(item.id)}>
                     {dispPrice(item, item.default_item)}
                 </div>
-                <div>
+                <div className='link' onClick={() => handleNavigateItem(item.id)}>
                     {
                         item.prices[item.default_item] !== item.discount_prices[item.default_item] ?
                         <>
@@ -85,13 +92,13 @@ function SearchResult() {
     );
 
 
-    console.log('In SearchResult, items: ', items);
+    console.log('In SearchResult, searchItems: ', searchItems);
 
     return (
         <div>
             <div style={{display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center',}}>
                 <div>
-                    <div style={{display: 'inline-block', fontSize: '1.2em', margin: '10px 0 10px 10px', }}>{items.length} results for "</div>
+                    <div style={{display: 'inline-block', fontSize: '1.2em', margin: '10px 0 10px 10px', }}>{searchItems.length} results for "</div>
                     <div style={{display: 'inline-block', fontSize: '1.2em', margin: '10px 10px 10px 0', 
                         fontWeight: 'bold', color: 'chocolate'}}>{searchParams.get('query')}"</div>
                 </div>

@@ -83,3 +83,7 @@
 .item-thumbnail:hover {
   box-shadow: 0 0 5px aqua;
 } 
+
+.link {
+  cursor: pointer;
+}

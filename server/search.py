@@ -20,7 +20,7 @@ def remove_from_index(index, model):
 
 def query_index(index, query, page, per_page):
     if not current_app.elasticsearch:
-        return [], 0
+        raise Exception("Elastic search engine not initialized.")
     
     search = current_app.elasticsearch.search(
         index=index,
@@ -28,7 +28,7 @@ def query_index(index, query, page, per_page):
         from_=(page - 1) * per_page,
         size=per_page
     )
-    print('Search: ', search)
+    # print('Search: ', search)
     ids = [int(hit['_id']) for hit in search['hits']['hits']]
     return ids, search['hits']['total']['value']
 

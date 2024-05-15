@@ -1,6 +1,6 @@
-import { isEmptyArray } from 'formik';
 import React, { useEffect, useState } from 'react';
-import { json, useParams } from 'react-router-dom'; 
+import { useParams } from 'react-router-dom'; 
+import { dispPrice, dispListPrice, } from '../components/common';
 import { Divider, Table, TableBody, TableRow, TableCell, 
     Sticky, Image, Grid, GridRow, GridColumn, Rail, } from 'semantic-ui-react';
 
@@ -32,7 +32,7 @@ function Item() {
         // console.log('activeItemIdx: ', activeItemIdx);
         const packs = item.packs.map((pack, i) => {
             return (
-                <div key={pack} className={i === activeItemIdx ? 'size-active-ink' : 'size-link'} 
+                <div key={pack} className={i === activeItemIdx ? 'size-active-link' : 'size-link'} 
                     onClick={() => setActiveItemIdx(i)}>
                     {
                         `${item.amounts[i]} \
@@ -69,7 +69,7 @@ function Item() {
                     Object.keys(item.details_2).map(key => 
                         <div key={key} style={{marginBottom: '8px', }}>
                             <span style={{fontWeight: 'bold', }}>{`${key} : `}</span>
-                            <spen>{item.details_2[key]}</spen>
+                            <span>{item.details_2[key]}</span>
                         </div>
                     )
                 }
@@ -138,26 +138,14 @@ function Item() {
                                 </span> :
                                 null
                             }
-                            <span style={{fontSize: '1em', verticalAlign: '50%', }}>$</span>
-                            <span style={{fontSize: '2em', }}>
-                                {Math.floor(item.discount_prices[activeItemIdx])}
-                            </span>
-                            <span style={{fontSize: '1em', verticalAlign: '50%', marginRight: '10px', }}>
-                                {Math.round((item.discount_prices[activeItemIdx] - 
-                                    Math.floor(item.discount_prices[activeItemIdx]))*100)}
-                            </span>
-                            <span style={{fontSize: '1em', verticalAlign: '30%', }}>
-                                $({Math.round(item.discount_prices[activeItemIdx] / 
-                                    (item.amounts[activeItemIdx] * item.packs[activeItemIdx])*100)/100} 
-                                / {item.units[activeItemIdx]})
-                            </span>
+                            {dispPrice(item, activeItemIdx)}
                         </div>
                         <div>
                             {
                                 item.prices[activeItemIdx] !== item.discount_prices[activeItemIdx] ?
                                 <>
                                     <span style={{marginRight: '5px', }}>List Price:</span>
-                                    <span><s>${item.prices[activeItemIdx]}</s></span>
+                                    {dispListPrice(item, activeItemIdx)}
                                 </> :
                                 null
                             }

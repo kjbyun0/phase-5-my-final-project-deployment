@@ -20,6 +20,19 @@ app.secret_key=b'\xaf\x88\x87_\x1a\xf4\x97\x93f\xf5q\x0b\xad\xef,\xb3'
 def index():
     return '<h1>Project Server</h1>'
 
+def apply_json_loads_to_item(item):
+    item['prices'] = json.loads(item['prices'])
+    item['discount_prices'] = json.loads(item['discount_prices'])
+    item['amounts'] = json.loads(item['amounts'])
+    item['units'] = json.loads(item['units'])
+    item['packs'] = json.loads(item['packs'])
+    item['about_item'] = json.loads(item['about_item'])
+    item['details_1'] = json.loads(item['details_1'])
+    item['details_2'] = json.loads(item['details_2'])
+    item['thumbnails'] = json.loads(item['thumbnails'])
+    item['images'] = json.loads(item['images'])
+    return item
+
 class Authenticate(Resource):
     def get(self):
         user = User.query.filter_by(id=session.get('user_id')).first()
@@ -92,11 +105,17 @@ class Signup(Resource):
                 
 
 class Search(Resource):
-    def get(self, skeys):
-        print(f'skeys: {skeys}')
-        result_obj, count = Item.search(skeys, 1, 100)
-        # result = result_obj.all()
-        print(f'result: {result_obj}, count: {count}')
+    def get(self, keys):
+        try: 
+            print(f'keys: {keys}')
+            result_obj, count = Item.search(keys, 1, 500)
+            print(f'result_obj: {result_obj}, count: {count}')
+            results = [apply_json_loads_to_item(result.to_dict()) for result in result_obj.all()]
+        except Exception as exc:
+            return make_response({
+                'message': f'{exc}',
+            }, 500)
+        return make_response(results, 200)
 
 
 class Item_by_id(Resource):
@@ -104,16 +123,7 @@ class Item_by_id(Resource):
         item = Item.query.filter_by(id=id).first()
         if item: 
             item_dict = item.to_dict()
-            item_dict['prices'] = json.loads(item_dict['prices'])
-            item_dict['discount_prices'] = json.loads(item_dict['discount_prices'])
-            item_dict['amounts'] = json.loads(item_dict['amounts'])
-            item_dict['units'] = json.loads(item_dict['units'])
-            item_dict['packs'] = json.loads(item_dict['packs'])
-            item_dict['about_item'] = json.loads(item_dict['about_item'])
-            item_dict['details_1'] = json.loads(item_dict['details_1'])
-            item_dict['details_2'] = json.loads(item_dict['details_2'])
-            item_dict['thumbnails'] = json.loads(item_dict['thumbnails'])
-            item_dict['images'] = json.loads(item_dict['images'])
+            item_dict = apply_json_loads_to_item(item_dict)
             return make_response(item_dict, 200)
         return make_response({
             'message': f'Item {id} not found.',
@@ -123,7 +133,7 @@ class Item_by_id(Resource):
 
 api.add_resource(Authenticate, '/authenticate')
 api.add_resource(Signup, '/signup')
-api.add_resource(Search, '/search/<string:skeys>')
+api.add_resource(Search, '/search/<string:keys>')
 api.add_resource(Item_by_id, '/items/<int:id>')
 
 if __name__ == '__main__':

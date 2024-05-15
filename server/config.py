@@ -37,7 +37,6 @@ CORS(app)
 bcrypt = Bcrypt(app)
 
 app.config['ELASTICSEARCH_URL'] = os.environ.get('ELASTICSEARCH_URL')
-
 print("app.config[ELASTICSEARCH_URL]: ", app.config['ELASTICSEARCH_URL'])
 
 app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \

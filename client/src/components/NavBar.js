@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { Form, Input, Dropdown, Button, Icon } from 'semantic-ui-react';
 
 function NavBar({ user }) {
-    const [ searchKey, setSearchKey ] = useState(null);
+    const [ searchKey, setSearchKey ] = useState('');
     const navigate = useNavigate();
 
     function handleSearchInput(e, d) {

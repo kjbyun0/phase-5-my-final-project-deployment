@@ -10,7 +10,7 @@ function SearchResult() {
     const [ sort, setSort ] = useState(1);
     const navigate = useNavigate();
 
-    const options = [
+    const sortOptions = [
         { key: 1, text: 'Featured', value: 1 },
         { key: 2, text: 'Price: Low to Hight', value: 2 },
         { key: 3, text: 'Price: High to Low', value: 3 },
@@ -103,7 +103,7 @@ function SearchResult() {
                         fontWeight: 'bold', color: 'chocolate'}}>{searchParams.get('query')}"</div>
                 </div>
                 {/* <Menu compact size='tiny' style={{float: 'inline-end', }}> */}
-                <Dropdown options={options} simple item button 
+                <Dropdown options={sortOptions} simple item button 
                     text='Dropdown' value={sort} onChange={(e, d) => setSort(d.value)} />
             </div>
             <hr style={{boxShadow: '0 2px 6px 1px lightgray'}}/>

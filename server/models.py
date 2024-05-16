@@ -15,6 +15,10 @@ class User(db.Model, SerializerMixin):
         '-seller.user',
         '-seller.items',
         '-customer.user',
+        '-customer.cart_items.item.category',
+        '-customer.cart_items.item.seller',
+        '-customer.cart_items.item.cart_items',
+        '-customer.cart_items.customer',
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -116,7 +120,7 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     brand = db.Column(db.String)
-    default_item = db.Column(db.Integer, nullable=False)
+    default_item_idx = db.Column(db.Integer, nullable=False)
     prices = db.Column(db.String)   # list: price by package type
     discount_prices = db.Column(db.String)  # list: discount price by package type
     amounts = db.Column(db.String)    # list: amount by package type
@@ -152,6 +156,7 @@ class CartItem(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     quantity = db.Column(db.Integer, nullable=False)
+    item_idx = db.Column(db.Integer, nullable=False)
     item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'))
 

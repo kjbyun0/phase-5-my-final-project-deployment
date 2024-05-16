@@ -18,15 +18,17 @@ function SearchResult() {
     ];
 
     console.log('Before useEffect, searchParams: ', searchParams.get('query'));
+    console.log('In SearchResult, searchItems: ', searchItems);
 
     useEffect(() => {
         console.log('searchParams: ', searchParams.get('query'));
         fetch(`/search/${searchParams.get('query')}`)
         .then(r => {
             r.json().then(data => {
-                if (r.ok) 
+                if (r.ok) {
+                    console.log('In SearchResult, useEffect, searchItems: ', data)
                     onSetSearchItems(data)
-                else
+                } else
                     console.log('Server error: ', data.message);
                     //add more actions here....
             })
@@ -40,10 +42,10 @@ function SearchResult() {
     let sortedItems;
     switch(sort) {
         case 2:
-            sortedItems = searchItems.toSorted((item1, item2) => item1.discount_prices[item1.default_item] - item2.discount_prices[item2.default_item])
+            sortedItems = searchItems.toSorted((item1, item2) => item1.discount_prices[item1.default_item_idx] - item2.discount_prices[item2.default_item_idx])
             break;
         case 3:
-            sortedItems = searchItems.toSorted((item1, item2) => item2.discount_prices[item2.default_item] - item1.discount_prices[item1.default_item])
+            sortedItems = searchItems.toSorted((item1, item2) => item2.discount_prices[item2.default_item_idx] - item1.discount_prices[item1.default_item_idx])
             break;
         case 4:
             // need to implement it after reviews feature is implemented. the following code is temporary.
@@ -68,21 +70,21 @@ function SearchResult() {
                 <Label>
                     <span style={{fontSize: '1.2em',  fontWeight: 'bold', }}>
                         {
-                            `${item.amounts[item.default_item]} \
-                            ${item.units[item.default_item].charAt(0).toUpperCase() + item.units[item.default_item].slice(1)} \
-                            (Pack of ${item.packs[item.default_item]})`
+                            `${item.amounts[item.default_item_idx]} \
+                            ${item.units[item.default_item_idx].charAt(0).toUpperCase() + item.units[item.default_item_idx].slice(1)} \
+                            (Pack of ${item.packs[item.default_item_idx]})`
                         }
                     </span>
                 </Label>
                 <div className='link' onClick={() => handleNavigateItem(item.id)}>
-                    {dispPrice(item, item.default_item)}
+                    {dispPrice(item, item.default_item_idx)}
                 </div>
                 <div className='link' onClick={() => handleNavigateItem(item.id)}>
                     {
-                        item.prices[item.default_item] !== item.discount_prices[item.default_item] ?
+                        item.prices[item.default_item_idx] !== item.discount_prices[item.default_item_idx] ?
                         <>
                             <span style={{marginRight: '5px', }}>List:</span>
-                            {dispListPrice(item, item.default_item)}
+                            {dispListPrice(item, item.default_item_idx)}
                         </> :
                         null
                     }
@@ -91,8 +93,6 @@ function SearchResult() {
         </Card>
     );
 
-
-    console.log('In SearchResult, searchItems: ', searchItems);
 
     return (
         <div>

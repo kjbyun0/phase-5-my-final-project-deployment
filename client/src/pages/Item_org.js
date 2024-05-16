@@ -16,7 +16,7 @@ function Item() {
                 if (r.ok) {
                     // console.log('In Istem, fetched item: ', data);
                     setItem(data);
-                    setActiveItemIdx(data.default_item);
+                    setActiveItemIdx(data.default_item_idx);
                 } else {
                     console.log('Error: ', data.message);
                 }
@@ -87,7 +87,7 @@ function Item() {
     if (!item)
         return;
 
-    // console.log('item.discount_prices[item.default_item]')
+    // console.log('item.discount_prices[item.default_item_idx]')
     return (
         <div style={{display: 'grid', gridTemplateRows: 'auto auto auto', padding: '15px', 
             width: '100%', height: '100%', }}>

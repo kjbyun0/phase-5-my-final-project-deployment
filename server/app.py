@@ -150,6 +150,7 @@ class CartItems(Resource):
         try: 
             ci = CartItem(
                 quantity = req.get('quantity'),
+                item_idx = req.get('item_idx'),
                 item_id = req.get('item_id'),
                 customer_id = req.get('customer_id')
             )

@@ -27,7 +27,7 @@ function Item() {
                 if (r.ok) {
                     // console.log('In Istem, fetched item: ', data);
                     setItem(data);
-                    setActiveItemIdx(data.default_item);
+                    setActiveItemIdx(data.default_item_idx);
                     if (data.thumbnails.length)
                         setActiveImageIdx(0);
                 } else {
@@ -113,7 +113,7 @@ function Item() {
     if (!item)
         return;
 
-    // console.log('item.discount_prices[item.default_item]')
+    // console.log('item.discount_prices[item.default_item_idx]')
     console.log('quantity: ', quantity);
 
     return (

@@ -90,7 +90,7 @@ if __name__ == '__main__':
         items.append(Item(
             name = "Dove Skin Care Beauty Bar For Softer Skin Cucumber and Green Tea More Moisturizing Than Bar Soap 3.75 oz, 14 Bars",
             brand = 'Dove',
-            default_item = 2,
+            default_item_idx = 2,
             prices = json.dumps([9.71, 10.97, 21.47, 33.96, 20.98, ]),
             discount_prices = json.dumps([9.22, 10.97, 18.63, 30.34, 20.98, ]),
             amounts = json.dumps([3.75, 3.75, 3.75, 3.75, 4.0, ]),
@@ -144,7 +144,7 @@ if __name__ == '__main__':
         items.append(Item(
             name = 'BodyRefresh Shower Steamers Aromatherapy - 8 Pack Shower Bombs with Essential Oils. Self Care Birthday Gifts for Women, Gifts for Her, Mothers Day Gifts for Wife Mom from Daughter',
             brand = 'BodyRefresh',
-            default_item = 0,
+            default_item_idx = 0,
             prices = json.dumps([9.99, ]),
             discount_prices = json.dumps([9.99, ]),
             amounts = json.dumps([8, ]),
@@ -194,7 +194,7 @@ if __name__ == '__main__':
         items.append(Item(
             name = "eos Shea Better Body Lotion- Jasmine Peach, 24-Hour Moisture Skin Care, Lightweight & Non-Greasy, Made with Natural Shea, Vegan, 16 fl oz",
             brand = 'eos',
-            default_item = 0,
+            default_item_idx = 0,
             prices = json.dumps([10.99, 21.98, ]),
             discount_prices = json.dumps([8.98, 17.97, ]),
             amounts = json.dumps([16, 16, ]),
@@ -243,7 +243,7 @@ if __name__ == '__main__':
         items.append(Item(
             name = 'CeraVe Cleansing Balm for Sensitive Skin | Hydrating Makeup Remover with Ceramides and Plant-based Jojoba Oil for Face | Non-Comedogenic Fragrance Free Non-Greasy |1.3 Ounces',
             brand = 'CeraVe',
-            default_item = 0,
+            default_item_idx = 0,
             prices = json.dumps([10.99, ]),
             discount_prices = json.dumps([9.97, ]),
             amounts = json.dumps([1.3, ]),
@@ -295,7 +295,7 @@ if __name__ == '__main__':
         items.append(Item(
             name = 'Dove Nourishing Body Care, Face, Hand, and Body Beauty Cream for Normal to Dry Skin Lotion for Women with 24-Hour Moisturization, 4-Pack, 2.53 Oz Each Jar',
             brand = 'Dove',
-            default_item = 0,
+            default_item_idx = 0,
             prices = json.dumps([8.79, ]),
             discount_prices = json.dumps([8.79, ]),
             amounts = json.dumps([2.53, ]),
@@ -345,7 +345,7 @@ if __name__ == '__main__':
         # items.append(Item(
         #     name = ,
         #     brand = ,
-        #     default_item = ,
+        #     default_item_idx = ,
         #     prices = json.dumps([]),
         #     discount_prices = json.dumps([]),
         #     amounts = json.dumps([]),

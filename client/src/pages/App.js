@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import NavBar from '../components/NavBar';
+import { setUserInfo } from '../components/common';
 
 
 function App() {
     const [ user, setUser ] = useState(null);
+    const [ cartItems, setCartItems ] = useState([]);
+
     const [ searchItems, setSearchItems ] = useState([]);
 
     useEffect(() => {
@@ -13,7 +16,7 @@ function App() {
             r.json().then(data => {
                 if (r.ok) {
                     console.log('in App, user: ', data);
-                    setUser(data);
+                    setUserInfo(data, setUser, setCartItems);
                 } else {
                     console.log('In App, error: ', data.message);
                 }
@@ -32,6 +35,8 @@ function App() {
                 <Outlet context={{
                     user: user,
                     onSetUser: setUser,
+                    cartItems: cartItems,
+                    onSetCartItems: setCartItems,
                     searchItems: searchItems,
                     onSetSearchItems: setSearchItems, 
                 }} />

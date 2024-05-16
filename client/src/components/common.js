@@ -1,5 +1,17 @@
 
 
+function setUserInfo(userData, setUser, setCartItems) {
+    const { customer, ...userRemaings } = userData;
+    const { cart_items, ...customerRemainings } = customer ? customer : {};
+
+    // userData can't be null because fetch operation for user data is succeeded.
+    setUser({
+        ...userRemaings,
+        customer: Object.keys(customerRemainings).length === 0 ? null : customerRemainings,
+    });
+    setCartItems(cart_items === undefined ? [] : cart_items);
+}
+
 function dispPrice(item, idx) {
     // console.log('dispPrice, item: ', item);
     // console.log('dispPrice, idx: ', idx, 'type: ', typeof(idx));
@@ -29,19 +41,4 @@ function dispListPrice(item, idx) {
     );
 }
 
-export { dispPrice, dispListPrice };
-
-
-{/* <span style={{fontSize: '1em', verticalAlign: '50%', }}>$</span>
-<span style={{fontSize: '2em', }}>
-    {Math.floor(item.discount_prices[activeItemIdx])}
-</span>
-<span style={{fontSize: '1em', verticalAlign: '50%', marginRight: '10px', }}>
-    {Math.round((item.discount_prices[activeItemIdx] - 
-        Math.floor(item.discount_prices[activeItemIdx]))*100)}
-</span>
-<span style={{fontSize: '1em', verticalAlign: '30%', }}>
-    $({Math.round(item.discount_prices[activeItemIdx] / 
-        (item.amounts[activeItemIdx] * item.packs[activeItemIdx])*100)/100} 
-    / {item.units[activeItemIdx]})
-</span> */}
+export { setUserInfo, dispPrice, dispListPrice };

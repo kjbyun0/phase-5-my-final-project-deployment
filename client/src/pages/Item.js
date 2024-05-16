@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'; 
+import { useParams, useOutletContext, useNavigate, } from 'react-router-dom'; 
 import { dispPrice, dispListPrice, } from '../components/common';
 import { Divider, Table, TableBody, TableRow, TableCell, 
-    Image, ButtonGroup, Button, Dropdown, Menu, } from 'semantic-ui-react';
+    Image, ButtonGroup, Button, Dropdown,  } from 'semantic-ui-react';
 
 
 function Item() {
@@ -11,6 +11,8 @@ function Item() {
     const [ activeItemIdx, setActiveItemIdx ] = useState(null);
     const [ activeImageIdx, setActiveImageIdx ] = useState(null);
     const [ quantity, setQuantity ] = useState(1);
+    const { user, cartItems, onSetCartItems } = useOutletContext();
+    const navigate = useNavigate()
 
     const quantityOptions = [];
     for (let i = 1; i <= 30; i++)
@@ -19,6 +21,9 @@ function Item() {
             text: `${i}`,
             value: i
         });
+
+    console.log('In Item, user: ', user, ', cartItems: ', cartItems);
+    console.log('quantity: ', quantity);
 
     useEffect(() => {
         fetch(`/items/${id}`)
@@ -110,11 +115,87 @@ function Item() {
         );
     }
 
+    function handleAddToCart() {
+        // if user is not signed in or is a seller
+        if (!user || !user.customer) {
+            navigate('/signin');
+        }
+
+        const cItem = cartItems.find(cItem => 
+            cItem.item_id === item.id && cItem.item_idx === activeItemIdx);
+        
+        if (cItem) {
+            fetch(`/cartitems/${cItem.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    quantity: cItem.quantity + quantity,
+                }),
+            })
+            .then(r => {
+                r.json().then(data => {
+                    if (r.ok) {
+                        console.log('In handleAddToCart fetch(PATCH), cartItem: ', data);
+
+                        onSetCartItems(cartItems.map(cItems => 
+                            cItems.item_id === data.item_id && cItems.item_idx === data.item_idx ? 
+                            data : cItems));
+
+                        // navigate to my cart page later...
+                    } else {
+                        if (r.status === 401 || r.status === 403) {
+                            console.log(data);
+                            alert(data.message);
+                        } else {
+                            console.log('Server Error - Updating an item in cart: ', data);
+                            alert(`Server Error - Updating an item in cart: ${data.message}`);
+                        }
+                    }
+                });
+            });
+        } else {
+            fetch('/cartitems', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    quantity: quantity,
+                    item_idx: activeItemIdx,
+                    item_id: item.id,
+                    customer_id: user.customer.id,
+                }),
+            })
+            .then(r => {
+                r.json().then(data => {
+                    if (r.ok) {
+                        console.log('In handleAddToCart fetch(POST), cartItem: ', data);
+
+                        onSetCartItems([
+                            ...cartItems,
+                            data
+                        ]);
+
+                        // navigate to my cart page later...
+                    } else {
+                        if (r.status === 401 || r.status === 403) {
+                            console.log(data);
+                            alert(data.message);
+                        } else {
+                            console.log('Server Error - Adding an item to cart: ', data);
+                            alert(`Server Error - Adding an item to cart: ${data.message}`);
+                        }
+                    }
+                });
+            });
+        }
+    }
+
+
     if (!item)
         return;
-
-    // console.log('item.discount_prices[item.default_item_idx]')
-    console.log('quantity: ', quantity);
 
     return (
         <div style={{ padding: '15px', width: '100%', height: '100%', }}>
@@ -194,7 +275,8 @@ function Item() {
                                     disabled={quantity >= 30} onClick={() => setQuantity(quantity + 1)} >+</Button>
                             </ButtonGroup>
                             <Button color='yellow' size='medium' 
-                                style={{display: 'block', borderRadius: '20px', width: '220px', margin: '5px', color: 'black', }}>Add to Cart</Button>
+                                style={{display: 'block', borderRadius: '20px', width: '220px', margin: '5px', color: 'black', }}
+                                onClick={handleAddToCart}>Add to Cart</Button>
                             <Button color='orange' size='medium' 
                                 style={{display: 'block', borderRadius: '20px', width: '220px', margin: '5px', color: 'black', }}>Buy Now</Button>
                         </div>

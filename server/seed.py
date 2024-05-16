@@ -8,7 +8,7 @@ from faker import Faker
 
 # Local imports
 from app import app
-from models import db, User, Seller, Customer, Category, Item
+from models import db, User, Seller, Customer, Category, Item, CartItem
 import json
 
 if __name__ == '__main__':
@@ -17,6 +17,7 @@ if __name__ == '__main__':
         print("Starting seed...")
 
         # Seed code goes here!
+        CartItem.query.delete()
         Seller.query.delete()
         Customer.query.delete()
         User.query.delete()

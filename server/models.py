@@ -51,6 +51,11 @@ class User(db.Model, SerializerMixin):
 class Seller(db.Model, SerializerMixin):
     __tablename__ = 'sellers'
 
+    serialize_rules = (
+        '-user',
+        '-items',
+    )
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -65,6 +70,11 @@ class Seller(db.Model, SerializerMixin):
 class Customer(db.Model, SerializerMixin):
     __tablename__ = 'customers'
 
+    serialize_rules = (
+        '-user',
+        '-cart_items',
+    )
+
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
@@ -72,6 +82,10 @@ class Customer(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     user = db.relationship('User', back_populates='customer')
+    cart_items = db.relationship('CartItem', back_populates='customer', cascade='all, delete-orphan')
+
+    items_thru_cart = association_proxy('cart_items', 'item', 
+                        creator=lambda item_obj: CartItem(item=iem_obj))
 
     def __repr__(self):
         return f'<Customer {self.id}>'
@@ -96,6 +110,7 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
     serialize_rules = (
         '-category', 
         '-seller',
+        '-cart_items',
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -118,7 +133,35 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
 
     category = db.relationship('Category', back_populates='items')
     seller = db.relationship('Seller', back_populates='items')
+    cart_items = db.relationship('CartItem', back_populates='item', cascade='all, delete-orphan')
+
+    customers_thru_cart = association_proxy('cart_items', 'customer', 
+                            creator=lambda customer_obj : CartItem(customer=customer_obj))
 
     def __repr__(self):
         return f'<Item {self.id}>'
+    
+
+class CartItem(db.Model, SerializerMixin):
+    __tablename__ = 'cart_items'
+
+    serialize_rules = (
+        '-item',
+        '-customer',
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    quantity = db.Column(db.Integer, nullable=False)
+    item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'))
+
+    item = db.relationship('Item', back_populates='cart_items')
+    customer = db.relationship('Customer', back_populates='cart_items')
+
+    def __repr__(self):
+        return f'<CartItem {self.id}>'
+
+
+
+
 

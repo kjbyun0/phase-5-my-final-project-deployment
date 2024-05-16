@@ -9,16 +9,11 @@ from flask_restful import Resource
 # Local imports
 from config import app, db, api
 # Add your model imports
-from models import User, Seller, Customer, Category, Item
+from models import User, Seller, Customer, Category, Item, CartItem
 import json
 
 app.secret_key=b'\xaf\x88\x87_\x1a\xf4\x97\x93f\xf5q\x0b\xad\xef,\xb3'
 
-# Views go here!
-
-@app.route('/')
-def index():
-    return '<h1>Project Server</h1>'
 
 def apply_json_loads_to_item(item):
     item['prices'] = json.loads(item['prices'])
@@ -32,6 +27,25 @@ def apply_json_loads_to_item(item):
     item['thumbnails'] = json.loads(item['thumbnails'])
     item['images'] = json.loads(item['images'])
     return item
+
+# Views go here!
+
+@app.before_request
+def check_if_signed_in():
+    if not session.get('user_id') \
+        and request.endpoint != 'authenticate' \
+        and request.endpoint != 'signup' \
+        and request.endpoint != 'search' \
+        and request.endpoint != 'item_by_id':
+        return make_response({
+            'message': 'User is not signed in',
+        }, 401)
+
+
+@app.route('/')
+def index():
+    return '<h1>Project Server</h1>'
+
 
 class Authenticate(Resource):
     def get(self):
@@ -130,11 +144,66 @@ class Item_by_id(Resource):
         }, 404)
 
 
+class CartItems(Resource):
+    def post(self): 
+        req = request.get_json()
+        try: 
+            ci = CartItem(
+                quantity = req.get('quantity'),
+                item_id = req.get('item_id'),
+                customer_id = req.get('customer_id')
+            )
+            db.session.add(ci)
+            db.session.commit()
+        except Exception as exc:
+            return make_response({
+                'message': f'{exc}',
+            }, 400)
+        return make_response(ci.to_dict(), 201)
 
-api.add_resource(Authenticate, '/authenticate')
-api.add_resource(Signup, '/signup')
-api.add_resource(Search, '/search/<string:keys>')
-api.add_resource(Item_by_id, '/items/<int:id>')
+class CartItem_by_id(Resource):
+    def patch(self, id):
+        req = request.get_json()
+        ci = CartItem.query.filter_by(id=id).first()
+        if ci:
+            try:
+                for key in req:
+                    setattr(ci, key, req[key])
+                db.session.commit()
+            except Exception as exc:
+                return make_response({
+                    'message': f'{exc}',
+                }, 400)
+            return make_response(ci.to_dict(), 200)
+        
+        return make_response({
+            'message': f'Cart Item {id} not found.',
+        }, 404)
+    
+    def delete(self, id):
+        ci = CartItem.query.filter_by(id=id).first()
+        if ci:
+            try:
+                db.session.delete(ci)
+                db.session.commit()
+            except Exception as exc:
+                return make_response({
+                    'message': f'{exc}',
+                }, 400)
+            return make_response({}, 204)
+        
+        return make_response({
+            'message': f'Cart Item {id} not found.',
+        }, 404)
+
+
+
+api.add_resource(Authenticate, '/authenticate', endpoint='authenticate')
+api.add_resource(Signup, '/signup', endpoint='signup')
+api.add_resource(Search, '/search/<string:keys>', endpoint='search')
+api.add_resource(Item_by_id, '/items/<int:id>', endpoint='item_by_id')
+api.add_resource(CartItems, '/cartitems', endpoint='cartitems') # Authentication required
+api.add_resource(CartItem_by_id, '/cartitems/<int:id>', endpoint='cartitem_by_id') # Authentication required
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

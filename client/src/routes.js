@@ -2,6 +2,7 @@ import App from './pages/App';
 import Home from './pages/Home';
 import SearchResult from './pages/SearchResult'
 import Item from './pages/Item';
+import Cart from './pages/Cart';
 import Signin from './pages/Signin';
 import Signout from './pages/Signout';
 import Signup from './pages/Signup';
@@ -23,6 +24,10 @@ const routes = [
             {
                 path: '/items/:id',
                 element: <Item />,
+            },
+            {
+                path: '/cart',
+                element: <Cart />,
             },
             {
                 path: '/signin',

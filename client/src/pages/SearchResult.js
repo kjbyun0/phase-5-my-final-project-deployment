@@ -95,7 +95,7 @@ function SearchResult() {
 
 
     return (
-        <div>
+        <div style={{width: '100%', height: '100%', }}>
             <div style={{display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center',}}>
                 <div>
                     <div style={{display: 'inline-block', fontSize: '1.2em', margin: '10px 0 10px 10px', }}>{searchItems.length} results for "</div>

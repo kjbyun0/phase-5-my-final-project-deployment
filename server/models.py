@@ -150,7 +150,9 @@ class CartItem(db.Model, SerializerMixin):
     __tablename__ = 'cart_items'
 
     serialize_rules = (
-        '-item',
+        '-item.category',
+        '-item.seller',
+        '-item.cart_items',
         '-customer',
     )
 

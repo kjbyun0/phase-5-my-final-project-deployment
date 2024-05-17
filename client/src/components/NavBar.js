@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Form, Input, Dropdown, Button, Icon } from 'semantic-ui-react';
+import { Form, Input, Dropdown, Button, 
+    Icon, IconGroup } from 'semantic-ui-react';
 
-function NavBar({ user }) {
+function NavBar({ user, cartItems }) {
     const [ searchKey, setSearchKey ] = useState('');
     const navigate = useNavigate();
 
@@ -35,6 +36,20 @@ function NavBar({ user }) {
                 <NavLink to='/signout' className='nav-link'>Sign Out</NavLink> :
                 <NavLink to='/signin' className='nav-link'>Sign in</NavLink>
             }
+            <NavLink to='/cart' className='nav-link'>
+                <div style={{display: 'grid', gridTemplateColumns: 'max-content max-content'}}>
+                    <IconGroup>
+                        <Icon name='cart' size='big' />
+                        <Icon >
+                            <div style={{fontFamily: 'sans-serif', fontSize: '0.8em', 
+                                fontWeight: 'bold', color: 'darkorange', marginLeft: '5px', }}>
+                                {cartItems.length}
+                            </div>
+                        </Icon>
+                    </IconGroup>
+                    <div style={{alignSelf: 'end', fontSize: '0.8em', fontWeight: 'bold'}}>Cart</div>
+                </div>
+            </NavLink>
         </nav>
     )
 }

@@ -12,12 +12,13 @@
 }
 
 /* div, header, main, nav {
-  border: 2px solid tomato;
+  border: 1px solid tomato;
 } */
 
 .nav {
   display:grid;
-  grid-template-columns: 1fr max-content;
+  grid-template-columns: 1fr max-content max-content;
+  align-items: center;
   background: black;
 }
 
@@ -86,4 +87,14 @@
 
 .link {
   cursor: pointer;
+}
+
+.underscore {
+  color: darkcyan;
+}
+
+.underscore:hover {
+  color: brown;
+  text-decoration: underline;
+  text-decoration-color: brown;
 }

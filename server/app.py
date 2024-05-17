@@ -51,7 +51,12 @@ class Authenticate(Resource):
     def get(self):
         user = User.query.filter_by(id=session.get('user_id')).first()
         if user:
-            return make_response(user.to_dict(), 200)
+            user_dict = user.to_dict()
+            if user_dict.get('customer'):
+                for ci in user_dict['customer']['cart_items']:
+                    if ci.get('item'):
+                        apply_json_loads_to_item(ci['item'])
+            return make_response(user_dict, 200)
         return make_response({
             'message': 'User is signed out'
         }, 401)
@@ -62,7 +67,12 @@ class Authenticate(Resource):
         print('in Authenticate, user: ', user)
         if user and user.authenticate(req.get('password')):
             session['user_id'] = user.id
-            return make_response(user.to_dict(), 200)
+            user_dict = user.to_dict()
+            if user_dict.get('customer'):
+                for ci in user_dict['customer']['cart_items']:
+                    if ci.get('item'):
+                        apply_json_loads_to_item(ci['item'])
+            return make_response(user_dict, 200)
         return make_response({
             'message': 'Invaled username or password.'
         }, 401)
@@ -115,7 +125,12 @@ class Signup(Resource):
             }, 400)
         
         session['user_id'] = user.id
-        return make_response(user.to_dict(), 201)
+        user_dict = user.to_dict()
+        if user_dict.get('customer'):
+            for ci in user_dict['customer']['cart_items']:
+                if ci.get('item'):
+                    apply_json_loads_to_item(ci['item'])
+        return make_response(user_dict, 201)
                 
 
 class Search(Resource):
@@ -137,7 +152,7 @@ class Item_by_id(Resource):
         item = Item.query.filter_by(id=id).first()
         if item: 
             item_dict = item.to_dict()
-            item_dict = apply_json_loads_to_item(item_dict)
+            apply_json_loads_to_item(item_dict)
             return make_response(item_dict, 200)
         return make_response({
             'message': f'Item {id} not found.',
@@ -160,7 +175,11 @@ class CartItems(Resource):
             return make_response({
                 'message': f'{exc}',
             }, 400)
-        return make_response(ci.to_dict(), 201)
+        
+        ci_dict = ci.to_dict()
+        if ci_dict.get('item'):
+            apply_json_loads_to_item(ci_dict['item'])
+        return make_response(ci_dict, 201)
 
 class CartItem_by_id(Resource):
     def patch(self, id):
@@ -175,7 +194,11 @@ class CartItem_by_id(Resource):
                 return make_response({
                     'message': f'{exc}',
                 }, 400)
-            return make_response(ci.to_dict(), 200)
+            
+            ci_dict = ci.to_dict()
+            if ci_dict.get('item'):
+                apply_json_loads_to_item(ci_dict['item'])
+            return make_response(ci_dict, 200)
         
         return make_response({
             'message': f'Cart Item {id} not found.',

@@ -15,7 +15,7 @@ function App() {
         .then(r => 
             r.json().then(data => {
                 if (r.ok) {
-                    console.log('in App, user: ', data);
+                    // console.log('in App, user: ', data);
                     setUserInfo(data, setUser, setCartItems);
                 } else {
                     console.log('In App, error: ', data.message);
@@ -24,11 +24,13 @@ function App() {
         )
     }, []);
 
+    console.log('In App, user: ', user, ', cartItems: ', cartItems);
+
     return (
         <div style={{display: 'grid', width: '100%', height: '100%', 
             gridTemplateRows: 'max-content 1fr',}}>
             <header style={{minWidth: '0', minHeight: '0',}}>
-                <NavBar user={user} />
+                <NavBar user={user} cartItems={cartItems} />
             </header>
             <main style={{minWidth: '0', minHeight: '0',}}>
                 {/* <h1>I'm at App.</h1> */}

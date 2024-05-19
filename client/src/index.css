@@ -98,3 +98,11 @@
   text-decoration: underline;
   text-decoration-color: brown;
 }
+
+.underscore2 {
+  color: darkcyan;
+}
+
+.underscore2:hover {
+  text-decoration: underline;
+}

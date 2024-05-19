@@ -157,6 +157,7 @@ class CartItem(db.Model, SerializerMixin):
     )
 
     id = db.Column(db.Integer, primary_key=True)
+    checked = db.Column(db.Integer, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     item_idx = db.Column(db.Integer, nullable=False)
     item_id = db.Column(db.Integer, db.ForeignKey('items.id'))

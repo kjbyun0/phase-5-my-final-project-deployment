@@ -164,6 +164,7 @@ class CartItems(Resource):
         req = request.get_json()
         try: 
             ci = CartItem(
+                checked = 1,
                 quantity = req.get('quantity'),
                 item_idx = req.get('item_idx'),
                 item_id = req.get('item_id'),

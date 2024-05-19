@@ -41,4 +41,100 @@ function dispListPrice(item, idx) {
     );
 }
 
-export { setUserInfo, dispPrice, dispListPrice };
+
+function handleCItemDelete(cartItem, cartItems, onSetCartItems) {
+    console.log('in handleCItemDelete, item: ', cartItem);
+
+    fetch(`/cartitems/${cartItem.id}`, {
+        method: 'DELETE',
+    })
+    .then(r => {
+        console.log('in handleCItemDelete, r: ', r);
+        if (r.ok) {
+            console.log('in handleCItemChange, cItem is successfully deleted.');
+            onSetCartItems(cartItems.filter(cItem => cItem.id !== cartItem.id));
+        } else {
+            r.json().then(data => {
+                if (r.status === 401 || r.status === 403) {
+                    console.log(data);
+                    alert(data.message);
+                } else {
+                    console.log("Server Error - Can't delete this item from cart: ", data);
+                    alert(`Server Error - Can't delete this item from cart: ${data.message}`);
+                }
+            });
+        }
+    });
+}
+
+function handleCItemAdd(cartItem, cartItems, onSetCartItems) {
+    fetch('/cartitems', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cartItem),
+    })
+    .then(r => {
+        r.json().then(data => {
+            if (r.ok) {
+                console.log('In handleAddToCart fetch(POST), cartItem: ', data);
+
+                onSetCartItems([
+                    ...cartItems,
+                    data
+                ]);
+
+                // navigate to my cart page later...
+            } else {
+                if (r.status === 401 || r.status === 403) {
+                    console.log(data);
+                    alert(data.message);
+                } else {
+                    console.log("Server Error - Can't add an item to cart: ", data);
+                    alert(`Server Error - Can't add an item to cart: ${data.message}`);
+                }
+            }
+        });
+    });
+}
+
+function handleCItemChange(cartItem, cartItems, onSetCartItems) {
+    // console.log('in handleCItemCheckChange, e: ', e, ', d: ', d);
+    console.log('in handleCItemCheckChange, item: ', cartItem);
+
+    if (cartItem.quantity === 0) {
+        handleCItemDelete(cartItem);
+        return;
+    }
+
+    fetch(`/cartitems/${cartItem.id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            checked: cartItem.checked,
+            quantity: cartItem.quantity,
+        }),
+    })
+    .then(r => {
+        r.json().then(data => {
+            if (r.ok) {
+                console.log('in handleCItemChange, cItem: ', data);
+                onSetCartItems(cartItems.map(cItem => cItem.id === data.id ? data : cItem));
+            } else {
+                if (r.status === 401 || r.status === 403) {
+                    console.log(data);
+                    alert(data.message);
+                } else {
+                    console.log("Server Error - Can't patch this item in cart: ", data);
+                    alert(`Server Error - Can't patch this item in cart: ${data.message}`);
+                }
+            }
+        });
+    });
+}
+
+
+export { setUserInfo, dispPrice, dispListPrice, handleCItemDelete, handleCItemAdd, handleCItemChange };

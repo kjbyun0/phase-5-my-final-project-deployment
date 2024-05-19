@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useOutletContext, useNavigate } from 'react-router-dom';
-import { dispPrice, dispListPrice, } from '../components/common';
-import { CardGroup, Card, CardContent, CardHeader, Label, Menu, Dropdown,  } from 'semantic-ui-react';
+import { dispPrice, dispListPrice, handleCItemChange, handleCItemAdd, } from '../components/common';
+import { CardGroup, Card, CardContent, CardHeader, Label, Dropdown, 
+    Button, } from 'semantic-ui-react';
 
 
 function SearchResult() {
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const { searchItems, onSetSearchItems } = useOutletContext();
-    const [ sort, setSort ] = useState(1);
+    const { user, cartItems, onSetCartItems, searchItems, onSetSearchItems } = useOutletContext();
+    const [ inCart, setInCart ] = useState({});
     const navigate = useNavigate();
 
+    const [ sort, setSort ] = useState(1);
     const sortOptions = [
         { key: 1, text: 'Featured', value: 1 },
         { key: 2, text: 'Price: Low to Hight', value: 2 },
@@ -19,6 +21,7 @@ function SearchResult() {
 
     console.log('Before useEffect, searchParams: ', searchParams.get('query'));
     console.log('In SearchResult, searchItems: ', searchItems);
+    console.log('In SearchResult, inCart: ', inCart);
 
     useEffect(() => {
         console.log('searchParams: ', searchParams.get('query'));
@@ -35,8 +38,51 @@ function SearchResult() {
         });
     }, [searchParams]);
 
-    function handleNavigateItem(id) {
-        navigate(`/items/${id}`);
+    useEffect(() => {
+        const cartItemsDict = {};
+        cartItems.forEach(cItem => {
+            if (cItem.item_idx === cItem.item.default_item_idx)
+                cartItemsDict[cItem.item_id] = cItem;
+        });
+
+        const inCartTmp = {};
+        searchItems.forEach(item => {
+            if (cartItemsDict.hasOwnProperty(item.id)) {
+                // inCart.hasOwnProperty(item.id)
+                // need to update a flag in right way....
+                inCartTmp[item.id] = [false, cartItemsDict[item.id]];
+            }
+        });
+        setInCart(inCartTmp);
+    }, [searchItems, cartItems]);
+
+    function handleNavigateItem(itemId) {
+        navigate(`/items/${itemId}`);
+    }
+
+    function handleAddToCart(item) {
+        // if user is not signed in or is a seller
+        if (!user || !user.customer) {
+            navigate('/signin');
+        }
+
+        const cItem = cartItems.find(cItem => 
+            cItem.item_id === item.id && cItem.item_idx === item.default_item_idx);
+        
+        if (cItem) {
+            handleCItemChange({
+                ...cItem,
+                quantity: cItem.quantity + 1,
+            }, cartItems, onSetCartItems);
+        } else {
+            handleCItemAdd({
+                checked: 1,
+                quantity: 1,
+                item_idx: item.default_item_idx,
+                item_id: item.id,
+                customer_id: user.customer.id,
+            }, cartItems, onSetCartItems);
+        }
     }
 
     let sortedItems;
@@ -89,6 +135,15 @@ function SearchResult() {
                         null
                     }
                 </div>
+                <Button type='button' size='medium' color='yellow' 
+                    style={{color: 'black', borderRadius: '20px', padding: '10px 15px', 
+                    marginTop: '10px', }} 
+                    onClick={() => handleAddToCart(item)} >Add to cart</Button> 
+                {
+                    (inCart.hasOwnProperty(item.id) && inCart[item.id][0]) ?
+                    <div>In cart~~~~</div> :
+                    null
+                }
             </CardContent>
         </Card>
     );

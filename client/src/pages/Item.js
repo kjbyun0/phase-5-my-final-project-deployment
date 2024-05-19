@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useOutletContext, useNavigate, } from 'react-router-dom'; 
-import { dispPrice, dispListPrice, } from '../components/common';
+import { dispPrice, dispListPrice, handleCItemAdd, handleCItemChange, } from '../components/common';
 import { Divider, Table, TableBody, TableRow, TableCell, 
     Image, ButtonGroup, Button, Dropdown,  } from 'semantic-ui-react';
 
@@ -125,71 +125,82 @@ function Item() {
             cItem.item_id === item.id && cItem.item_idx === activeItemIdx);
         
         if (cItem) {
-            fetch(`/cartitems/${cItem.id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    quantity: cItem.quantity + quantity,
-                }),
-            })
-            .then(r => {
-                r.json().then(data => {
-                    if (r.ok) {
-                        console.log('In handleAddToCart fetch(PATCH), cartItem: ', data);
+            handleCItemChange({
+                ...cItem,
+                quantity: cItem.quantity + quantity,
+            }, cartItems, onSetCartItems);
+            // fetch(`/cartitems/${cItem.id}`, {
+            //     method: 'PATCH',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({
+            //         quantity: cItem.quantity + quantity,
+            //     }),
+            // })
+            // .then(r => {
+            //     r.json().then(data => {
+            //         if (r.ok) {
+            //             console.log('In handleAddToCart fetch(PATCH), cartItem: ', data);
 
-                        onSetCartItems(cartItems.map(cItems => 
-                            cItems.item_id === data.item_id && cItems.item_idx === data.item_idx ? 
-                            data : cItems));
+            //             onSetCartItems(cartItems.map(cItems => 
+            //                 cItems.item_id === data.item_id && cItems.item_idx === data.item_idx ? 
+            //                 data : cItems));
 
-                        // navigate to my cart page later...
-                    } else {
-                        if (r.status === 401 || r.status === 403) {
-                            console.log(data);
-                            alert(data.message);
-                        } else {
-                            console.log('Server Error - Updating an item in cart: ', data);
-                            alert(`Server Error - Updating an item in cart: ${data.message}`);
-                        }
-                    }
-                });
-            });
+            //             // navigate to my cart page later...
+            //         } else {
+            //             if (r.status === 401 || r.status === 403) {
+            //                 console.log(data);
+            //                 alert(data.message);
+            //             } else {
+            //                 console.log('Server Error - Updating an item in cart: ', data);
+            //                 alert(`Server Error - Updating an item in cart: ${data.message}`);
+            //             }
+            //         }
+            //     });
+            // });
         } else {
-            fetch('/cartitems', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    quantity: quantity,
-                    item_idx: activeItemIdx,
-                    item_id: item.id,
-                    customer_id: user.customer.id,
-                }),
-            })
-            .then(r => {
-                r.json().then(data => {
-                    if (r.ok) {
-                        console.log('In handleAddToCart fetch(POST), cartItem: ', data);
+            handleCItemAdd({
+                checked: 1,
+                quantity: quantity,
+                item_idx: activeItemIdx,
+                item_id: item.id,
+                customer_id: user.customer.id,
+            }, cartItems, onSetCartItems);
+            // fetch('/cartitems', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({
+            //         quantity: quantity,
+            //         item_idx: activeItemIdx,
+            //         item_id: item.id,
+            //         customer_id: user.customer.id,
+            //     }),
+            // })
+            // .then(r => {
+            //     r.json().then(data => {
+            //         if (r.ok) {
+            //             console.log('In handleAddToCart fetch(POST), cartItem: ', data);
 
-                        onSetCartItems([
-                            ...cartItems,
-                            data
-                        ]);
+            //             onSetCartItems([
+            //                 ...cartItems,
+            //                 data
+            //             ]);
 
-                        // navigate to my cart page later...
-                    } else {
-                        if (r.status === 401 || r.status === 403) {
-                            console.log(data);
-                            alert(data.message);
-                        } else {
-                            console.log('Server Error - Adding an item to cart: ', data);
-                            alert(`Server Error - Adding an item to cart: ${data.message}`);
-                        }
-                    }
-                });
-            });
+            //             // navigate to my cart page later...
+            //         } else {
+            //             if (r.status === 401 || r.status === 403) {
+            //                 console.log(data);
+            //                 alert(data.message);
+            //             } else {
+            //                 console.log("Server Error - Can't add an item to cart: ", data);
+            //                 alert(`Server Error - Can't add an item to cart: ${data.message}`);
+            //             }
+            //         }
+            //     });
+            // });
         }
     }
 

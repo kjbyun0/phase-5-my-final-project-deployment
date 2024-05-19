@@ -42,19 +42,19 @@ function dispListPrice(item, idx) {
 }
 
 
-function handleCItemDelete(cartItem, cartItems, onSetCartItems) {
+async function handleCItemDelete(cartItem, cartItems, onSetCartItems) {
     console.log('in handleCItemDelete, item: ', cartItem);
 
-    fetch(`/cartitems/${cartItem.id}`, {
+    await fetch(`/cartitems/${cartItem.id}`, {
         method: 'DELETE',
     })
-    .then(r => {
+    .then(async r => {
         console.log('in handleCItemDelete, r: ', r);
         if (r.ok) {
             console.log('in handleCItemChange, cItem is successfully deleted.');
-            onSetCartItems(cartItems.filter(cItem => cItem.id !== cartItem.id));
+            onSetCartItems(cartItems => cartItems.filter(cItem => cItem.id !== cartItem.id));
         } else {
-            r.json().then(data => {
+            await r.json().then(data => {
                 if (r.status === 401 || r.status === 403) {
                     console.log(data);
                     alert(data.message);
@@ -67,19 +67,19 @@ function handleCItemDelete(cartItem, cartItems, onSetCartItems) {
     });
 }
 
-function handleCItemAdd(cartItem, cartItems, onSetCartItems) {
-    fetch('/cartitems', {
+async function handleCItemAdd(cartItem, cartItems, onSetCartItems) {
+    await fetch('/cartitems', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(cartItem),
     })
-    .then(r => {
-        r.json().then(data => {
+    .then(async r => {
+        await r.json().then(data => {
             if (r.ok) {
                 console.log('In handleAddToCart fetch(POST), cartItem: ', data);
-                onSetCartItems([
+                onSetCartItems(cartItems => [
                     ...cartItems,
                     data
                 ]);
@@ -96,7 +96,7 @@ function handleCItemAdd(cartItem, cartItems, onSetCartItems) {
     });
 }
 
-function handleCItemChange(cartItem, cartItems, onSetCartItems) {
+async function handleCItemChange(cartItem, cartItems, onSetCartItems) {
     console.log('in handleCItemChange, item: ', cartItem);
 
     if (cartItem.quantity === 0) {
@@ -104,7 +104,7 @@ function handleCItemChange(cartItem, cartItems, onSetCartItems) {
         return;
     }
 
-    fetch(`/cartitems/${cartItem.id}`, {
+    await fetch(`/cartitems/${cartItem.id}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -114,11 +114,11 @@ function handleCItemChange(cartItem, cartItems, onSetCartItems) {
             quantity: cartItem.quantity,
         }),
     })
-    .then(r => {
-        r.json().then(data => {
+    .then(async r => {
+        await r.json().then(data => {
             if (r.ok) {
                 console.log('in handleCItemChange, cItem: ', data);
-                onSetCartItems(cartItems.map(cItem => cItem.id === data.id ? data : cItem));
+                onSetCartItems(cartItems => cartItems.map(cItem => cItem.id === data.id ? data : cItem));
             } else {
                 if (r.status === 401 || r.status === 403) {
                     console.log(data);

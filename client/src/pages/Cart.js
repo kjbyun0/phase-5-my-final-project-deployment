@@ -5,6 +5,8 @@ import { Button, Divider, Checkbox, Dropdown, Input, } from 'semantic-ui-react';
 
 function Cart() {
     const { user, cartItems, onSetCartItems } = useOutletContext();
+    //0: Nothing is selected, 1: Not all items selected, 2: all items selected
+    const [ selectStatus, setSelectStatus ] = useState(2);
     const navigate = useNavigate();
 
     const [ qInputs, setQInputs ] = useState({});
@@ -13,7 +15,20 @@ function Cart() {
         const tmpDict = {};
         cartItems.forEach(cItem => tmpDict[cItem.id] = 
             [cItem.quantity >= 10 ? true : false, cItem.quantity.toString()]);
-        setQInputs(tmpDict);    
+        setQInputs(tmpDict);
+
+        const selectNum = cartItems.reduce((accum, cItem) => {
+            if (cItem.checked)
+                return accum + 1;
+            else
+                return accum;
+        }, 0);
+        if (selectNum === cartItems.length)
+            setSelectStatus(2);
+        else if (selectNum === 0)
+            setSelectStatus(0);
+        else
+            setSelectStatus(1);
     }, [cartItems]);
 
     const quantityOptions = [
@@ -128,6 +143,40 @@ function Cart() {
             }, cartItems, onSetCartItems);
     }
 
+    async function handleSelect() {
+        for (const cartItem of cartItems) {
+            // console.log('in handleSelect, cartItem will be: ', {
+            //     ...cartItem,
+            //     checked: selectStatus === 2 ? 0 : 1,
+            // });
+
+            if ((selectStatus === 2 && cartItem.checked) || 
+                (selectStatus !== 2 && !cartItem.checked)) {
+                await handleCItemChange({
+                    ...cartItem,
+                    checked: selectStatus === 2 ? 0 : 1,
+                }, cartItems, onSetCartItems);
+            }
+        }
+    }
+
+    function dispSubTotal() {
+        return (
+            <>
+                <span style={{fontSize: '1.5em', marginRight: '10px', }}>
+                    Subtotal ({cartItems.length} {cartItems.length <= 1 ? 'item' : 'items'}):
+                </span>
+                {/* <span style={{fontSize: '1.5em', fontWeight: 'bold', }}>
+                    ${Math.round(100 * cartItems.reduce((accum, cItem) => 
+                        accum + (cItem.quantity * cItem.item.discount_prices[cItem.item_idx]), 0)) / 100}
+                </span> */}
+                <span style={{fontSize: '1.5em', fontWeight: 'bold', }}>
+                    ${Math.round(subTotal*100)/100}
+                </span>
+            </>
+        )
+    }
+
     let subTotal = 0, itemTotal = 0;
     const dispCartItems = cartItems.map(cItem => {
         itemTotal = Math.round(cItem.quantity*cItem.item.discount_prices[cItem.item_idx]*100)/100;
@@ -201,23 +250,6 @@ function Cart() {
         );
     });
 
-    function dispSubTotal() {
-        return (
-            <>
-                <span style={{fontSize: '1.5em', marginRight: '10px', }}>
-                    Subtotal ({cartItems.length} {cartItems.length <= 1 ? 'item' : 'items'}):
-                </span>
-                {/* <span style={{fontSize: '1.5em', fontWeight: 'bold', }}>
-                    ${Math.round(100 * cartItems.reduce((accum, cItem) => 
-                        accum + (cItem.quantity * cItem.item.discount_prices[cItem.item_idx]), 0)) / 100}
-                </span> */}
-                <span style={{fontSize: '1.5em', fontWeight: 'bold', }}>
-                    ${Math.round(subTotal*100)/100}
-                </span>
-            </>
-        )
-    }
-
     return (
         <div style={{with: '100%', height: '100%', border: '10px solid gainsboro', }}>
             <div style={{display: 'grid', gridTemplateColumns: '1fr max-content', alignItems: 'center', 
@@ -230,8 +262,12 @@ function Cart() {
             </div>
             <div style={{border: '10px solid gainsboro',  }}>
                 <div style={{padding: '30px 0 0 20px', fontSize: '2.2em', }}>Shopping Cart</div>
-                <div className='underscore link' style={{fontSize: '1.0em', padding: '10px 0 0 20px', }} >
-                    Deselect all items</div>
+                <div style={{fontSize: '1.0em', padding: '10px 0 0 20px', }}>
+                    <span>{selectStatus === 0 ? 'No items selected. ' : null}</span>
+                    <span className='underscore link' onClick={handleSelect}>
+                        {selectStatus === 2 ? 'Deselect all items' : 'Select all items'}
+                    </span>
+                </div>
                 <div style={{display: 'grid', gridTemplateColumns: '1fr max-content'}}>
                     <div></div>
                     <div style={{marginRight: '20px', }}>Price</div>

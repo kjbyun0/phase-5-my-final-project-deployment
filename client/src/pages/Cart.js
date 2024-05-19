@@ -187,7 +187,7 @@ function Cart() {
                             /> 
                         }
                         <span style={{fontSize: '1.2em', color: 'lightgray', margin: '0 10px',}}>|</span>
-                        <span className='underscore2' onClick={() => handleCItemDelete(cItem, cartItems, onSetCartItems)} >Delete</span>
+                        <span className='underscore2 link' onClick={() => handleCItemDelete(cItem, cartItems, onSetCartItems)} >Delete</span>
                     </div>
                 </div>
                 <div style={{display: 'grid', gridTemplateColumns: '1fr max-content', alignItems: 'center', 
@@ -230,7 +230,7 @@ function Cart() {
             </div>
             <div style={{border: '10px solid gainsboro',  }}>
                 <div style={{padding: '30px 0 0 20px', fontSize: '2.2em', }}>Shopping Cart</div>
-                <div className='underscore' style={{fontSize: '1.0em', padding: '10px 0 0 20px', }} >
+                <div className='underscore link' style={{fontSize: '1.0em', padding: '10px 0 0 20px', }} >
                     Deselect all items</div>
                 <div style={{display: 'grid', gridTemplateColumns: '1fr max-content'}}>
                     <div></div>

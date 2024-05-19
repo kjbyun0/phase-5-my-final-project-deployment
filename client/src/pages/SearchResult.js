@@ -8,7 +8,11 @@ import { CardGroup, Card, CardContent, CardHeader, Label, Dropdown,
 function SearchResult() {
     const [ searchParams, setSearchParams ] = useSearchParams();
     const { user, cartItems, onSetCartItems, searchItems, onSetSearchItems } = useOutletContext();
-    const [ inCart, setInCart ] = useState({});
+    // key: item id and value: cart item of card items. 
+    // It is to speed up searching for items in cart among my search result.
+    const [ cartItemsDict, setCartItemsDict ] = useState({});
+    // key: item id and value: boolean value to indicate if corresponding searched item is added to cart.
+    const [ itemInCart, setItemInCart] = useState({});
     const navigate = useNavigate();
 
     const [ sort, setSort ] = useState(1);
@@ -21,16 +25,23 @@ function SearchResult() {
 
     console.log('Before useEffect, searchParams: ', searchParams.get('query'));
     console.log('In SearchResult, searchItems: ', searchItems);
-    console.log('In SearchResult, inCart: ', inCart);
+    console.log('In SearchResult, cartItemsDict: ', cartItemsDict);
+    console.log('In SearchResult, itemInCart: ', itemInCart);
 
     useEffect(() => {
-        console.log('searchParams: ', searchParams.get('query'));
+        console.log('In useEffect, searchParams: ', searchParams.get('query'));
         fetch(`/search/${searchParams.get('query')}`)
         .then(r => {
             r.json().then(data => {
                 if (r.ok) {
                     console.log('In SearchResult, useEffect, searchItems: ', data)
                     onSetSearchItems(data)
+
+                    // Initializing itemInCart state.
+                    console.log('initializing');
+                    const itemInCartTmp = {};
+                    data.forEach(item => itemInCartTmp[item.id] = false);
+                    setItemInCart(itemInCartTmp);
                 } else
                     console.log('Server error: ', data.message);
                     //add more actions here....
@@ -39,22 +50,25 @@ function SearchResult() {
     }, [searchParams]);
 
     useEffect(() => {
-        const cartItemsDict = {};
+        const cartItemsDictTmp = {};
         cartItems.forEach(cItem => {
             if (cItem.item_idx === cItem.item.default_item_idx)
-                cartItemsDict[cItem.item_id] = cItem;
+                cartItemsDictTmp[cItem.item_id] = cItem;
         });
+        setCartItemsDict(cartItemsDictTmp);
 
-        const inCartTmp = {};
-        searchItems.forEach(item => {
-            if (cartItemsDict.hasOwnProperty(item.id)) {
-                // inCart.hasOwnProperty(item.id)
-                // need to update a flag in right way....
-                inCartTmp[item.id] = [false, cartItemsDict[item.id]];
-            }
-        });
-        setInCart(inCartTmp);
-    }, [searchItems, cartItems]);
+
+        // const inCartTmp = {};
+        // searchItems.forEach(item => {
+        //     if (cartItemsDict.hasOwnProperty(item.id)) {
+        //         // inCart.hasOwnProperty(item.id)
+        //         // need to update a flag in right way....
+        //         inCartTmp[item.id] = [false, cartItemsDict[item.id]];
+                
+        //     }
+        // });
+        // setInCart(inCartTmp);
+    }, [cartItems]);
 
     function handleNavigateItem(itemId) {
         navigate(`/items/${itemId}`);
@@ -66,16 +80,19 @@ function SearchResult() {
             navigate('/signin');
         }
 
-        const cItem = cartItems.find(cItem => 
-            cItem.item_id === item.id && cItem.item_idx === item.default_item_idx);
+        // const cItem = cartItems.find(cItem => 
+        //     cItem.item_id === item.id && cItem.item_idx === item.default_item_idx);
+        const cItem = cartItemsDict.hasOwnProperty(item.id) ? cartItemsDict[item.id] : null;
+        console.log('In handleAddToCart, cItem: ', cItem);
         
+        let res = false;
         if (cItem) {
-            handleCItemChange({
+            res = handleCItemChange({
                 ...cItem,
                 quantity: cItem.quantity + 1,
             }, cartItems, onSetCartItems);
         } else {
-            handleCItemAdd({
+            res = handleCItemAdd({
                 checked: 1,
                 quantity: 1,
                 item_idx: item.default_item_idx,
@@ -83,6 +100,10 @@ function SearchResult() {
                 customer_id: user.customer.id,
             }, cartItems, onSetCartItems);
         }
+
+        // Showing number of item in the cart is better regardless of 
+        // the status of above fetch operation.
+        setItemInCart({...itemInCart, [item.id]: true});
     }
 
     let sortedItems;
@@ -140,8 +161,8 @@ function SearchResult() {
                     marginTop: '10px', }} 
                     onClick={() => handleAddToCart(item)} >Add to cart</Button> 
                 {
-                    (inCart.hasOwnProperty(item.id) && inCart[item.id][0]) ?
-                    <div>In cart~~~~</div> :
+                    itemInCart[item.id] && cartItemsDict.hasOwnProperty(item.id) ?
+                    <div>{cartItemsDict[item.id].quantity} in cart</div> :
                     null
                 }
             </CardContent>

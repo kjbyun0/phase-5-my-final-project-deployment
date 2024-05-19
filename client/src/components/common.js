@@ -79,13 +79,10 @@ function handleCItemAdd(cartItem, cartItems, onSetCartItems) {
         r.json().then(data => {
             if (r.ok) {
                 console.log('In handleAddToCart fetch(POST), cartItem: ', data);
-
                 onSetCartItems([
                     ...cartItems,
                     data
                 ]);
-
-                // navigate to my cart page later...
             } else {
                 if (r.status === 401 || r.status === 403) {
                     console.log(data);
@@ -100,8 +97,7 @@ function handleCItemAdd(cartItem, cartItems, onSetCartItems) {
 }
 
 function handleCItemChange(cartItem, cartItems, onSetCartItems) {
-    // console.log('in handleCItemCheckChange, e: ', e, ', d: ', d);
-    console.log('in handleCItemCheckChange, item: ', cartItem);
+    console.log('in handleCItemChange, item: ', cartItem);
 
     if (cartItem.quantity === 0) {
         handleCItemDelete(cartItem);

@@ -236,7 +236,7 @@ function Cart() {
                             /> 
                         }
                         <span style={{fontSize: '1.2em', color: 'lightgray', margin: '0 10px',}}>|</span>
-                        <span className='underscore2 link' onClick={() => handleCItemDelete(cItem, cartItems, onSetCartItems)} >Delete</span>
+                        <span className='link2 link' onClick={() => handleCItemDelete(cItem, cartItems, onSetCartItems)} >Delete</span>
                     </div>
                 </div>
                 <div style={{display: 'grid', gridTemplateColumns: '1fr max-content', alignItems: 'center', 
@@ -264,7 +264,7 @@ function Cart() {
                 <div style={{padding: '30px 0 0 20px', fontSize: '2.2em', }}>Shopping Cart</div>
                 <div style={{fontSize: '1.0em', padding: '10px 0 0 20px', }}>
                     <span>{selectStatus === 0 ? 'No items selected. ' : null}</span>
-                    <span className='underscore link' onClick={handleSelect}>
+                    <span className='link1 link' onClick={handleSelect}>
                         {selectStatus === 2 ? 'Deselect all items' : 'Select all items'}
                     </span>
                 </div>

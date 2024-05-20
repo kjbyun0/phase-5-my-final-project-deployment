@@ -89,20 +89,29 @@
   cursor: pointer;
 }
 
-.underscore {
+.link1 {
   color: darkcyan;
 }
 
-.underscore:hover {
+.link1:hover {
   color: brown;
   text-decoration: underline;
   text-decoration-color: brown;
 }
 
-.underscore2 {
+.link2 {
   color: darkcyan;
 }
 
-.underscore2:hover {
+.link2:hover {
   text-decoration: underline;
 }
+
+.link3 {
+  color: darkcyan;
+}
+
+.link3:hover {
+  color: brown;
+}
+

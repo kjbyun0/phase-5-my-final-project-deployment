@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useOutletContext, useNavigate } from 'react-router-dom';
-import { dispPrice, dispListPrice, handleCItemChange, handleCItemAdd, } from '../components/common';
+import { dispPrice, dispListPrice, handleCItemChange, handleCItemAdd, handleCItemDelete, } from '../components/common';
 import { CardGroup, Card, CardContent, CardHeader, Label, Dropdown, 
     Button, } from 'semantic-ui-react';
-
 
 function SearchResult() {
     const [ searchParams, setSearchParams ] = useSearchParams();
@@ -162,7 +161,13 @@ function SearchResult() {
                     onClick={() => handleAddToCart(item)} >Add to cart</Button> 
                 {
                     itemInCart[item.id] && cartItemsDict.hasOwnProperty(item.id) ?
-                    <div>{cartItemsDict[item.id].quantity} in cart</div> :
+                    <div style={{marginTop: '5px', }}>
+                        <span style={{fontSize: '0.9em', fontWeight: 'bold'}}>{cartItemsDict[item.id].quantity} in cart</span>
+                        <span> - </span>
+                        <span className='link3 link' 
+                            onClick={() => handleCItemDelete(cartItemsDict[item.id], cartItems, onSetCartItems)}>
+                            Remove</span>
+                    </div> :
                     null
                 }
             </CardContent>

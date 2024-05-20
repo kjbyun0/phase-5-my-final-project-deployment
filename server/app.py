@@ -263,6 +263,25 @@ class Orders(Resource):
             if order_item.get('item'):
                 apply_json_loads_to_item(order_item['item'])
         return make_response(order_dict, 201)
+    
+class Order_by_id(Resource):
+    def delete(self, id):
+        o = Order.query.filter_by(id=id).first()
+        if o:
+            try:
+                db.session.delete(o)
+                db.session.commit()
+            except Exception as exc:
+                return make_response({
+                    'message': f'{exc}',
+                }, 400)
+            return make_response({}, 204)
+
+        return make_response({
+            'message': f'Order {id} not found.',
+        }, 404)
+
+
 
 class OrderItems(Resource):
     def post(self):
@@ -296,6 +315,7 @@ api.add_resource(Item_by_id, '/items/<int:id>', endpoint='item_by_id')
 api.add_resource(CartItems, '/cartitems', endpoint='cartitems') # Authentication required
 api.add_resource(CartItem_by_id, '/cartitems/<int:id>', endpoint='cartitem_by_id') # Authentication required
 api.add_resource(Orders, '/orders') # Authentication required
+api.add_resource(Order_by_id, '/orders/<int:id>') # Authentication required
 api.add_resource(OrderItems, '/orderitems') # Authentication required
 
 

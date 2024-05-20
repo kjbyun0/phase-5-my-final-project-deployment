@@ -45,7 +45,7 @@ function Cart() {
         {key: 10, text: '10+', value: 10},
     ];
 
-    //RBAC need to be implemented.
+    //RBAC need to be implemented. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     console.log('In Cart, user: ', user, ', cartItems: ', cartItems);
     console.log('In Cart, qInputs: ', qInputs);
@@ -160,6 +160,18 @@ function Cart() {
         }
     }
 
+    function handlePlaceOrder() {
+        fetch('/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            })
+        })
+    }
+
     function dispSubTotal() {
         return (
             <>
@@ -256,7 +268,8 @@ function Cart() {
                 padding: '20px', border: '10px solid gainsboro', }} >
                 <div>{dispSubTotal()}</div>
                 <Button color='yellow' size='large' 
-                    style={{color: 'black', borderRadius: '10px', width: '250px', }}>
+                    style={{color: 'black', borderRadius: '10px', width: '250px', }}
+                    onClick={handlePlaceOrder}>
                     Proceed to checkout
                 </Button>
             </div>

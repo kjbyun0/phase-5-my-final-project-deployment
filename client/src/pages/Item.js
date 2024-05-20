@@ -11,7 +11,7 @@ function Item() {
     const [ activeItemIdx, setActiveItemIdx ] = useState(null);
     const [ activeImageIdx, setActiveImageIdx ] = useState(null);
     const [ quantity, setQuantity ] = useState(1);
-    const { user, cartItems, onSetCartItems } = useOutletContext();
+    const { user, cartItems, onSetCartItems, orders, onSetOrders, } = useOutletContext();
     const navigate = useNavigate()
 
     const quantityOptions = [];
@@ -22,7 +22,7 @@ function Item() {
             value: i
         });
 
-    console.log('In Item, user: ', user, ', cartItems: ', cartItems);
+    console.log('In Item, user: ', user, ', item: ', item, ', cartItems: ', cartItems, ', orders: ', orders);
     console.log('quantity: ', quantity);
 
     useEffect(() => {
@@ -116,6 +116,8 @@ function Item() {
     }
 
     function handleAddToCart() {
+        if (!item) return;
+
         // if user is not signed in or is a seller
         if (!user || !user.customer) {
             navigate('/signin');
@@ -205,6 +207,87 @@ function Item() {
     }
 
 
+    function handlePlaceOrder() {
+        if (!item) return;
+
+        // if user is not signed in or is a seller
+        if (!user || !user.customer) {
+            navigate('/signin');
+        }
+
+        fetch('/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                street_1: user.street_1,
+                street_2: user.street_2,
+                city: user.city,
+                state: user.state,
+                zip_code: user.zip_code,
+                customer_id: user.id,
+            }),
+        })
+        .then(r => {
+            r.json().then(data1 => {
+                if (r.ok) {
+                    console.log('in handlePlaceOrder new order: ', data1);
+                    const orderTmp = data1;
+                    fetch('/orderitems', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            quantity: quantity,
+                            price: item.discount_prices[activeItemIdx],
+                            item_idx: activeItemIdx, // ??? - what if this item is removed from db?
+                            item_id: item.id,
+                            order_id: orderTmp.id,
+                        }),
+                    })
+                    .then(r => {
+                        r.json().then(data2 => {
+                            if (r.ok) {
+                                console.log('in handlePlaceOrder new order item: ', data2);
+                                const orderItemTmp = data2;
+                                orderItemTmp.item = item;
+                                orderTmp.order_items.push(orderItemTmp);
+                                onSetOrders([
+                                    ...orders,
+                                    orderTmp
+                                ]);
+                            } else {
+                                if (r.status === 401 || r.status === 403) {
+                                    console.log(data2);
+                                    alert(data2.message);
+                                } else {
+                                    console.log("Server Error - Can't add an order item: ", data2);
+                                    alert(`Server Error - Can't add an order item: ${data2.message}`);
+
+                                    // delete this order. Don't need to take care of promise.
+                                    fetch(`/orders/${orderTmp.id}`, {
+                                        method: 'DELETE',
+                                    })
+                                }
+                            }
+                        });
+                    });
+                } else {
+                    if (r.status === 401 || r.status === 403) {
+                        console.log(data1);
+                        alert(data1.message);
+                    } else {
+                        console.log("Server Error - Can't place an order: ", data1);
+                        alert(`Server Error - Can't place an order: ${data1.message}`);
+                    }
+                }
+            });
+        });
+    }
+
+
     if (!item)
         return;
 
@@ -289,7 +372,8 @@ function Item() {
                                 style={{display: 'block', borderRadius: '20px', width: '220px', margin: '5px', color: 'black', }}
                                 onClick={handleAddToCart}>Add to Cart</Button>
                             <Button color='orange' size='medium' 
-                                style={{display: 'block', borderRadius: '20px', width: '220px', margin: '5px', color: 'black', }}>Buy Now</Button>
+                                style={{display: 'block', borderRadius: '20px', width: '220px', margin: '5px', color: 'black', }}
+                                onClick={handlePlaceOrder}>Buy Now</Button>
                         </div>
                     </div>
                     {/* Product details_1 */}

@@ -19,6 +19,12 @@ class User(db.Model, SerializerMixin):
         '-customer.cart_items.item.seller',
         '-customer.cart_items.item.cart_items',
         '-customer.cart_items.customer',
+        '-customer.orders.customer',
+        '-customer.orders.order_items.order',
+        '-customer.orders.order_items.item.category',
+        '-customer.orders.order_items.item.seller',
+        '-customer.orders.order_items.item.cart_items',
+        '-customer.orders.order_items.item.order_items',
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -77,6 +83,7 @@ class Customer(db.Model, SerializerMixin):
     serialize_rules = (
         '-user',
         '-cart_items',
+        '-orders',
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -87,6 +94,7 @@ class Customer(db.Model, SerializerMixin):
 
     user = db.relationship('User', back_populates='customer')
     cart_items = db.relationship('CartItem', back_populates='customer', cascade='all, delete-orphan')
+    orders = db.relationship('Order', back_populates='customer', cascade='all, delete-orphan')
 
     items_thru_cart = association_proxy('cart_items', 'item', 
                         creator=lambda item_obj: CartItem(item=iem_obj))
@@ -115,6 +123,7 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
         '-category', 
         '-seller',
         '-cart_items',
+        '-order_items',
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -138,6 +147,7 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
     category = db.relationship('Category', back_populates='items')
     seller = db.relationship('Seller', back_populates='items')
     cart_items = db.relationship('CartItem', back_populates='item', cascade='all, delete-orphan')
+    order_items = db.relationship('OrderItem', back_populates='item', cascade='all, delete-orphan')
 
     customers_thru_cart = association_proxy('cart_items', 'customer', 
                             creator=lambda customer_obj : CartItem(customer=customer_obj))
@@ -168,6 +178,59 @@ class CartItem(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f'<CartItem {self.id}>'
+
+
+class OrderItem(db.Model, SerializerMixin):
+    __tablename__ = 'order_items'
+
+    serialize_rules = (
+        '-order',
+        '-item',
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    quantity = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    item_idx = db.Column(db.Integer, nullable=False)
+    item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
+
+    # relationship
+    order = db.relationship('Order', back_populates='order_items')
+    item = db.relationship('Item', back_populates='order_items')
+    
+    # association proxy may be needed later
+    # from Order model class to Item model class and vice versa
+
+    def __repr__(self):
+        return f'<OrderItem {self.id}>'
+
+
+class Order(db.Model, SerializerMixin):
+    __tablename__ = 'orders'
+
+    serialize_rules = (
+        '-customer',
+        'order_items',
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+    street_1 = db.Column(db.String)
+    street_2 = db.Column(db.String)
+    city = db.Column(db.String)
+    state = db.Column(db.String)
+    zip_code = db.Column(db.String)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'))
+
+    # relationship
+    customer = db.relationship('Customer', back_populates='orders')
+    order_items = db.relationship('OrderItem', back_populates='order', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'<Order {self.id}>'
+
+
 
 
 

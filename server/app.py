@@ -9,7 +9,7 @@ from flask_restful import Resource
 # Local imports
 from config import app, db, api
 # Add your model imports
-from models import User, Seller, Customer, Category, Item, CartItem
+from models import User, Seller, Customer, Category, Item, CartItem, OrderItem, Order
 import json
 
 app.secret_key=b'\xaf\x88\x87_\x1a\xf4\x97\x93f\xf5q\x0b\xad\xef,\xb3'
@@ -54,8 +54,15 @@ class Authenticate(Resource):
             user_dict = user.to_dict()
             if user_dict.get('customer'):
                 for ci in user_dict['customer']['cart_items']:
-                    if ci.get('item'):
+                    # I don't think I need to check this... it applies to the other codes below.
+                    # add nullable=False constraint.
+                    if ci.get('item'):  
                         apply_json_loads_to_item(ci['item'])
+
+                for order in user_dict['customer']['orders']:
+                    for order_item in order['order_items']:
+                        if order_item.get('item'):
+                            apply_json_loads_to_item(order_item['item'])
             return make_response(user_dict, 200)
         return make_response({
             'message': 'User is signed out'
@@ -72,6 +79,11 @@ class Authenticate(Resource):
                 for ci in user_dict['customer']['cart_items']:
                     if ci.get('item'):
                         apply_json_loads_to_item(ci['item'])
+
+                for order in user_dict['customer']['orders']:
+                    for order_item in order['order_items']:
+                        if order_item.get('item'):
+                            apply_json_loads_to_item(order_item['item'])
             return make_response(user_dict, 200)
         return make_response({
             'message': 'Invaled username or password.'
@@ -130,6 +142,11 @@ class Signup(Resource):
             for ci in user_dict['customer']['cart_items']:
                 if ci.get('item'):
                     apply_json_loads_to_item(ci['item'])
+
+                for order in user_dict['customer']['orders']:
+                    for order_item in order['order_items']:
+                        if order_item.get('item'):
+                            apply_json_loads_to_item(order_item['item'])
         return make_response(user_dict, 201)
                 
 
@@ -221,6 +238,55 @@ class CartItem_by_id(Resource):
             'message': f'Cart Item {id} not found.',
         }, 404)
 
+class Orders(Resource):
+    def post(self):
+        req = request.get_json()
+        try:
+            o = Order(
+                street_1 = req.get('street_1'),
+                street_2 = req.get('street_2'),
+                city = req.get('city'),
+                state = req.get('state'),
+                zip_code = req.get('zip_code'),
+                customer_id = req.get('customer_id')
+            )
+            db.session.add(o)
+            db.session.commit()
+        except Exception as exc:
+            return make_response({
+                'message': f'{exc}',
+            }, 400)
+        
+        order_dict = o.to_dict()
+        # it is tested indirectly when authenticating user.
+        for order_item in order_dict['order_items']:
+            if order_item.get('item'):
+                apply_json_loads_to_item(order_item['item'])
+        return make_response(order_dict, 201)
+
+class OrderItems(Resource):
+    def post(self):
+        req = request.get_json()
+        try:
+            oi = OrderItem(
+                quantity = req.get('quantity'),
+                price = req.get('price'),
+                item_idx = req.get('item_idx'),
+                item_id = req.get('item_id'),
+                order_id = req.get('order_id')
+            )
+            db.session.add(oi)
+            db.session.commit()
+        except Exception as exc:
+            return make_response({
+                'message': f'{exc}',
+            }, 400)
+        
+        oi_dict = oi.to_dict()
+        # it is tested indirectly when authenticating user.
+        if oi_dict.get('item'):
+            apply_json_loads_to_item(oi_dict['item'])
+        return make_response(oi_dict, 201)
 
 
 api.add_resource(Authenticate, '/authenticate', endpoint='authenticate')
@@ -229,6 +295,9 @@ api.add_resource(Search, '/search/<string:keys>', endpoint='search')
 api.add_resource(Item_by_id, '/items/<int:id>', endpoint='item_by_id')
 api.add_resource(CartItems, '/cartitems', endpoint='cartitems') # Authentication required
 api.add_resource(CartItem_by_id, '/cartitems/<int:id>', endpoint='cartitem_by_id') # Authentication required
+api.add_resource(Orders, '/orders') # Authentication required
+api.add_resource(OrderItems, '/orderitems') # Authentication required
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

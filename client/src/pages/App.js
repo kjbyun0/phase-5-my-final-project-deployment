@@ -7,6 +7,7 @@ import { setUserInfo } from '../components/common';
 function App() {
     const [ user, setUser ] = useState(null);
     const [ cartItems, setCartItems ] = useState([]);
+    const [ orders, setOrders ] = useState([]);
 
     const [ searchItems, setSearchItems ] = useState([]);
 
@@ -16,7 +17,7 @@ function App() {
             r.json().then(data => {
                 if (r.ok) {
                     // console.log('in App, user: ', data);
-                    setUserInfo(data, setUser, setCartItems);
+                    setUserInfo(data, setUser, setCartItems, setOrders);
                 } else {
                     console.log('In App, error: ', data.message);
                 }
@@ -24,7 +25,7 @@ function App() {
         )
     }, []);
 
-    console.log('In App, user: ', user, ', cartItems: ', cartItems);
+    console.log('In App, user: ', user, ', cartItems: ', cartItems, ', orders: ', orders);
 
     return (
         <div style={{display: 'grid', width: '100%', height: '100%', 
@@ -39,6 +40,8 @@ function App() {
                     onSetUser: setUser,
                     cartItems: cartItems,
                     onSetCartItems: setCartItems,
+                    orders: orders,
+                    onSetOrders: setOrders,
                     searchItems: searchItems,
                     onSetSearchItems: setSearchItems, 
                 }} />

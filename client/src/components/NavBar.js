@@ -36,6 +36,7 @@ function NavBar({ user, cartItems }) {
                 <NavLink to='/signout' className='nav-link'>Sign Out</NavLink> :
                 <NavLink to='/signin' className='nav-link'>Sign in</NavLink>
             }
+            <NavLink to='/orders' className='nav-link'>Orders</NavLink>
             <NavLink to='/cart' className='nav-link'>
                 <div style={{display: 'grid', gridTemplateColumns: 'max-content max-content'}}>
                     <IconGroup>

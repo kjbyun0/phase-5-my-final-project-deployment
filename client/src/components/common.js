@@ -1,8 +1,8 @@
 
 
-function setUserInfo(userData, setUser, setCartItems) {
+function setUserInfo(userData, setUser, setCartItems, setOrders) {
     const { customer, ...userRemaings } = userData;
-    const { cart_items, ...customerRemainings } = customer ? customer : {};
+    const { cart_items, orders, ...customerRemainings } = customer ? customer : {};
 
     // userData can't be null because fetch operation for user data is succeeded.
     setUser({
@@ -10,6 +10,7 @@ function setUserInfo(userData, setUser, setCartItems) {
         customer: Object.keys(customerRemainings).length === 0 ? null : customerRemainings,
     });
     setCartItems(cart_items === undefined ? [] : cart_items);
+    setOrders(orders === undefined ? [] : orders);
 }
 
 function dispPrice(item, idx) {

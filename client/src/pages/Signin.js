@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { useOutletContext, useNavigate } from  'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { setUserInfo } from '../components/common';
 import { Form, FormField, Input, FormButton, Button, Divider, } from 'semantic-ui-react';
 
 
 function Signin() {
-    const { onSetUser } = useOutletContext();
+    const { onSetUser, onSetCartItems, onSetOrders } = useOutletContext();
     const [ isSigninFail, setIsSigninFail ] = useState(false);
     const navigate = useNavigate();
 
@@ -35,7 +36,8 @@ function Signin() {
                 r.json().then(data => {
                     if (r.ok) {
                         console.log('In Signin, data: ', data);
-                        onSetUser(data);
+                        // onSetUser(data);
+                        setUserInfo(data, onSetUser, onSetCartItems, onSetOrders);
                         navigate('/');
                     } else {
                         console.log('in Signin, error: ', data.message);

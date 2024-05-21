@@ -16,7 +16,7 @@ function App() {
         .then(r => 
             r.json().then(data => {
                 if (r.ok) {
-                    // console.log('in App, user: ', data);
+                    console.log('in App, full user data: ', data);
                     setUserInfo(data, setUser, setCartItems, setOrders);
                 } else {
                     console.log('In App, error: ', data.message);

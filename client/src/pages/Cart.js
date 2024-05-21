@@ -346,9 +346,9 @@ function Cart() {
     });
 
     return (
-        <div style={{with: '100%', height: '100%', border: '10px solid gainsboro', }}>
+        <div style={{width: '100%', height: '100%', border: '10px solid whitesmoke', }}>
             <div style={{display: 'grid', gridTemplateColumns: '1fr max-content', alignItems: 'center', 
-                padding: '20px', border: '10px solid gainsboro', }} >
+                padding: '20px', border: '10px solid whitesmoke', }} >
                 <div>{dispSubTotal()}</div>
                 <Button color='yellow' size='large' 
                     style={{color: 'black', borderRadius: '10px', width: '250px', }}
@@ -356,7 +356,7 @@ function Cart() {
                     Proceed to checkout
                 </Button>
             </div>
-            <div style={{border: '10px solid gainsboro',  }}>
+            <div style={{border: '10px solid whitesmoke',  }}>
                 <div style={{padding: '30px 0 0 20px', fontSize: '2.2em', }}>Shopping Cart</div>
                 <div style={{fontSize: '1.0em', padding: '10px 0 0 20px', }}>
                     <span>{selectStatus === 0 ? 'No items selected. ' : null}</span>

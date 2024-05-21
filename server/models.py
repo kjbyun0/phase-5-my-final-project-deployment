@@ -2,6 +2,8 @@ from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import validates
+# from sqlalchemy.sql import func
+from datetime import datetime
 from config import db, bcrypt
 import json
 
@@ -44,7 +46,7 @@ class User(db.Model, SerializerMixin):
     @hybrid_property
     def password_hash(self):
         return self._password_hash
-    
+
     @password_hash.setter
     def password_hash(self, password):
         password_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
@@ -56,7 +58,7 @@ class User(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f'<User {self.id}>'
-    
+
 
 class Seller(db.Model, SerializerMixin):
     __tablename__ = 'sellers'
@@ -75,7 +77,7 @@ class Seller(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f'<Seller {self.id}>'
-    
+
 
 class Customer(db.Model, SerializerMixin):
     __tablename__ = 'customers'
@@ -96,12 +98,12 @@ class Customer(db.Model, SerializerMixin):
     cart_items = db.relationship('CartItem', back_populates='customer', cascade='all, delete-orphan')
     orders = db.relationship('Order', back_populates='customer', cascade='all, delete-orphan')
 
-    items_thru_cart = association_proxy('cart_items', 'item', 
+    items_thru_cart = association_proxy('cart_items', 'item',
                         creator=lambda item_obj: CartItem(item=iem_obj))
 
     def __repr__(self):
         return f'<Customer {self.id}>'
-    
+
 
 class Category(db.Model, SerializerMixin):
     __tablename__ = 'categories'
@@ -120,7 +122,7 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
     __searchable__ = ['name', 'details_2', ]
 
     serialize_rules = (
-        '-category', 
+        '-category',
         '-seller',
         '-cart_items',
         '-order_items',
@@ -139,7 +141,7 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
     details_1 = db.Column(db.String)    # object: item details
     details_2 = db.Column(db.String)    # object: item details
     card_thumbnail = db.Column(db.String)
-    thumbnails = db.Column(db.String)   # list: 
+    thumbnails = db.Column(db.String)   # list:
     images = db.Column(db.String)   # list:
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
     seller_id = db.Column(db.Integer, db.ForeignKey('sellers.id'))
@@ -149,12 +151,12 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
     cart_items = db.relationship('CartItem', back_populates='item', cascade='all, delete-orphan')
     order_items = db.relationship('OrderItem', back_populates='item', cascade='all, delete-orphan')
 
-    customers_thru_cart = association_proxy('cart_items', 'customer', 
+    customers_thru_cart = association_proxy('cart_items', 'customer',
                             creator=lambda customer_obj : CartItem(customer=customer_obj))
 
     def __repr__(self):
         return f'<Item {self.id}>'
-    
+
 
 class CartItem(db.Model, SerializerMixin):
     __tablename__ = 'cart_items'
@@ -198,7 +200,7 @@ class OrderItem(db.Model, SerializerMixin):
     # relationship
     order = db.relationship('Order', back_populates='order_items')
     item = db.relationship('Item', back_populates='order_items')
-    
+
     # association proxy may be needed later
     # from Order model class to Item model class and vice versa
 
@@ -215,7 +217,9 @@ class Order(db.Model, SerializerMixin):
     )
 
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+    # date = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+    # date = db.Column(db.TimeStamp(timezone=True), nullable=False, server_default=func.now())
+    date = db.Column(db.Integer, nullable=False, server_default=datetime.now().strftime('%s'))
     street_1 = db.Column(db.String)
     street_2 = db.Column(db.String)
     city = db.Column(db.String)

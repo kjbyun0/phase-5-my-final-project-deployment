@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { setUserInfo } from '../components/common';
 import { Form, FormField, Input, Button, Checkbox, } from 'semantic-ui-react';
 
 function Signup() {
     const [ isSeller, setIsSeller ] = useState(false);
-    const { onSetUser } = useOutletContext();
+    const { onSetUser, onSetCartItems, onSetOrders } = useOutletContext();
     const navigate = useNavigate();
 
     const formSchema = yup.object().shape({
@@ -65,7 +66,8 @@ function Signup() {
             .then(r => {
                 r.json().then(data => {
                     if (r.ok) {
-                        onSetUser(data);
+                        // onSetUser(data);
+                        setUserInfo(data, onSetUser, onSetCartItems, onSetOrders);
                         navigate('/');
                     } else {
                         console.log("In Signup, error: ", data.message);

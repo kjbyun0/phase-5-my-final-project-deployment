@@ -226,7 +226,7 @@ function Item() {
                 city: user.city,
                 state: user.state,
                 zip_code: user.zip_code,
-                customer_id: user.id,
+                customer_id: user.customer.id,
             }),
         })
         .then(r => {
@@ -260,7 +260,7 @@ function Item() {
                                 ]);
                             } else {
                                 if (r.status === 401 || r.status === 403) {
-                                    console.log(data2);
+                                    console.log(data2); // it won't occur
                                     alert(data2.message);
                                 } else {
                                     console.log("Server Error - Can't add an order item: ", data2);

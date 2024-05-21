@@ -4,7 +4,7 @@ import { handleCItemDelete, handleCItemChange } from '../components/common';
 import { Button, Divider, Checkbox, Dropdown, Input, } from 'semantic-ui-react';
 
 function Cart() {
-    const { user, cartItems, onSetCartItems } = useOutletContext();
+    const { user, cartItems, onSetCartItems, orders, onSetOrders } = useOutletContext();
     //0: Nothing is selected, 1: Not all items selected, 2: all items selected
     const [ selectStatus, setSelectStatus ] = useState(2);
     const navigate = useNavigate();
@@ -47,7 +47,7 @@ function Cart() {
 
     //RBAC need to be implemented. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    console.log('In Cart, user: ', user, ', cartItems: ', cartItems);
+    console.log('In Cart, user: ', user, ', cartItems: ', cartItems, ', orders: ', orders);
     console.log('In Cart, qInputs: ', qInputs);
 
     // function handleCItemChange(cItem) {
@@ -160,31 +160,114 @@ function Cart() {
         }
     }
 
-    function handlePlaceOrder() {
-        fetch('/orders', {
+    function deleteCheckedCartItems() {
+        cartItems.filter(cItem => cItem.checked)
+        .forEach(cItem => handleCItemDelete(cItem, cartItems, onSetCartItems));
+    }
+
+    async function handlePlaceOrder() {
+        if (!selectStatus) {    // ??? - need to make a popup for this!!!!!!!!!!!!!!!!!!
+            console.log('Please select at least one item to Checkout');
+            return;
+        }
+
+        await fetch('/orders', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                street_1: user.street_1,
+                street_2: user.street_2,
+                city: user.city,
+                state: user.state,
+                zip_code: user.zip_code,
+                customer_id: user.customer.id,
             })
         })
+        .then(async r => {
+            await r.json().then(data1 => {
+                if (r.ok) {
+                    //console.log('in handlePlaceOrder new order: ', data1);
+
+                    const orderTmp = data1;
+                    cartItems.filter(cItems => cItems.checked).forEach(async cItem => {
+                        await fetch('/orderitems', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                quantity: cItem.quantity,
+                                price: cItem.item.discount_prices[cItem.item_idx],
+                                item_idx: cItem.item_idx, // ??? - what if this item is removed from db?
+                                item_id: cItem.item.id,
+                                order_id: orderTmp.id,
+                            })
+                        })
+                        .then(async r => {
+                            await r.json().then(data2 => {
+                                if (r.ok) {
+                                    
+                                    const orderItemTmp = data2;
+                                    orderItemTmp.item = cItem.item
+                                    orderTmp.order_items.push(orderItemTmp);
+                                } else {
+                                    if (r.status === 401 || r.status === 403) {
+                                        console.log(data2); // it won't occur
+                                        alert(data2.message);
+                                    } else {
+                                        console.log("Server Error - Can't add an order item: ", data2);
+                                        alert(`Server Error - Can't add an order item: ${data2.message}`);
+
+                                        // delete this order. Don't need to take care of promise.
+                                        fetch(`/orders/${orderTmp.id}`, {
+                                            method: 'DELETE',
+                                        })
+                                        .then(r => {
+                                            return;
+                                        })
+                                    }
+                                }
+                            })
+                        })
+                    })
+
+                    console.log('in handlePlaceOrder, new order: ', orderTmp);
+                    onSetOrders([
+                        ...orders,
+                        orderTmp,
+                    ]);
+
+                    deleteCheckedCartItems();
+                } else {
+                    if (r.status === 401 || r.status === 403) {
+                        console.log(data1);
+                        alert(data1.message);
+                    } else {
+                        console.log("Server Error - Can't place an order: ", data1);
+                        alert(`Server Error - Can't place an order: ${data1.message}`);
+                    }
+                }
+            });
+        });
     }
 
     function dispSubTotal() {
         return (
             <>
-                <span style={{fontSize: '1.5em', marginRight: '10px', }}>
-                    Subtotal ({cartItems.length} {cartItems.length <= 1 ? 'item' : 'items'}):
-                </span>
-                {/* <span style={{fontSize: '1.5em', fontWeight: 'bold', }}>
-                    ${Math.round(100 * cartItems.reduce((accum, cItem) => 
-                        accum + (cItem.quantity * cItem.item.discount_prices[cItem.item_idx]), 0)) / 100}
-                </span> */}
-                <span style={{fontSize: '1.5em', fontWeight: 'bold', }}>
-                    ${Math.round(subTotal*100)/100}
-                </span>
+                {
+                    selectStatus ? 
+                    <>
+                        <span style={{fontSize: '1.5em', marginRight: '10px', }}>
+                            Subtotal ({cartItems.length} {cartItems.length <= 1 ? 'item' : 'items'}):
+                        </span>
+                        <span style={{fontSize: '1.5em', fontWeight: 'bold', }}>
+                            ${Math.round(subTotal*100)/100}
+                        </span>
+                    </> : 
+                    <span style={{fontSize: '1.5em', marginRight: '10px', }}>No items selected</span>
+                }
             </>
         )
     }
@@ -192,7 +275,7 @@ function Cart() {
     let subTotal = 0, itemTotal = 0;
     const dispCartItems = cartItems.map(cItem => {
         itemTotal = Math.round(cItem.quantity*cItem.item.discount_prices[cItem.item_idx]*100)/100;
-        subTotal += itemTotal;
+        subTotal += cItem.checked ? itemTotal : 0;
 
         return (
             <div key={cItem.id} style={{display: 'grid', gridTemplateColumns: '100px 200px 1fr 180px', 

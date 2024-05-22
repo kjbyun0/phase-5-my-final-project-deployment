@@ -96,7 +96,7 @@ function SearchResult() {
                 quantity: 1,
                 item_idx: item.default_item_idx,
                 item_id: item.id,
-                customer_id: user.customer.id,
+                customer_id: user.customer.id, //????????
             }, cartItems, onSetCartItems);
         }
 

@@ -20,6 +20,8 @@ class User(db.Model, SerializerMixin):
         '-customer.cart_items.item.category',
         '-customer.cart_items.item.seller',
         '-customer.cart_items.item.cart_items',
+        '-customer.cart_items.item.order_items',
+        '-customer.cart_items.item.reviews',
         '-customer.cart_items.customer',
         '-customer.orders.customer',
         '-customer.orders.order_items.order',
@@ -27,6 +29,13 @@ class User(db.Model, SerializerMixin):
         '-customer.orders.order_items.item.seller',
         '-customer.orders.order_items.item.cart_items',
         '-customer.orders.order_items.item.order_items',
+        '-customer.orders.order_items.item.reviews',
+        '-customer.reviews.item.category',
+        '-customer.reviews.item.seller',
+        '-customer.reviews.item.cart_items',
+        '-customer.reviews.item.order_items',
+        '-customer.reviews.item.reviews',
+        '-customer.reviews.customer',
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -86,6 +95,7 @@ class Customer(db.Model, SerializerMixin):
         '-user',
         '-cart_items',
         '-orders',
+        '-reviews',
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -97,6 +107,7 @@ class Customer(db.Model, SerializerMixin):
     user = db.relationship('User', back_populates='customer')
     cart_items = db.relationship('CartItem', back_populates='customer', cascade='all, delete-orphan')
     orders = db.relationship('Order', back_populates='customer', cascade='all, delete-orphan')
+    reviews = db.relationship('Review', back_populates='customer', cascade='all, delete-orphan')
 
     items_thru_cart = association_proxy('cart_items', 'item',
                         creator=lambda item_obj: CartItem(item=iem_obj))
@@ -126,6 +137,7 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
         '-seller',
         '-cart_items',
         '-order_items',
+        '-reviews',
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -150,6 +162,7 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
     seller = db.relationship('Seller', back_populates='items')
     cart_items = db.relationship('CartItem', back_populates='item', cascade='all, delete-orphan')
     order_items = db.relationship('OrderItem', back_populates='item', cascade='all, delete-orphan')
+    reviews = db.relationship('Review', back_populates='item', cascade='all, delete-orphan')
 
     customers_thru_cart = association_proxy('cart_items', 'customer',
                             creator=lambda customer_obj : CartItem(customer=customer_obj))
@@ -233,6 +246,32 @@ class Order(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f'<Order {self.id}>'
+    
+
+class Review(db.Model, SerializerMixin):
+    __tablename__ = 'reviews'
+
+    serialize_rules = (
+        '-item',
+        '-customer', 
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+    rating = db.Column(db.Integer, nullable=False) # ??? it must be 0 <=  <= 5. Add it to constraints and validates.
+    headline = db.Column(db.String)
+    review = db.Column(db.String)
+    images = db.Column(db.String) # ??? need to implement it later.
+    item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'))
+
+    item = db.relationship('Item', back_populates='reviews')
+    customer = db.relationship('Customer', back_populates='reviews')
+
+    def __repr__(self):
+        return f'<Review {self.id}>'
+
+
 
 
 

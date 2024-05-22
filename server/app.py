@@ -9,7 +9,7 @@ from flask_restful import Resource
 # Local imports
 from config import app, db, api
 # Add your model imports
-from models import User, Seller, Customer, Category, Item, CartItem, OrderItem, Order
+from models import User, Seller, Customer, Category, Item, CartItem, OrderItem, Order, Review
 import json
 
 app.secret_key=b'\xaf\x88\x87_\x1a\xf4\x97\x93f\xf5q\x0b\xad\xef,\xb3'
@@ -281,8 +281,6 @@ class Order_by_id(Resource):
             'message': f'Order {id} not found.',
         }, 404)
 
-
-
 class OrderItems(Resource):
     def post(self):
         req = request.get_json()
@@ -306,6 +304,27 @@ class OrderItems(Resource):
         if oi_dict.get('item'):
             apply_json_loads_to_item(oi_dict['item'])
         return make_response(oi_dict, 201)
+    
+class Reviews(Resource):
+    def post(self):
+        req = request.get_json()
+        try:
+            r = Review(
+                rating = req.get('rating'),
+                headline = req.get('headline'),
+                review = req.get('review'),
+                images = req.get('images'), # ??? need to implement it later.
+                item_id = req.get('item_id'),
+                customer_id = req.get('customer_id')
+            )
+            db.session.add(r)
+            db.session.commit()
+        except Exception as exc:
+            return make_response({
+                'message': f'{exc}',
+            }, 400)
+        
+        return make_response(r.to_dict(), 201)
 
 
 api.add_resource(Authenticate, '/authenticate', endpoint='authenticate')
@@ -317,6 +336,7 @@ api.add_resource(CartItem_by_id, '/cartitems/<int:id>', endpoint='cartitem_by_id
 api.add_resource(Orders, '/orders') # Authentication required
 api.add_resource(Order_by_id, '/orders/<int:id>') # Authentication required
 api.add_resource(OrderItems, '/orderitems') # Authentication required
+api.add_resource(Reviews, '/reviews') # Authentication required
 
 
 if __name__ == '__main__':

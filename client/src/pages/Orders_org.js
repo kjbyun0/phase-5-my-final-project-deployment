@@ -20,8 +20,10 @@ function Orders() {
     console.log('in Orders, orders: ', orders);
 
     function formatDate(date) {
+        const d = new Date(date * 1000);
+
         let month;
-        switch(date.getMonth()) {
+        switch(d.getMonth()) {
             case 0:
                 month = 'January';
                 break;
@@ -63,54 +65,37 @@ function Orders() {
                 break;
         }
 
-        return month + ' ' + date.getDate() + ', ' + date.getFullYear();
+        return month + ' ' + d.getDate() + ', ' + d.getFullYear();
     }
 
     function handleNavigateItem(itemId) {
         navigate(`/items/${itemId}`);
     }
 
-    const ordersLocalTime = orders.map(order => {
-        return (
-            {
-                ...order,
-                date: new Date(Date.UTC(
-                    parseInt(order.date.slice(0, 4)),
-                    parseInt(order.date.slice(5, 7)) - 1,
-                    parseInt(order.date.slice(8, 10)),
-                    parseInt(order.date.slice(11, 13)),
-                    parseInt(order.date.slice(14, 16)),
-                    parseInt(order.date.slice(17)),
-                )),
-            }
-        );
-    });
-    // console.log('ordersLocalTime: ', ordersLocalTime);
-
     const thirtyDaysInMillisec = 1000 * 60 * 60 * 24 * 30;
-    const ordersInPeriod = ordersLocalTime.filter(order => {
+    const ordersInPeriod = orders.filter(order => {
+        const orderDate = order.date * 1000;
         switch(period) {
             case 1:
-                return new Date() - order.date < thirtyDaysInMillisec;
+                return Date.now() - orderDate < thirtyDaysInMillisec;
             case 2: 
                 const threeMonthsAgo = new Date();
                 const threeMonthsAgoTS = threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-                return order.date > threeMonthsAgoTS;
+                return orderDate > threeMonthsAgoTS;
             case 3: 
-                return new Date(order.date).getFullYear() === new Date().getFullYear();
+                return new Date(orderDate).getFullYear() === new Date().getFullYear();
             case 4:
-                return new Date(order.date).getFullYear() === new Date().getFullYear() - 1;
+                return new Date(orderDate).getFullYear() === new Date().getFullYear() - 1;
             case 5:
-                return new Date(order.date).getFullYear() === new Date().getFullYear() - 2;
+                return new Date(orderDate).getFullYear() === new Date().getFullYear() - 2;
             default:
                 return true;
         }
     });
 
-    // Sort ordersInPeriod.
-    ordersInPeriod.sort((a, b) => b.date - a.date);
+    const sortOrders = [...ordersInPeriod].sort((a, b) => a.date < b.date);
 
-    const dispOrders = ordersInPeriod.map(order => {
+    const dispOrders = sortOrders.map(order => {
         const total = order.order_items.reduce((accum, oi) => accum + (oi.quantity * oi.price), 0);
 
         const dispOrderedItems = order.order_items.map(oi => {
@@ -175,7 +160,7 @@ function Orders() {
         <div style={{width: '100%', height: '100%', padding: '40px', }} >
             <div style={{fontSize: '2.0em', }}>Your Orders</div>
             <div style={{fontSize: '1.1em', marginTop: '20px', }}>
-                <span style={{fontWeight: 'bold', }}>{`${ordersInPeriod.length} order${ordersInPeriod.length <= 1 ? ' ' : 's '}`} </span>
+                <span style={{fontWeight: 'bold', }}>{`${sortOrders.length} order${sortOrders.length <= 1 ? ' ' : 's '}`} </span>
                 <span>{'placed in '}</span>
                 <Dropdown button style={{fontSize: '1.1em', padding: '7px 10px', margin: '10px 0 0 0', 
                     borderRadius: '10px', background: 'whitesmoke', border: '1px solid lightgray', 

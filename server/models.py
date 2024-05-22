@@ -3,7 +3,7 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import validates
 # from sqlalchemy.sql import func
-from datetime import datetime
+# from datetime import datetime
 from config import db, bcrypt
 import json
 
@@ -217,9 +217,9 @@ class Order(db.Model, SerializerMixin):
     )
 
     id = db.Column(db.Integer, primary_key=True)
-    # date = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
-    # date = db.Column(db.TimeStamp(timezone=True), nullable=False, server_default=func.now())
-    date = db.Column(db.Integer, nullable=False, server_default=datetime.now().strftime('%s'))
+    date = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+    # date = db.Column(db.Integer, nullable=False, server_default=func.now())
+    # date = db.Column(db.Integer, nullable=False, server_default=datetime.now().strftime('%s'))
     street_1 = db.Column(db.String)
     street_2 = db.Column(db.String)
     city = db.Column(db.String)

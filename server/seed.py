@@ -46,6 +46,7 @@ if __name__ == '__main__':
             first_name='cust-first',
             last_name='cust-last',
             mobile='111)111-2222',
+            nickname='cust-first',
             user = u1
         )
 

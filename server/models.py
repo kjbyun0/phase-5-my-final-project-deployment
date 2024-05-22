@@ -102,6 +102,7 @@ class Customer(db.Model, SerializerMixin):
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
     mobile = db.Column(db.String)
+    nickname = db.Column(db.String)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     user = db.relationship('User', back_populates='customer')

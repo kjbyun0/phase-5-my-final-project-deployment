@@ -126,6 +126,7 @@ class Signup(Resource):
                     first_name = req.get('firstName'),
                     last_name = req.get('lastName'),
                     mobile = req.get('mobile'),
+                    nickname = req.get('firstName'),
                     user = user,
                 )
                 # print('in Signup(post), customer: ', customer)

@@ -261,8 +261,9 @@ class Review(db.Model, SerializerMixin):
     date = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
     rating = db.Column(db.Integer, nullable=False) # ??? it must be 0 <=  <= 5. Add it to constraints and validates.
     headline = db.Column(db.String)
-    review = db.Column(db.String)
+    content = db.Column(db.String)
     images = db.Column(db.String) # ??? need to implement it later.
+    review_done = db.Column(db.Integer)
     item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'))
 

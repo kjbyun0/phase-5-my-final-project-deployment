@@ -7,7 +7,7 @@ import { Form, FormField, Input, Button, Checkbox, } from 'semantic-ui-react';
 
 function Signup() {
     const [ isSeller, setIsSeller ] = useState(false);
-    const { onSetUser, onSetCartItems, onSetOrders } = useOutletContext();
+    const { onSetUser, onSetCartItems, onSetOrders, onSetReviews } = useOutletContext();
     const navigate = useNavigate();
 
     const formSchema = yup.object().shape({
@@ -67,7 +67,7 @@ function Signup() {
                 r.json().then(data => {
                     if (r.ok) {
                         // onSetUser(data);
-                        setUserInfo(data, onSetUser, onSetCartItems, onSetOrders);
+                        setUserInfo(data, onSetUser, onSetCartItems, onSetOrders, onSetReviews);
                         navigate('/');
                     } else {
                         console.log("In Signup, error: ", data.message);

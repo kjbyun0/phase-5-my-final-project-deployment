@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
+import { applyUTCToOrders } from '../components/common';
 import { Dropdown, Button, } from 'semantic-ui-react';
 
 function Orders() {
@@ -17,7 +18,7 @@ function Orders() {
 
     //RBAC need to be implemented. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    console.log('in Orders, orders: ', orders);
+    console.log('in Orders, user: ', user, ', orders: ', orders);
 
     function formatDate(date) {
         let month;
@@ -70,21 +71,8 @@ function Orders() {
         navigate(`/items/${itemId}`);
     }
 
-    const ordersLocalTime = orders.map(order => {
-        return (
-            {
-                ...order,
-                date: new Date(Date.UTC(
-                    parseInt(order.date.slice(0, 4)),
-                    parseInt(order.date.slice(5, 7)) - 1,
-                    parseInt(order.date.slice(8, 10)),
-                    parseInt(order.date.slice(11, 13)),
-                    parseInt(order.date.slice(14, 16)),
-                    parseInt(order.date.slice(17)),
-                )),
-            }
-        );
-    });
+    // apply UTC time to order dates.
+    const ordersLocalTime = applyUTCToOrders(orders);
     // console.log('ordersLocalTime: ', ordersLocalTime);
 
     const thirtyDaysInMillisec = 1000 * 60 * 60 * 24 * 30;
@@ -160,7 +148,8 @@ function Orders() {
                     </div>
                     <div style={{margin: '15px 20px', }}>
                         <Button style={{width: '250px', fontSize: '1.1em', borderRadius: '10px', 
-                            backgroundColor: 'white', border: '1px solid lightgray',  }}>
+                            backgroundColor: 'white', border: '1px solid lightgray',  }} 
+                            onClick={() => navigate('/reviewlist')}>
                             Write a product review
                         </Button>
                     </div>

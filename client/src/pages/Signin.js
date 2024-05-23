@@ -7,7 +7,7 @@ import { Form, FormField, Input, FormButton, Button, Divider, } from 'semantic-u
 
 
 function Signin() {
-    const { onSetUser, onSetCartItems, onSetOrders } = useOutletContext();
+    const { onSetUser, onSetCartItems, onSetOrders, onSetReviews } = useOutletContext();
     const [ isSigninFail, setIsSigninFail ] = useState(false);
     const navigate = useNavigate();
 
@@ -37,7 +37,7 @@ function Signin() {
                     if (r.ok) {
                         console.log('In Signin, data: ', data);
                         // onSetUser(data);
-                        setUserInfo(data, onSetUser, onSetCartItems, onSetOrders);
+                        setUserInfo(data, onSetUser, onSetCartItems, onSetOrders, onSetReviews);
                         navigate('/');
                     } else {
                         console.log('in Signin, error: ', data.message);

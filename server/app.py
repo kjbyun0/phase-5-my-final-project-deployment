@@ -150,6 +150,26 @@ class Signup(Resource):
                             apply_json_loads_to_item(order_item['item'])
         return make_response(user_dict, 201)
                 
+class Customer_by_id(Resource):
+    def patch(self, id):
+        req = request.get_json()
+        customer = Customer.query.filter_by(id=id).first()
+        if customer: 
+            try:
+                for key in req:
+                    setattr(customer, key, req[key])
+                db.session.commit()
+            except Exception as exc:
+                return make_response({
+                    'message': f'{exc}',
+                }, 400)
+            
+            return make_response(customer.to_dict(), 200)   # Customer rules out all the relationships.
+        
+        return make_response({
+            'message': f'Customer {id} not found.',
+        }, 404)
+
 
 class Search(Resource):
     def get(self, keys):
@@ -313,8 +333,9 @@ class Reviews(Resource):
             r = Review(
                 rating = req.get('rating'),
                 headline = req.get('headline'),
-                review = req.get('review'),
+                content = req.get('content'),
                 images = req.get('images'), # ??? need to implement it later.
+                review_done = 0,
                 item_id = req.get('item_id'),
                 customer_id = req.get('customer_id')
             )
@@ -326,10 +347,32 @@ class Reviews(Resource):
             }, 400)
         
         return make_response(r.to_dict(), 201)
+    
+class Review_by_id(Resource):
+    def patch(self, id):
+        req = request.get_json()
+        r = Review.query.filter_by(id=id).first()
+        if r:
+            try:
+                for key in req:
+                    setattr(r, key, req[key])
+                db.session.commit()
+            except Exception as exc:
+                return make_response({
+                    'message': f'{exc}',
+                }, 400)
+            return make_response(r.to_dict(), 200)
+        
+        return make_response({
+            'message': f'Review {id} not found.',
+        }, 404)
+        
+
 
 
 api.add_resource(Authenticate, '/authenticate', endpoint='authenticate')
 api.add_resource(Signup, '/signup', endpoint='signup')
+api.add_resource(Customer_by_id, '/customers/<int:id>') # Authentication required
 api.add_resource(Search, '/search/<string:keys>', endpoint='search')
 api.add_resource(Item_by_id, '/items/<int:id>', endpoint='item_by_id')
 api.add_resource(CartItems, '/cartitems', endpoint='cartitems') # Authentication required
@@ -338,6 +381,7 @@ api.add_resource(Orders, '/orders') # Authentication required
 api.add_resource(Order_by_id, '/orders/<int:id>') # Authentication required
 api.add_resource(OrderItems, '/orderitems') # Authentication required
 api.add_resource(Reviews, '/reviews') # Authentication required
+api.add_resource(Review_by_id, '/reviews/<int:id>') # Authentication required
 
 
 if __name__ == '__main__':

@@ -8,6 +8,7 @@ function App() {
     const [ user, setUser ] = useState(null);
     const [ cartItems, setCartItems ] = useState([]);
     const [ orders, setOrders ] = useState([]);
+    const [ reviews, setReviews ] = useState([]);
 
     const [ searchItems, setSearchItems ] = useState([]);
 
@@ -17,7 +18,7 @@ function App() {
             r.json().then(data => {
                 if (r.ok) {
                     console.log('in App, full user data: ', data);
-                    setUserInfo(data, setUser, setCartItems, setOrders);
+                    setUserInfo(data, setUser, setCartItems, setOrders, setReviews);
                 } else {
                     console.log('In App, error: ', data.message);
                 }
@@ -25,7 +26,8 @@ function App() {
         )
     }, []);
 
-    console.log('In App, user: ', user, ', cartItems: ', cartItems, ', orders: ', orders);
+    console.log('In App, user: ', user, ', cartItems: ', cartItems, ', orders: ', 
+        orders, ', reviews: ', reviews);
 
     return (
         <div style={{display: 'grid', width: '100%', height: '100%', 
@@ -42,6 +44,8 @@ function App() {
                     onSetCartItems: setCartItems,
                     orders: orders,
                     onSetOrders: setOrders,
+                    reviews: reviews,
+                    onSetReviews: setReviews,
                     searchItems: searchItems,
                     onSetSearchItems: setSearchItems, 
                 }} />

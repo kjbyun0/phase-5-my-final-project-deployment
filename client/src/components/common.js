@@ -1,8 +1,8 @@
 
 
-function setUserInfo(userData, setUser, setCartItems, setOrders) {
+function setUserInfo(userData, setUser, setCartItems, setOrders, setReviews) {
     const { customer, ...userRemaings } = userData;
-    const { cart_items, orders, ...customerRemainings } = customer ? customer : {};
+    const { cart_items, orders, reviews, ...customerRemainings } = customer ? customer : {};
 
     // userData can't be null because fetch operation for user data is succeeded.
     setUser({
@@ -11,6 +11,7 @@ function setUserInfo(userData, setUser, setCartItems, setOrders) {
     });
     setCartItems(cart_items === undefined ? [] : cart_items);
     setOrders(orders === undefined ? [] : orders);
+    setReviews(reviews === undefined ? [] : reviews);
 }
 
 function dispPrice(item, idx) {
@@ -133,5 +134,24 @@ async function handleCItemChange(cartItem, cartItems, onSetCartItems) {
     });
 }
 
+function applyUTCToOrders(orders) {
+    return orders.map(order => {
+        return (
+            {
+                ...order,
+                date: new Date(Date.UTC(
+                    parseInt(order.date.slice(0, 4)),
+                    parseInt(order.date.slice(5, 7)) - 1,
+                    parseInt(order.date.slice(8, 10)),
+                    parseInt(order.date.slice(11, 13)),
+                    parseInt(order.date.slice(14, 16)),
+                    parseInt(order.date.slice(17)),
+                )),
+            }
+        );
+    });
+}
 
-export { setUserInfo, dispPrice, dispListPrice, handleCItemDelete, handleCItemAdd, handleCItemChange };
+
+export { setUserInfo, dispPrice, dispListPrice, handleCItemDelete, handleCItemAdd, 
+    handleCItemChange, applyUTCToOrders };

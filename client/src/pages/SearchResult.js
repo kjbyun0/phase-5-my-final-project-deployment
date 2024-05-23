@@ -124,7 +124,7 @@ function SearchResult() {
 
     const dispItemCards = sortedItems.map(item => 
         <Card key={item.id} style={{minWidth: '250px', }}>
-            <div style={{width: '100%', height: '300px', 
+            <div style={{width: '100%', height: '300px', margin: 'auto', 
                 backgroundImage: `url(${item.card_thumbnail})`, 
                 backgroundSize: 'contain', backgroundRepeat: 'no-repeat', 
                 backgroundPosition: 'center', }} 

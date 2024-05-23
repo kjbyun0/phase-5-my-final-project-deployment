@@ -126,8 +126,8 @@ async function handleCItemChange(cartItem, cartItems, onSetCartItems) {
                     console.log(data);
                     alert(data.message);
                 } else {
-                    console.log("Server Error - Can't patch this item in cart: ", data);
-                    alert(`Server Error - Can't patch this item in cart: ${data.message}`);
+                    console.log("Server Error - Can't update this item in cart: ", data);
+                    alert(`Server Error - Can't update this item in cart: ${data.message}`);
                 }
             }
         });

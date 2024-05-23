@@ -5,6 +5,7 @@ import Item from './pages/Item';
 import Cart from './pages/Cart';
 import Orders from './pages/Orders';
 import ReviewList from './pages/ReviewList';
+import Review from './pages/Review';
 import Signin from './pages/Signin';
 import Signout from './pages/Signout';
 import Signup from './pages/Signup';
@@ -38,6 +39,10 @@ const routes = [
             {
                 path: '/reviewlist',
                 element: <ReviewList />,
+            },
+            {
+                path: '/reviewlist/:itemId',
+                element: <Review />
             },
             {
                 path: '/signin',

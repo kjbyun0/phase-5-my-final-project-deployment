@@ -7,6 +7,8 @@ function ReviewApp() {
     const [ nickname, setNickname ] = useState(null);
 
     //RBAC need to be implemented. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    if (!user) return;
+    
 
     function handleNickNameChange() {
         console.log('In handleNicknameChange');

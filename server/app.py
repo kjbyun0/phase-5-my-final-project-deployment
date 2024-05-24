@@ -54,7 +54,7 @@ class Authenticate(Resource):
             user_dict = user.to_dict()
             if user_dict.get('customer'):
                 for ci in user_dict['customer']['cart_items']:
-                    # I don't think I need to check this... it applies to the other codes below.
+                    # I don't think I need to check this... My opinion applies to the other codes below.
                     # add nullable=False constraint.
                     if ci.get('item'):  
                         apply_json_loads_to_item(ci['item'])
@@ -63,6 +63,10 @@ class Authenticate(Resource):
                     for order_item in order['order_items']:
                         if order_item.get('item'):
                             apply_json_loads_to_item(order_item['item'])
+
+                for review in user_dict['customer']['reviews']:
+                    if review.get('item'):
+                        apply_json_loads_to_item(review['item'])
             return make_response(user_dict, 200)
         return make_response({
             'message': 'User is signed out'
@@ -84,6 +88,10 @@ class Authenticate(Resource):
                     for order_item in order['order_items']:
                         if order_item.get('item'):
                             apply_json_loads_to_item(order_item['item'])
+
+                for review in user_dict['customer']['reviews']:
+                    if review.get('item'):
+                        apply_json_loads_to_item(review['item'])
             return make_response(user_dict, 200)
         return make_response({
             'message': 'Invaled username or password.'
@@ -144,10 +152,14 @@ class Signup(Resource):
                 if ci.get('item'):
                     apply_json_loads_to_item(ci['item'])
 
-                for order in user_dict['customer']['orders']:
-                    for order_item in order['order_items']:
-                        if order_item.get('item'):
-                            apply_json_loads_to_item(order_item['item'])
+            for order in user_dict['customer']['orders']:
+                for order_item in order['order_items']:
+                    if order_item.get('item'):
+                        apply_json_loads_to_item(order_item['item'])
+
+            for review in user_dict['customer']['reviews']:
+                if review.get('item'):
+                    apply_json_loads_to_item(review['item'])
         return make_response(user_dict, 201)
                 
 class Customer_by_id(Resource):

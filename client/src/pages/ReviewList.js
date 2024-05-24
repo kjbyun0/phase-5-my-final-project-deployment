@@ -5,12 +5,9 @@ import { Button, Divider, CardGroup, Card, CardContent,} from 'semantic-ui-react
 
 function ReviewList() {
     const { user, orders, reviews, onSetReviews } = useOutletContext();
-
     const [ itemsReviewed, setItemsReviewed ] = useState({});
     const navigate = useNavigate()
     
-    //RBAC need to be implemented. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
     console.log('in ReviewList, user: ', user, ', orders: ', orders, ', reviews: ', reviews);
 
     useEffect(() => {
@@ -22,6 +19,9 @@ function ReviewList() {
         })
         setItemsReviewed(itemsReviewedTmp);
     }, [reviews]);
+
+
+    //RBAC need to be implemented. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
     function handleReviewAdd(review) {
@@ -79,9 +79,8 @@ function ReviewList() {
         });
     }
 
-    function handleStarClick(itemId, rating) {
-        if (itemsReviewed.hasOwnProperty(itemId)) {
-            const review = itemsReviewed[itemId];
+    function handleStarClick(itemId, review, rating) {
+        if (review) {
             handleReviewChange({
                 id: review.id,
                 rating: rating,
@@ -105,17 +104,15 @@ function ReviewList() {
         }
     }
 
-    function dispStars(itemId) {
+    function dispRating(itemId, review) {
         const stars = [];
-        const rating = (itemsReviewed.hasOwnProperty(itemId) 
-                        && !itemsReviewed[itemId].review_done) ? 
-                        itemsReviewed[itemId].rating : 0;
+        const rating = review ? review.rating : 0;
 
         for (let i = 1; i <= 5; i++) {
             stars.push(<img key={i} src={rating >= i ? 'star_filled.png' : 'star_hollow.png'} 
-                className='link' 
-                style={{width: '35px', height: '35px', }} 
-                onClick={() => handleStarClick(itemId, i)} />);        
+                className='link'  
+                style={{width: '40px', height: '40px'}} 
+                onClick={() => handleStarClick(itemId, review, i)} />);        
         }
 
         return stars;
@@ -161,7 +158,8 @@ function ReviewList() {
                         {oi.item.name.length <= 20 ? oi.item.name : oi.item.name.slice(0, 20) + '...'}
                     </div>
                     <div style={{margin: '10px auto', }}>
-                        {dispStars(oi.item_id)}
+                        {dispRating(oi.item_id, 
+                            itemsReviewed.hasOwnProperty(oi.item_id) ? itemsReviewed[oi.item_id] : null)}
                     </div>
                     <div>
                         {
@@ -179,20 +177,15 @@ function ReviewList() {
         );
     });
 
-
-    if (!user) return;
-
     // padding: '15px 150px'
     return (
-        <div style={{width: '100%', height: '100%', }}>
-            <div style={{padding: '0 140px'}}>
-                <div style={{fontSize: '2.0em', margin: '30px 0'}}>
-                    Review Your Purchases</div>
-                <Divider />
-                <CardGroup itemsPerRow={3} style={{marginTop: '5px', }} >
-                    {dispReviewCards}
-                </CardGroup>
-            </div>
+        <div style={{width: '100%', height: '100%', padding: '0 140px', }}>
+            <div style={{fontSize: '2.0em', margin: '30px 0'}}>
+                Review Your Purchases</div>
+            <Divider />
+            <CardGroup itemsPerRow={3} style={{marginTop: '5px', }} >
+                {dispReviewCards}
+            </CardGroup>
         </div>
     );
 }

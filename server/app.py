@@ -358,7 +358,10 @@ class Reviews(Resource):
                 'message': f'{exc}',
             }, 400)
         
-        return make_response(r.to_dict(), 201)
+        r_dict = r.to_dict()
+        if r_dict.get('item'):
+            apply_json_loads_to_item(r_dict['item'])
+        return make_response(r_dict, 201)
     
 class Review_by_id(Resource):
     def patch(self, id):
@@ -373,7 +376,11 @@ class Review_by_id(Resource):
                 return make_response({
                     'message': f'{exc}',
                 }, 400)
-            return make_response(r.to_dict(), 200)
+            
+            r_dict = r.to_dict()
+            if r_dict.get('item'):
+                apply_json_loads_to_item(r_dict['item'])
+            return make_response(r_dict, 200)
         
         return make_response({
             'message': f'Review {id} not found.',

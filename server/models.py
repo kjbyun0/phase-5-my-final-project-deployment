@@ -253,7 +253,11 @@ class Review(db.Model, SerializerMixin):
     __tablename__ = 'reviews'
 
     serialize_rules = (
-        '-item',
+        '-item.category',
+        '-item.seller',
+        '-item.cart_items',
+        '-item.order_items',
+        '-item.reviews',
         '-customer', 
     )
 

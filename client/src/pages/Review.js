@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useOutletContext } from 'react-router-dom';
+import { dispRating } from '../components/common';
 import { Divider } from 'semantic-ui-react';
 
 
@@ -53,6 +54,11 @@ function Review() {
 
 
 
+
+
+
+
+
     return (
         <div style={{width: '100%', height: '100%', padding: '0 160px', }}>
             <div style={{fontSize: '1.9em', fontWeight: 'bold', marginTop: '40px', }}>
@@ -69,10 +75,19 @@ function Review() {
                     itemReview.item.name}
                 </div>
             </div>
-            <Divider />
-            <div>
-                <div style={{fontSize: '1.5em', fontWeight: 'bold', }}>Overall rating</div>
+            <Divider style={{backgroundColor: 'gainsboro', }} />
+            <div style={{display: 'grid', gridTemplateColumns: '1fr max-content', }}>
+                <div>
+                    <div style={{fontSize: '1.5em', fontWeight: 'bold', }}>Overall rating</div>
+                    <div style={{margin: '20px 0', }}>
+                        {dispRating(itemReview.item.id, itemReview.review, user, reviews, onSetReviews)}
+                    </div>
+                </div>
+                <div className='link' style={{color: 'darkcyan', fontSize: '1.1em', marginRight: '10px', }} >
+                    {itemReview.review && itemReview.review.rating > 0 ? 'Clear' : null}
+                </div>
             </div>
+            <Divider style={{backgroundColor: 'gainsboro', }} />
         </div>
     );
 }

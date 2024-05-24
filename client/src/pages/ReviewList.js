@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import { applyUTCToOrders } from '../components/common';
+import { applyUTCToOrders, dispRating, } from '../components/common';
 import { Button, Divider, CardGroup, Card, CardContent,} from 'semantic-ui-react';
 
 function ReviewList() {
@@ -24,99 +24,99 @@ function ReviewList() {
     //RBAC need to be implemented. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-    function handleReviewAdd(review) {
-        fetch('/reviews', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(review),
-        })
-        .then(r => {
-            r.json().then(data => {
-                if (r.ok) {
-                    onSetReviews([
-                        ...reviews,
-                        data
-                    ]);
-                } else {
-                    if (r.status === 401 || r.status === 403) {
-                        console.log(data);
-                        alert(data.message);
-                    } else {
-                        console.log("Server Error - Can't add this review: ", data);
-                        alert(`Server Error - Can't add this review: ${data.message}`);
-                    }
-                }
-            });
-        });
-    }
+    // function handleReviewAdd(review) {
+    //     fetch('/reviews', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify(review),
+    //     })
+    //     .then(r => {
+    //         r.json().then(data => {
+    //             if (r.ok) {
+    //                 onSetReviews([
+    //                     ...reviews,
+    //                     data
+    //                 ]);
+    //             } else {
+    //                 if (r.status === 401 || r.status === 403) {
+    //                     console.log(data);
+    //                     alert(data.message);
+    //                 } else {
+    //                     console.log("Server Error - Can't add this review: ", data);
+    //                     alert(`Server Error - Can't add this review: ${data.message}`);
+    //                 }
+    //             }
+    //         });
+    //     });
+    // }
 
-    function handleReviewChange(review) {
-        console.log('review: ', review);
+    // function handleReviewChange(review) {
+    //     console.log('review: ', review);
 
-        fetch(`/reviews/${review.id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(review),
-        })
-        .then(r => {
-            r.json().then(data => {
-                if (r.ok) {
-                    onSetReviews(reviews.map(rw => rw.id === data.id ? data : rw));
-                } else {
-                    if (r.status === 401 || r.status === 403) {
-                        console.log(data);
-                        alert(data.message);
-                    } else {
-                        console.log("Server Error - Can't update this review: ", data);
-                        alert(`Server Error - Can't update this review: ${data.message}`);
-                    }
-                }
-            });
-        });
-    }
+    //     fetch(`/reviews/${review.id}`, {
+    //         method: 'PATCH',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify(review),
+    //     })
+    //     .then(r => {
+    //         r.json().then(data => {
+    //             if (r.ok) {
+    //                 onSetReviews(reviews.map(rw => rw.id === data.id ? data : rw));
+    //             } else {
+    //                 if (r.status === 401 || r.status === 403) {
+    //                     console.log(data);
+    //                     alert(data.message);
+    //                 } else {
+    //                     console.log("Server Error - Can't update this review: ", data);
+    //                     alert(`Server Error - Can't update this review: ${data.message}`);
+    //                 }
+    //             }
+    //         });
+    //     });
+    // }
 
-    function handleStarClick(itemId, review, rating) {
-        if (review) {
-            handleReviewChange({
-                id: review.id,
-                rating: rating,
-                headline: review.headline,
-                content: review.content,
-                images: review.images,
-                review_done: review.review_done,
-                item_id: review.item_Id,
-                customer_id: review.customer_id,
-            });
-        } else {
-            handleReviewAdd({
-                rating: rating,
-                headline: '',
-                content: '',
-                images: '',
-                review_done: 0,
-                item_id: itemId,
-                customer_id: user.customer.id,
-            });
-        }
-    }
+    // function handleStarClick(itemId, review, rating) {
+    //     if (review) {
+    //         handleReviewChange({
+    //             id: review.id,
+    //             rating: rating,
+    //             headline: review.headline,
+    //             content: review.content,
+    //             images: review.images,
+    //             review_done: review.review_done,
+    //             item_id: review.item_Id,
+    //             customer_id: review.customer_id,
+    //         });
+    //     } else {
+    //         handleReviewAdd({
+    //             rating: rating,
+    //             headline: '',
+    //             content: '',
+    //             images: '',
+    //             review_done: 0,
+    //             item_id: itemId,
+    //             customer_id: user.customer.id,
+    //         });
+    //     }
+    // }
 
-    function dispRating(itemId, review) {
-        const stars = [];
-        const rating = review ? review.rating : 0;
+    // function dispRating(itemId, review) {
+    //     const stars = [];
+    //     const rating = review ? review.rating : 0;
 
-        for (let i = 1; i <= 5; i++) {
-            stars.push(<img key={i} src={rating >= i ? 'star_filled.png' : 'star_hollow.png'} 
-                className='link'  
-                style={{width: '40px', height: '40px'}} 
-                onClick={() => handleStarClick(itemId, review, i)} />);        
-        }
+    //     for (let i = 1; i <= 5; i++) {
+    //         stars.push(<img key={i} src={rating >= i ? 'star_filled.png' : 'star_hollow.png'} 
+    //             className='link'  
+    //             style={{width: '40px', height: '40px'}} 
+    //             onClick={() => handleStarClick(itemId, review, i)} />);        
+    //     }
 
-        return stars;
-    }
+    //     return stars;
+    // }
 
     function handleNavigateReview(itemId) {
         navigate(`/reviewlist/${itemId}`);
@@ -159,7 +159,8 @@ function ReviewList() {
                     </div>
                     <div style={{margin: '10px auto', }}>
                         {dispRating(oi.item_id, 
-                            itemsReviewed.hasOwnProperty(oi.item_id) ? itemsReviewed[oi.item_id] : null)}
+                            itemsReviewed.hasOwnProperty(oi.item_id) ? itemsReviewed[oi.item_id] : null,
+                            user, reviews, onSetReviews)}
                     </div>
                     <div>
                         {

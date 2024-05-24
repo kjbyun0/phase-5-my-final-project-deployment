@@ -153,7 +153,104 @@ function applyUTCToOrders(orders) {
 }
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
+function handleReviewAdd(review, reviews, onSetReviews) {
+    fetch('/reviews', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(review),
+    })
+    .then(r => {
+        r.json().then(data => {
+            if (r.ok) {
+                onSetReviews([
+                    ...reviews,
+                    data
+                ]);
+            } else {
+                if (r.status === 401 || r.status === 403) {
+                    console.log(data);
+                    alert(data.message);
+                } else {
+                    console.log("Server Error - Can't add this review: ", data);
+                    alert(`Server Error - Can't add this review: ${data.message}`);
+                }
+            }
+        });
+    });
+}
 
-export { setUserInfo, dispPrice, dispListPrice, handleCItemDelete, handleCItemAdd, 
-    handleCItemChange, applyUTCToOrders };
+function handleReviewChange(review, reviews, onSetReviews) {
+    console.log('review: ', review);
+
+    fetch(`/reviews/${review.id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(review),
+    })
+    .then(r => {
+        r.json().then(data => {
+            if (r.ok) {
+                onSetReviews(reviews.map(rw => rw.id === data.id ? data : rw));
+            } else {
+                if (r.status === 401 || r.status === 403) {
+                    console.log(data);
+                    alert(data.message);
+                } else {
+                    console.log("Server Error - Can't update this review: ", data);
+                    alert(`Server Error - Can't update this review: ${data.message}`);
+                }
+            }
+        });
+    });
+}
+
+function handleStarClick(itemId, review, rating, user, reviews, onSetReviews) {
+    if (review) {
+        handleReviewChange({
+            id: review.id,
+            rating: rating,
+            headline: review.headline,
+            content: review.content,
+            images: review.images,
+            review_done: review.review_done,
+            item_id: review.item_Id,
+            customer_id: review.customer_id,
+        }, reviews, onSetReviews);
+    } else {
+        handleReviewAdd({
+            rating: rating,
+            headline: '',
+            content: '',
+            images: '',
+            review_done: 0,
+            item_id: itemId,
+            customer_id: user.customer.id,
+        }, reviews, onSetReviews);
+    }
+}
+
+function dispRating(itemId, review, user, reviews, onSetReviews) {
+    const stars = [];
+    const rating = review ? review.rating : 0;
+
+    for (let i = 1; i <= 5; i++) {
+        stars.push(<img key={i} src={rating >= i ? '/star_filled.png' : '/star_hollow.png'} 
+            className='link'  
+            style={{width: '40px', height: '40px'}} 
+            onClick={() => handleStarClick(itemId, review, i, user, reviews, onSetReviews)} />);        
+    }
+
+    return stars;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+export { setUserInfo, dispPrice, dispListPrice, 
+    handleCItemDelete, handleCItemAdd, handleCItemChange, applyUTCToOrders, 
+    handleReviewAdd, handleReviewChange, handleStarClick, dispRating };

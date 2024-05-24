@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useOutletContext } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { dispRating, handleReviewDelete } from '../components/common';
-
-import { Divider, Input, TextArea, Button, } from 'semantic-ui-react';
+import { dispRating, handleReviewDelete, handleReviewChange } from '../components/common';
+import { Divider, Input, TextArea, Button, Form, Icon } from 'semantic-ui-react';
 
 
 function Review() {
@@ -16,9 +15,6 @@ function Review() {
     const { itemId } = useParams();
     const iid = parseInt(itemId);
 
-    const [ headline, setHeadline ] = useState('');
-    const [ content, setContent ] = useState('');
-
     console.log('itemId: ', itemId, 'reviews: ', reviews, 'itemReview: ', itemReview);
 
     useEffect(() => {
@@ -28,6 +24,7 @@ function Review() {
                 item: reviewTmp.item,
                 review: reviewTmp,
             });
+            formik.setFieldValue('rating', reviewTmp.rating);
         } else {
             fetch(`/items/${iid}`)
             .then(r => {
@@ -36,7 +33,8 @@ function Review() {
                         setItemReview({
                             item: data,
                             review: null,
-                        })
+                        });
+                        formik.setFieldValue('rating', null);
                     } else {
                         if (r.status === 401 || r.status === 403) {
                             console.log(data);
@@ -52,15 +50,41 @@ function Review() {
         }
     }, [itemId, reviews]);
     
+    const formSchema = yup.object().shape({
+        rating: yup.number().required('Please select a star rating').min(1).max(5),
+        headline: yup.string().required('Please enter your headline.'),
+        // images: , Please add a video, photo, or a written review.
+        content: yup.string().required('Please add a written review.'),
+    });
 
+    const formik = useFormik({
+        initialValues: {
+            rating: null,
+            headline: '',
+            // images: ''
+            content: '',
+        },
+        validationSchema: formSchema,
+        validateOnChange: false,
+        validateOnBlur: false,
+        onSubmit: values => {
+            console.log('formik submit called.')
+            // Since rating must be updated and adding a rate creates a review, 
+            // submit is always a patch operation.
+            handleReviewChange({
+                ...itemReview,
+                headline: formik.values.headline,
+                // images: formik.values.images,
+                content: formik.values.content,
+                review_done: 1,
+            }, reviews, onSetReviews)
+        },
+    });
+
+
+    
     //RBAC need to be implemented. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if (!itemReview.item) return;
-    
-
-
-
-
-
 
 
 
@@ -81,38 +105,48 @@ function Review() {
                 </div>
             </div>
             <Divider style={{backgroundColor: 'gainsboro', }} />
-            <div style={{display: 'grid', gridTemplateColumns: '1fr max-content', }}>
-                <div>
-                    <div style={{fontSize: '1.5em', fontWeight: 'bold', }}>Overall rating</div>
-                    <div style={{margin: '10px 0', }}>
-                        {dispRating(itemReview.item.id, itemReview.review, user, reviews, onSetReviews)}
+
+            <Form onSubmit={formik.handleSubmit}>
+                <div style={{display: 'grid', gridTemplateColumns: '1fr max-content', }}>
+                    <div>
+                        <div style={{fontSize: '1.5em', fontWeight: 'bold', }}>Overall rating</div>
+                        <div style={{margin: '10px 0', }}>
+                            {dispRating(itemReview.item.id, itemReview.review, user, reviews, onSetReviews)}
+                        </div>
                     </div>
+                    {
+                        !itemReview.review ? null :
+                        <div className='link' style={{color: 'darkcyan', fontSize: '1.1em', marginRight: '10px', }} 
+                        onClick={() => handleReviewDelete(itemReview.review, reviews, onSetReviews)}>
+                        Clear</div>   
+                    }
                 </div>
-                {
-                    !itemReview.review ? null :
-                    <div className='link' style={{color: 'darkcyan', fontSize: '1.1em', marginRight: '10px', }} 
-                    onClick={() => handleReviewDelete(itemReview.review, reviews, onSetReviews)}>
-                    Clear</div>   
-                }
-            </div>
-            <Divider style={{backgroundColor: 'gainsboro', }} />
-            <div>
-                <div style={{fontSize: '1.5em', fontWeight: 'bold', }}>Add a headline</div>
-                <Input type='text' style={{width: '100%', marginTop: '20px', border: '1px solid gray', 
-                    borderRadius: '5px', fontSize: '1.1em', }}
-                    placeholder="What's most important to know?" 
-                    value={headline} onChange={(e, d) => setHeadline(d.value)} />
-            </div>
-            <Divider style={{backgroundColor: 'gainsboro', }} />
-            <div>
-                <div style={{fontSize: '1.5em', fontWeight: 'bold', }}>Add a written review</div>
-                <TextArea rows='6' style={{width: '100%', marginTop: '20px', border: '1px solid gray', 
-                    borderRadius: '5px', fontSize: '1.1em', }} 
-                    value={content} onChange={(e, d) => setContent(d.value)} />
-            </div>
-            <Divider style={{backgroundColor: 'gainsboro', }} />
-            <Button style={{float: 'right', }}></Button>
-            
+                <Divider style={{backgroundColor: 'gainsboro', }} />
+                <div>
+                    <div style={{fontSize: '1.5em', fontWeight: 'bold', }}>Add a headline</div>
+                    <Input id='headline' name='headline' type='text' style={{width: '100%', marginTop: '20px', border: '1px solid gray', 
+                        borderRadius: '5px', fontSize: '1.1em', }}
+                        placeholder="What's most important to know?" 
+                        value={formik.values.headline} onChange={formik.handleChange} />
+                    <div style={{marginTop: '15px', color: 'crimson', fontSize: '1.1em', }}>
+                        <Icon name='exclamation circle' size='large' />
+                        {formik.errors.headline}</div>
+                </div>
+                <Divider style={{backgroundColor: 'gainsboro', }} />
+                <div>
+                    <div style={{fontSize: '1.5em', fontWeight: 'bold', }}>Add a written review</div>
+                    <TextArea  id='content' name='content' rows='6' style={{width: '100%', marginTop: '20px', border: '1px solid gray', 
+                        borderRadius: '5px', fontSize: '1.1em', }} 
+                        value={formik.values.content} onChange={formik.handleChange} />
+                    <div style={{marginTop: '15px', color: 'crimson', fontSize: '1.1em', }}>
+                        <Icon name='exclamation circle' size='large' />
+                        {formik.errors.content}</div>
+                </div>
+                <Divider style={{backgroundColor: 'gainsboro', }} />
+                <Button type='submit' style={{float: 'right', color: 'black', backgroundColor: 'yellow', }}>
+                    Submit</Button>
+            </Form>
+
         </div>
     );
 }

@@ -385,6 +385,23 @@ class Review_by_id(Resource):
         return make_response({
             'message': f'Review {id} not found.',
         }, 404)
+    
+    def delete(self, id):
+        r = Review.query.filter_by(id=id).first()
+        if r:
+            try:
+                db.session.delete(r)
+                db.session.commit()
+            except Exception as exc:
+                return make_response({
+                    'message': f'{exc}',
+                }, 400)
+            
+            return make_response({}, 204)
+        
+        return make_response({
+            'message': f'Review {id} not found.',
+        }, 404)
         
 
 

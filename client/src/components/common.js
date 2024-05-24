@@ -46,6 +46,7 @@ function dispListPrice(item, idx) {
 
 async function handleCItemDelete(cartItem, cartItems, onSetCartItems) {
     console.log('in handleCItemDelete, item: ', cartItem);
+    if (!cartItem) return;
 
     await fetch(`/cartitems/${cartItem.id}`, {
         method: 'DELETE',
@@ -155,6 +156,29 @@ function applyUTCToOrders(orders) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
+function handleReviewDelete(review, reviews, onSetReviews) {
+    if (!review) return;
+
+    fetch(`/reviews/${review.id}`, {
+        method: 'DELETE',
+    })
+    .then(r => {
+        if (r.ok) {
+            onSetReviews(reviews.filter(rw => rw.id !== review.id));
+        } else {
+            r.json().then(data => {
+                if (r.status === 401 || r.status === 403) {
+                    console.log(data);
+                    alert(data.message);
+                } else {
+                    console.log("Server Error - Can't delete this review: ", data);
+                    alert(`Server Error - Can't delete this review: ${data.message}`);
+                }
+            });
+        }
+    });
+}
+
 function handleReviewAdd(review, reviews, onSetReviews) {
     fetch('/reviews', {
         method: 'POST',
@@ -253,4 +277,4 @@ function dispRating(itemId, review, user, reviews, onSetReviews) {
 
 export { setUserInfo, dispPrice, dispListPrice, 
     handleCItemDelete, handleCItemAdd, handleCItemChange, applyUTCToOrders, 
-    handleReviewAdd, handleReviewChange, handleStarClick, dispRating };
+    handleReviewDelete, handleReviewAdd, handleReviewChange, handleStarClick, dispRating };

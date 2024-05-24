@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useOutletContext } from 'react-router-dom';
-import { dispRating } from '../components/common';
-import { Divider } from 'semantic-ui-react';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
+import { dispRating, handleReviewDelete } from '../components/common';
+
+import { Divider, Input, TextArea, Button, } from 'semantic-ui-react';
 
 
 function Review() {
@@ -13,6 +16,8 @@ function Review() {
     const { itemId } = useParams();
     const iid = parseInt(itemId);
 
+    const [ headline, setHeadline ] = useState('');
+    const [ content, setContent ] = useState('');
 
     console.log('itemId: ', itemId, 'reviews: ', reviews, 'itemReview: ', itemReview);
 
@@ -79,15 +84,35 @@ function Review() {
             <div style={{display: 'grid', gridTemplateColumns: '1fr max-content', }}>
                 <div>
                     <div style={{fontSize: '1.5em', fontWeight: 'bold', }}>Overall rating</div>
-                    <div style={{margin: '20px 0', }}>
+                    <div style={{margin: '10px 0', }}>
                         {dispRating(itemReview.item.id, itemReview.review, user, reviews, onSetReviews)}
                     </div>
                 </div>
-                <div className='link' style={{color: 'darkcyan', fontSize: '1.1em', marginRight: '10px', }} >
-                    {itemReview.review && itemReview.review.rating > 0 ? 'Clear' : null}
-                </div>
+                {
+                    !itemReview.review ? null :
+                    <div className='link' style={{color: 'darkcyan', fontSize: '1.1em', marginRight: '10px', }} 
+                    onClick={() => handleReviewDelete(itemReview.review, reviews, onSetReviews)}>
+                    Clear</div>   
+                }
             </div>
             <Divider style={{backgroundColor: 'gainsboro', }} />
+            <div>
+                <div style={{fontSize: '1.5em', fontWeight: 'bold', }}>Add a headline</div>
+                <Input type='text' style={{width: '100%', marginTop: '20px', border: '1px solid gray', 
+                    borderRadius: '5px', fontSize: '1.1em', }}
+                    placeholder="What's most important to know?" 
+                    value={headline} onChange={(e, d) => setHeadline(d.value)} />
+            </div>
+            <Divider style={{backgroundColor: 'gainsboro', }} />
+            <div>
+                <div style={{fontSize: '1.5em', fontWeight: 'bold', }}>Add a written review</div>
+                <TextArea rows='6' style={{width: '100%', marginTop: '20px', border: '1px solid gray', 
+                    borderRadius: '5px', fontSize: '1.1em', }} 
+                    value={content} onChange={(e, d) => setContent(d.value)} />
+            </div>
+            <Divider style={{backgroundColor: 'gainsboro', }} />
+            <Button style={{float: 'right', }}></Button>
+            
         </div>
     );
 }

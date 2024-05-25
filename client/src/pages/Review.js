@@ -12,10 +12,13 @@ function Review() {
         item: null, 
         review: null,
     });
+    const [ validateAfterSubmit, setValidateAfterSubmit ] = useState(false);
     const { itemId } = useParams();
     const iid = parseInt(itemId);
 
     console.log('itemId: ', itemId, 'reviews: ', reviews, 'itemReview: ', itemReview);
+    console.log('itemReview, item: ', itemReview.item, ', review: ', itemReview.review);
+    // console.log('validateOnChange: ', formik.validateOnChange);
 
     useEffect(() => {
         const reviewTmp = reviews.find(r => r.item_id === iid && !r.review_done);
@@ -34,7 +37,8 @@ function Review() {
                             item: data,
                             review: null,
                         });
-                        formik.setFieldValue('rating', null);
+                        formik.resetForm();
+                        setValidateAfterSubmit(false);
                     } else {
                         if (r.status === 401 || r.status === 403) {
                             console.log(data);
@@ -51,7 +55,9 @@ function Review() {
     }, [itemId, reviews]);
     
     const formSchema = yup.object().shape({
-        rating: yup.number().required('Please select a star rating').min(1).max(5),
+        rating: yup.number().required('Please select a star rating')
+            .min(1, 'Your rating should be in between 1 and 5.')
+            .max(5, 'Your rating should be in between 1 and 5.'),
         headline: yup.string().required('Please enter your headline.'),
         // images: , Please add a video, photo, or a written review.
         content: yup.string().required('Please add a written review.'),
@@ -65,27 +71,25 @@ function Review() {
             content: '',
         },
         validationSchema: formSchema,
-        validateOnChange: false,
+        validateOnChange: validateAfterSubmit,
         validateOnBlur: false,
         onSubmit: values => {
-            console.log('formik submit called.')
+            // console.log('formik submit called.')
             // Since rating must be updated and adding a rate creates a review, 
             // submit is always a patch operation.
             handleReviewChange({
-                ...itemReview,
+                id: itemReview.review.id,
+                rating: formik.values.rating,
                 headline: formik.values.headline,
-                // images: formik.values.images,
                 content: formik.values.content,
+                // images: formik.values.images,
                 review_done: 1,
-            }, reviews, onSetReviews)
+            }, reviews, onSetReviews);
         },
     });
-
-
     
     //RBAC need to be implemented. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if (!itemReview.item) return;
-
 
 
     return (
@@ -113,6 +117,13 @@ function Review() {
                         <div style={{margin: '10px 0', }}>
                             {dispRating(itemReview.item.id, itemReview.review, user, reviews, onSetReviews)}
                         </div>
+                        {
+                            formik.errors.rating ?
+                            <div style={{marginTop: '15px', color: 'crimson', fontSize: '1.1em', }}>
+                                <Icon name='exclamation circle' size='large' />
+                                {formik.errors.rating}</div> : 
+                            null
+                        }
                     </div>
                     {
                         !itemReview.review ? null :
@@ -128,22 +139,34 @@ function Review() {
                         borderRadius: '5px', fontSize: '1.1em', }}
                         placeholder="What's most important to know?" 
                         value={formik.values.headline} onChange={formik.handleChange} />
-                    <div style={{marginTop: '15px', color: 'crimson', fontSize: '1.1em', }}>
-                        <Icon name='exclamation circle' size='large' />
-                        {formik.errors.headline}</div>
+                    {
+                        formik.errors.headline ? 
+                        <div style={{marginTop: '15px', color: 'crimson', fontSize: '1.1em', }}>
+                            <Icon name='exclamation circle' size='large' />
+                            {formik.errors.headline}</div> : 
+                        null
+                    }
                 </div>
                 <Divider style={{backgroundColor: 'gainsboro', }} />
                 <div>
                     <div style={{fontSize: '1.5em', fontWeight: 'bold', }}>Add a written review</div>
                     <TextArea  id='content' name='content' rows='6' style={{width: '100%', marginTop: '20px', border: '1px solid gray', 
                         borderRadius: '5px', fontSize: '1.1em', }} 
+                        placeholder="What did you like or dislike? What did you use this product for?"
                         value={formik.values.content} onChange={formik.handleChange} />
-                    <div style={{marginTop: '15px', color: 'crimson', fontSize: '1.1em', }}>
-                        <Icon name='exclamation circle' size='large' />
-                        {formik.errors.content}</div>
+                    {
+                        formik.errors.content ?
+                        <div style={{marginTop: '15px', color: 'crimson', fontSize: '1.1em', }}>
+                            <Icon name='exclamation circle' size='large' />
+                            {formik.errors.content}</div> : 
+                        null
+                    }
+                    
                 </div>
                 <Divider style={{backgroundColor: 'gainsboro', }} />
-                <Button type='submit' style={{float: 'right', color: 'black', backgroundColor: 'yellow', }}>
+                <Button type='submit' color='yellow'
+                    style={{float: 'right', color: 'black', borderRadius: '10px', }} 
+                    onClick={() => setValidateAfterSubmit(validateAfterSubmit => true)} >
                     Submit</Button>
             </Form>
 

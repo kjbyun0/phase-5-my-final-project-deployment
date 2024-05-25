@@ -134,41 +134,41 @@ function ReviewList() {
         order.order_items.forEach(oi => {
             // oi.review_done must be fixed
             // if (!oi.review_done && !itemsInList.hasOwnProperty(oi.id)) {
-            if (!itemsInList.hasOwnProperty(oi.id) && 
+            if (!itemsInList.hasOwnProperty(oi.item_id) &&
                 (!itemsReviewed.hasOwnProperty(oi.item_id) || !itemsReviewed[oi.item_id].review_done)) {
-                itemsNotReviewed.push(oi);
-                itemsInList[oi.id] = oi;
+                itemsNotReviewed.push(oi.item);
+                itemsInList[oi.item_id] = oi;   //this value is not used.
             }
         });
     });
     console.log('itemsNotReviewed: ', itemsNotReviewed);
 
-    const dispReviewCards = itemsNotReviewed.map(oi => {
+    const dispReviewCards = itemsNotReviewed.map(item => {
 
         return (
-            <Card key={oi.id} style={{minWidth: '200px', borderWidth: '0', alignItems: 'center', }}>
+            <Card key={item.id} style={{minWidth: '200px', borderWidth: '0', alignItems: 'center', }}>
                 <div className='link' style={{width: '90%', height: '250px', margin: 'auto', 
-                    backgroundImage: `url(${oi.item.card_thumbnail})`, 
+                    backgroundImage: `url(${item.card_thumbnail})`, 
                     backgroundSize: 'contain', backgroundRepeat: 'no-repeat', 
                     backgroundPosition: 'center', }} 
-                    onClick={() => handleNavigateReview(oi.item_id)} />
+                    onClick={() => handleNavigateReview(item.id)} />
                 {/* <CardContent> */}
                     <div className='link4 link' style={{fontSize: '1.1em', margin: '10px auto 0', }} 
-                        onClick={() => handleNavigateReview(oi.item_id)} >
-                        {oi.item.name.length <= 20 ? oi.item.name : oi.item.name.slice(0, 20) + '...'}
+                        onClick={() => handleNavigateReview(item.id)} >
+                        {item.name.length <= 20 ? item.name : item.name.slice(0, 20) + '...'}
                     </div>
                     <div style={{margin: '10px auto', }}>
-                        {dispRating(oi.item_id, 
-                            itemsReviewed.hasOwnProperty(oi.item_id) ? itemsReviewed[oi.item_id] : null,
+                        {dispRating(item.id, 
+                            itemsReviewed.hasOwnProperty(item.id) ? itemsReviewed[item.id] : null,
                             user, reviews, onSetReviews)}
                     </div>
                     <div>
                         {
-                            itemsReviewed.hasOwnProperty(oi.item_id) ? 
+                            itemsReviewed.hasOwnProperty(item.id) ? 
                             <Button type='button' style={{color: 'black', backgroundColor: 'white', 
                                 fontSize: '0.8em', padding: '5px 30px', marginBottom: '10px', 
                                 border: '1px solid lightgray', borderRadius: '10px', }} 
-                                onClick={() => handleNavigateReview(oi.item_id)} >
+                                onClick={() => handleNavigateReview(item.id)} >
                                 Write a review</Button> : 
                             null
                         }

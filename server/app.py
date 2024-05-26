@@ -36,7 +36,8 @@ def check_if_signed_in():
         and request.endpoint != 'authenticate' \
         and request.endpoint != 'signup' \
         and request.endpoint != 'search' \
-        and request.endpoint != 'item_by_id':
+        and request.endpoint != 'item_by_id' \
+        and request.endpoint != 'reviews_by_itemid':
         return make_response({
             'message': 'User is not signed in',
         }, 401)
@@ -402,8 +403,14 @@ class Review_by_id(Resource):
         return make_response({
             'message': f'Review {id} not found.',
         }, 404)
-        
 
+
+class Reviews_by_itemId(Resource):
+    def get(self, iid):
+        rs_dict = [ r.to_dict() for r in Review.query.filter_by(item_id=iid).all()]
+        for r_dict in rs_dict:
+            r_dict.pop('item', None)
+        return make_response(rs_dict, 200)
 
 
 api.add_resource(Authenticate, '/authenticate', endpoint='authenticate')
@@ -418,6 +425,7 @@ api.add_resource(Order_by_id, '/orders/<int:id>') # Authentication required
 api.add_resource(OrderItems, '/orderitems') # Authentication required
 api.add_resource(Reviews, '/reviews') # Authentication required
 api.add_resource(Review_by_id, '/reviews/<int:id>') # Authentication required
+api.add_resource(Reviews_by_itemId, '/reviews/items/<int:iid>', endpoint='reviews_by_itemid')
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import { applyUTCToOrders } from '../components/common';
+import { applyUTCToOrders, formatDate } from '../components/common';
 import { Dropdown, Button, } from 'semantic-ui-react';
 
 function Orders() {
@@ -20,52 +20,6 @@ function Orders() {
 
     console.log('in Orders, user: ', user, ', orders: ', orders);
 
-    function formatDate(date) {
-        let month;
-        switch(date.getMonth()) {
-            case 0:
-                month = 'January';
-                break;
-            case 1:
-                month = 'February';
-                break;
-            case 2:
-                month = 'March';
-                break;
-            case 3:
-                month = 'April';
-                break;
-            case 4:
-                month = 'May';
-                break;
-            case 5:
-                month = 'June';
-                break;
-            case 6:
-                month = 'July';
-                break;
-            case 7:
-                month = 'August';
-                break;
-            case 8:
-                month = 'September';
-                break;
-            case 9:
-                month = 'October';
-                break;
-            case 10:
-                month = 'November';
-                break;
-            case 11:
-                month = 'December';
-                break;
-            default:
-                month = 'January';
-                break;
-        }
-
-        return month + ' ' + date.getDate() + ', ' + date.getFullYear();
-    }
 
     function handleNavigateItem(itemId) {
         navigate(`/items/${itemId}`);

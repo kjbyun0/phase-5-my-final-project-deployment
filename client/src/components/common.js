@@ -135,19 +135,70 @@ async function handleCItemChange(cartItem, cartItems, onSetCartItems) {
     });
 }
 
+function formatDate(date) {
+    let month;
+    switch(date.getMonth()) {
+        case 0:
+            month = 'January';
+            break;
+        case 1:
+            month = 'February';
+            break;
+        case 2:
+            month = 'March';
+            break;
+        case 3:
+            month = 'April';
+            break;
+        case 4:
+            month = 'May';
+            break;
+        case 5:
+            month = 'June';
+            break;
+        case 6:
+            month = 'July';
+            break;
+        case 7:
+            month = 'August';
+            break;
+        case 8:
+            month = 'September';
+            break;
+        case 9:
+            month = 'October';
+            break;
+        case 10:
+            month = 'November';
+            break;
+        case 11:
+            month = 'December';
+            break;
+        default:
+            month = 'January';
+            break;
+    }
+
+    return month + ' ' + date.getDate() + ', ' + date.getFullYear();
+}
+
+function convertUTCDate(utcDate) {
+    return new Date(Date.UTC(
+        utcDate.slice(0, 4),
+        utcDate.slice(5, 7) - 1,
+        utcDate.slice(8, 10),
+        utcDate.slice(11, 13), 
+        utcDate.slice(14, 16), 
+        utcDate.slice(17)
+    ));
+}
+
 function applyUTCToOrders(orders) {
     return orders.map(order => {
         return (
             {
                 ...order,
-                date: new Date(Date.UTC(
-                    parseInt(order.date.slice(0, 4)),
-                    parseInt(order.date.slice(5, 7)) - 1,
-                    parseInt(order.date.slice(8, 10)),
-                    parseInt(order.date.slice(11, 13)),
-                    parseInt(order.date.slice(14, 16)),
-                    parseInt(order.date.slice(17)),
-                )),
+                date: convertUTCDate(order.date),
             }
         );
     });
@@ -276,5 +327,6 @@ function dispRating(itemId, review, user, reviews, onSetReviews) {
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 export { setUserInfo, dispPrice, dispListPrice, 
-    handleCItemDelete, handleCItemAdd, handleCItemChange, applyUTCToOrders, 
+    handleCItemDelete, handleCItemAdd, handleCItemChange, 
+    formatDate, convertUTCDate, applyUTCToOrders, 
     handleReviewDelete, handleReviewAdd, handleReviewChange, handleStarClick, dispRating };

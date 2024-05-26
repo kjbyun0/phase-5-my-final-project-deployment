@@ -258,7 +258,10 @@ class Review(db.Model, SerializerMixin):
         '-item.cart_items',
         '-item.order_items',
         '-item.reviews',
-        '-customer', 
+        '-customer.user', 
+        '-customer.cart_items', 
+        '-customer.cart_items', 
+        '-customer.reviews', 
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -276,12 +279,3 @@ class Review(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f'<Review {self.id}>'
-
-
-
-
-
-
-
-
-

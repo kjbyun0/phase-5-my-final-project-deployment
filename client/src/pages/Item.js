@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useOutletContext, useNavigate, } from 'react-router-dom'; 
-import { dispPrice, dispListPrice, handleCItemAdd, handleCItemChange, } from '../components/common';
+import { dispPrice, dispListPrice, handleCItemAdd, handleCItemChange, 
+    formatDate, convertUTCDate, } from '../components/common';
 import { Divider, Table, TableBody, TableRow, TableCell, 
-    Image, ButtonGroup, Button, Dropdown,  } from 'semantic-ui-react';
+    Image, ButtonGroup, Button, Dropdown, Icon, } from 'semantic-ui-react';
 
 
 function Item() {
@@ -11,6 +12,8 @@ function Item() {
     const [ activeItemIdx, setActiveItemIdx ] = useState(null);
     const [ activeImageIdx, setActiveImageIdx ] = useState(null);
     const [ quantity, setQuantity ] = useState(1);
+    const [ itemReviews, setItemReviews ] = useState([]);
+    const [ avgRating, setAvgRating ] = useState(0);
     const { user, cartItems, onSetCartItems, orders, onSetOrders, } = useOutletContext();
     const navigate = useNavigate()
 
@@ -22,7 +25,8 @@ function Item() {
             value: i
         });
 
-    console.log('In Item, user: ', user, ', item: ', item, ', cartItems: ', cartItems, ', orders: ', orders);
+    console.log('In Item, user: ', user, ', it1em: ', item, ', cartItems: ', cartItems, 
+        ', orders: ', orders, ', itemReviews: ', itemReviews);
     console.log('quantity: ', quantity);
 
     useEffect(() => {
@@ -40,6 +44,23 @@ function Item() {
                 }
             });
         })
+
+        fetch(`/reviews/items/${id}`)
+        .then(r => {
+            r.json().then(data => {
+                if (r.ok) {
+                    setItemReviews(data);
+                    setAvgRating(data.reduce((avg, review, i) => 
+                        avg + (review.rating - avg) / (i+1)
+                    , 0));
+                } else {
+                    // only authentication error is possible.
+                    console.log(data);
+                    alert(data.message);
+                }
+            });
+        });
+
     }, []);
 
     function dispAllSizes() {
@@ -112,6 +133,45 @@ function Item() {
                 src={thumbnail}
                 onMouseEnter={() => handleThumnailMouseEnter(i)}
             />
+        );
+    }
+
+    function dispItemRating(review) {
+        const stars = [];
+    
+        for (let i = 1; i <= 5; i++) {
+            stars.push(
+                <img key={i} src={review.rating >= i ? '/star_filled.png' : '/star_hollow.png'} 
+                    style={{width: '20px', height: '20px'}}/>
+            );        
+        }
+    
+        return stars;
+    }
+
+    function dispReviews() {
+        return (
+            itemReviews.map(review => 
+                <div key={review.id} style={{margin: '15px 0', fontSize: '1.1em', }}>
+                    <div>
+                        <Icon name='user circle outline' size='big' 
+                            style={{color: 'lightgray', }} />
+                        <span>{review.customer.nickname ? 
+                            review.customer.nickname : 
+                            review.customer.first_name}</span>
+                    </div>
+                    <div style={{display: 'grid', gridTemplateColumns: 'max-content 1fr', alignItems: 'center', 
+                         marginTop: '7px', }}>
+                        <div>{dispItemRating(review)}</div>
+                        <div style={{fontWeight: 'bold', marginLeft: '10px', }}>
+                            {review.headline}</div>
+                    </div>
+                    <div>Reviewed on {formatDate(convertUTCDate(review.date))}</div>
+                    <div style={{margin: '5px 0', }}>
+                        <p>{review.content}</p>
+                    </div>
+                </div>
+            )
         );
     }
 
@@ -390,11 +450,31 @@ function Item() {
 
             {/* Product details_2 */}
             <Divider />
-            <div style={{fontSize: '1.8em', fontWeight: 'bold', marginTop: '20px'}}>Product details</div>
-            {dispDetail_2()}
+            <div>
+                <div style={{fontSize: '1.8em', fontWeight: 'bold', marginTop: '20px'}}>Product details</div>
+                {dispDetail_2()}
+            </div>
 
             {/* Customer Reviews */}
             <Divider />
+            <div style={{display: 'grid', gridTemplateColumns: 'max-content 1fr', marginTop: '20px'}}>
+                <div>
+                    <div style={{fontSize: '1.8em', fontWeight: 'bold'}}>
+                        Customer reviews
+                    </div>
+                    <div style={{marginTop: '10px', }}>
+                        <div style={{display: 'inline-block', width: '20px', height: '20px', 
+                            backgroundColor: '#ffbd59', }} />
+                        <span style={{fontSize: '1.5em', }}>{avgRating} out of 5</span>
+                    </div>
+                    <div style={{marginTop: '15px', fontSize: '1.1em', }}>{itemReviews.length} ratings</div>
+                </div>
+                <div style={{marginLeft: '80px', }}>
+                    {dispReviews()}
+                </div>
+            </div>
+
+            
 
         </div>
     );

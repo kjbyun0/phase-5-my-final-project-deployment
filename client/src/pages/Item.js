@@ -3,7 +3,7 @@ import { useParams, useOutletContext, useNavigate, } from 'react-router-dom';
 import { dispPrice, dispListPrice, handleCItemAdd, handleCItemChange, 
     formatDate, convertUTCDate, } from '../components/common';
 import { Divider, Table, TableBody, TableRow, TableCell, 
-    Image, ButtonGroup, Button, Dropdown, Icon, } from 'semantic-ui-react';
+    Image, ButtonGroup, Button, Dropdown, Icon, Progress, } from 'semantic-ui-react';
 
 
 function Item() {
@@ -13,7 +13,13 @@ function Item() {
     const [ activeImageIdx, setActiveImageIdx ] = useState(null);
     const [ quantity, setQuantity ] = useState(1);
     const [ itemReviews, setItemReviews ] = useState([]);
+
+    // I made these two states and updated them in useEffect 
+    // because I didn't want them to be updated every time this page is updated.
+    // but I need to reconsider if it is the best choice....
     const [ avgRating, setAvgRating ] = useState(0);
+    const [ starCounts, setStarCounts ] = useState([0, 0, 0, 0, 0]);
+    
     const { user, cartItems, onSetCartItems, orders, onSetOrders, } = useOutletContext();
     const navigate = useNavigate()
 
@@ -28,6 +34,7 @@ function Item() {
     console.log('In Item, user: ', user, ', it1em: ', item, ', cartItems: ', cartItems, 
         ', orders: ', orders, ', itemReviews: ', itemReviews);
     console.log('quantity: ', quantity);
+    console.log('avgRating: ', avgRating, ', starCounts: ', starCounts);
 
     useEffect(() => {
         fetch(`/items/${id}`)
@@ -53,6 +60,9 @@ function Item() {
                     setAvgRating(data.reduce((avg, review, i) => 
                         avg + (review.rating - avg) / (i+1)
                     , 0));
+                    const starCountsTmp = [0, 0, 0, 0, 0];
+                    data.forEach(review => starCountsTmp[review.rating-1] += 1);
+                    setStarCounts(starCountsTmp);
                 } else {
                     // only authentication error is possible.
                     console.log(data);
@@ -136,13 +146,64 @@ function Item() {
         );
     }
 
-    function dispItemRating(review) {
+    function dispAvgRating(starWidth, starHeight) {
+        const stars = [];
+        const maxFilled = starWidth, minFilled = 0;
+
+        for (let i = 1; i <= 5; i++) {
+            const width = avgRating >= i ? maxFilled : 
+                avgRating <= i - 1 ? minFilled :
+                (avgRating - (i - 1)) * (maxFilled - minFilled);
+            stars.push(
+                <div key={i} style={{display: 'inline-block', width: '20px', height: '20px', }}>
+                    <div style={{position: 'absolute', zIndex: '1', backgroundColor: '#ffbd59', 
+                        height: `${starHeight}px`, width: `${width}px`, 
+                        }} />
+                    <img src='/star_tp.png' alt='transparent star image for rating' 
+                        style={{position: 'absolute', zIndex: '2', 
+                            width: `${starWidth}px`, height: `${starHeight}px`, }} />
+                </div>
+            );
+        }
+
+        return stars;
+    }
+
+    function dispStarDistribution() {
+        return (
+            starCounts.map((cnt, i) => {
+                const percentage = Math.round((starCounts[4 - i] / itemReviews.length)*100);
+
+                return (
+                    <div style={{display: 'grid', gridTemplateColumns: 'max-content max-content', 
+                        alignItems: 'center', margin: '15px 0', }}>
+                        <div style={{fontSize: '1.1em', }}>{5-i} star</div>
+                        {/* <progress value={percentage / 100} 
+                            style={{width: '200px', color: 'yellow', }} /> */}
+                        <Progress percent={percentage}  progress color='yellow' 
+                            style={{width: '200px', border: '1px solid lightgray', 
+                                margin: '0 0 0 15px', }}/>
+                    </div>
+                    // <div>
+                    //     <div style={{display: 'inline-block', }}>{5-i} star</div>
+                    //     <progress value={percentage / 100} 
+                    //         style={{display: 'inline-block', width: '200px', height: '50px', 
+
+                    //         }}/>
+                    //     <div style={{display: 'inline-block', }}>{percentage}%</div>
+                    // </div>
+                );
+            })
+        );
+    }
+
+    function dispReviewRating(review) {
         const stars = [];
     
         for (let i = 1; i <= 5; i++) {
             stars.push(
                 <img key={i} src={review.rating >= i ? '/star_filled.png' : '/star_hollow.png'} 
-                    style={{width: '20px', height: '20px'}}/>
+                    style={{width: '17px', height: '17px'}}/>
             );        
         }
     
@@ -162,7 +223,7 @@ function Item() {
                     </div>
                     <div style={{display: 'grid', gridTemplateColumns: 'max-content 1fr', alignItems: 'center', 
                          marginTop: '7px', }}>
-                        <div>{dispItemRating(review)}</div>
+                        <div>{dispReviewRating(review)}</div>
                         <div style={{fontWeight: 'bold', marginLeft: '10px', }}>
                             {review.headline}</div>
                     </div>
@@ -462,12 +523,17 @@ function Item() {
                     <div style={{fontSize: '1.8em', fontWeight: 'bold'}}>
                         Customer reviews
                     </div>
-                    <div style={{marginTop: '10px', }}>
-                        <div style={{display: 'inline-block', width: '20px', height: '20px', 
-                            backgroundColor: '#ffbd59', }} />
-                        <span style={{fontSize: '1.5em', }}>{avgRating} out of 5</span>
+                    <div style={{display: 'grid', gridTemplateColumns: 'max-content 1fr', 
+                        alignItems: 'center', marginTop: '10px', }}>
+                        <div >
+                            {dispAvgRating(20,20)}
+                        </div>
+                        <span style={{fontSize: '1.5em', marginLeft: '15px', }}>{avgRating} out of 5</span>
                     </div>
                     <div style={{marginTop: '15px', fontSize: '1.1em', }}>{itemReviews.length} ratings</div>
+                    <div>
+                        {dispStarDistribution()}
+                    </div>
                 </div>
                 <div style={{marginLeft: '80px', }}>
                     {dispReviews()}

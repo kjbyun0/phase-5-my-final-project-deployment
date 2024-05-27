@@ -57,9 +57,10 @@ function Item() {
             r.json().then(data => {
                 if (r.ok) {
                     setItemReviews(data);
-                    setAvgRating(data.reduce((avg, review, i) => 
-                        avg + (review.rating - avg) / (i+1)
-                    , 0));
+                    setAvgRating(
+                        Math.round(data.reduce((avg, review, i) => 
+                            avg + (review.rating - avg) / (i+1), 0) * 10) 
+                        / 10);
                     const starCountsTmp = [0, 0, 0, 0, 0];
                     data.forEach(review => starCountsTmp[review.rating-1] += 1);
                     setStarCounts(starCountsTmp);
@@ -155,7 +156,7 @@ function Item() {
                 avgRating <= i - 1 ? minFilled :
                 (avgRating - (i - 1)) * (maxFilled - minFilled);
             stars.push(
-                <div key={i} style={{display: 'inline-block', width: '20px', height: '20px', }}>
+                <div key={i} style={{width: `${starWidth}px`, height: `${starHeight}px`, }}>
                     <div style={{position: 'absolute', zIndex: '1', backgroundColor: '#ffbd59', 
                         height: `${starHeight}px`, width: `${width}px`, 
                         }} />
@@ -166,7 +167,13 @@ function Item() {
             );
         }
 
-        return stars;
+        return (
+            <div style={{display: 'grid', 
+                gridTemplateColumns: 'max-content max-content max-content max-content max-content', 
+                alignItems: 'center', }}>
+                {stars}
+            </div>
+        );
     }
 
     function dispStarDistribution() {
@@ -433,6 +440,15 @@ function Item() {
                 {/* Item name and descriptions */}
                 <div style={{padding: '15px 10px 10px 30px', }}>
                     <h1 style={{fontWeight: 'normal',}}>{item.name}</h1>
+                    <div style={{display: 'grid', gridTemplateColumns: 'max-content max-content 1fr', 
+                        alignItems: 'center', }}>
+                        <div>{avgRating.toFixed(1)}</div>
+                        <div style={{marginLeft: '5px', }}>{dispAvgRating(17, 17)}</div>
+                        <a href='#customer_reviews' className='link1 link' style={{marginLeft: '20px', }}>
+                            {itemReviews.length.toLocaleString('en-US')}  rating{itemReviews.length > 1 ? 's' : null}
+                        </a>
+                    </div>
+
                     <Divider />
                     {/* Price */}
                     <div style={{marginTop: '20px', }}>
@@ -518,6 +534,7 @@ function Item() {
 
             {/* Customer Reviews */}
             <Divider />
+            <a id='customer_reviews' />
             <div style={{display: 'grid', gridTemplateColumns: 'max-content 1fr', marginTop: '20px'}}>
                 <div>
                     <div style={{fontSize: '1.8em', fontWeight: 'bold'}}>
@@ -525,13 +542,13 @@ function Item() {
                     </div>
                     <div style={{display: 'grid', gridTemplateColumns: 'max-content 1fr', 
                         alignItems: 'center', marginTop: '10px', }}>
-                        <div >
-                            {dispAvgRating(20,20)}
-                        </div>
-                        <span style={{fontSize: '1.5em', marginLeft: '15px', }}>{avgRating} out of 5</span>
+                        <div>{dispAvgRating(20,20)}</div>
+                        <div style={{fontSize: '1.5em', marginLeft: '15px', }}>{avgRating.toFixed(1)} out of 5</div>
                     </div>
-                    <div style={{marginTop: '15px', fontSize: '1.1em', }}>{itemReviews.length} ratings</div>
-                    <div>
+                    <div style={{marginTop: '15px', fontSize: '1.1em', }}>
+                        {itemReviews.length.toLocaleString('en-US')} rating{itemReviews.length > 1 ? 's' : null}
+                    </div>
+                    <div style={{marginTop: '20px', }}>
                         {dispStarDistribution()}
                     </div>
                 </div>

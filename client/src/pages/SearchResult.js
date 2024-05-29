@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useSearchParams, useOutletContext, useNavigate } from 'react-router-dom';
 import { dispPrice, dispListPrice, handleCItemChange, handleCItemAdd, handleCItemDelete, } from '../components/common';
+import { TestContext } from '../components/contexts';
 import { CardGroup, Card, CardContent, CardHeader, Label, Dropdown, 
     Button, } from 'semantic-ui-react';
 
@@ -13,6 +14,16 @@ function SearchResult() {
     // key: item id and value: boolean value to indicate if corresponding searched item is added to cart.
     const [ itemInCart, setItemInCart] = useState({});
     const navigate = useNavigate();
+
+
+    
+    // ??? - testcode for useContext... delete it later on...
+    const { tContext, setTContext } = useContext(TestContext);
+    console.log('tContext: ', tContext);
+    setTContext('in SearchResult');
+    // ??? - testcode for useContext... delete it later on...
+
+
 
     const [ sort, setSort ] = useState(1);
     const sortOptions = [

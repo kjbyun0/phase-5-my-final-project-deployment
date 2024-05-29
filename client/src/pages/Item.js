@@ -21,7 +21,8 @@ function Item() {
     const [ starCounts, setStarCounts ] = useState([0, 0, 0, 0, 0]);
     
     const { user, cartItems, onSetCartItems, orders, onSetOrders, } = useOutletContext();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    
 
     const quantityOptions = [];
     for (let i = 1; i <= 30; i++)

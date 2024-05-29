@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import { setUserInfo } from '../components/common';
+import { TestProvider } from '../components/contexts';
 
 
 function App() {
@@ -37,18 +38,20 @@ function App() {
             </header>
             <main style={{minWidth: '0', minHeight: '0',}}>
                 {/* <h1>I'm at App.</h1> */}
-                <Outlet context={{
-                    user: user,
-                    onSetUser: setUser,
-                    cartItems: cartItems,
-                    onSetCartItems: setCartItems,
-                    orders: orders,
-                    onSetOrders: setOrders,
-                    reviews: reviews,
-                    onSetReviews: setReviews,
-                    searchItems: searchItems,
-                    onSetSearchItems: setSearchItems, 
-                }} />
+                <TestProvider>
+                    <Outlet context={{
+                        user: user,
+                        onSetUser: setUser,
+                        cartItems: cartItems,
+                        onSetCartItems: setCartItems,
+                        orders: orders,
+                        onSetOrders: setOrders,
+                        reviews: reviews,
+                        onSetReviews: setReviews,
+                        searchItems: searchItems,
+                        onSetSearchItems: setSearchItems, 
+                    }} />
+                </TestProvider>
             </main>
         </div>
     );

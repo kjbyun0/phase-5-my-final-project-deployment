@@ -68,6 +68,9 @@ class Authenticate(Resource):
                 for review in user_dict['customer']['reviews']:
                     if review.get('item'):
                         apply_json_loads_to_item(review['item'])
+            else:   # seller account
+                for item in user_dict['seller']['items']:
+                    apply_json_loads_to_item(item)
             return make_response(user_dict, 200)
         return make_response({
             'message': 'User is signed out'
@@ -78,6 +81,7 @@ class Authenticate(Resource):
         user = User.query.filter_by(username=req.get('username')).first()
         print('in Authenticate, user: ', user)
         if user and user.authenticate(req.get('password')):
+            print('in Authenticate, authentication successful.')
             session['user_id'] = user.id
             user_dict = user.to_dict()
             if user_dict.get('customer'):
@@ -93,9 +97,12 @@ class Authenticate(Resource):
                 for review in user_dict['customer']['reviews']:
                     if review.get('item'):
                         apply_json_loads_to_item(review['item'])
+            else:   # seller account
+                for item in user_dict['seller']['items']:
+                    apply_json_loads_to_item(item)
             return make_response(user_dict, 200)
         return make_response({
-            'message': 'Invaled username or password.'
+            'message': 'Invalid username or password.'
         }, 401)
     
     def delete(self):
@@ -130,7 +137,6 @@ class Signup(Resource):
                 # print('in Signup(post), seller: ', seller)
                 db.session.add(seller)
             else:
-
                 customer = Customer(
                     first_name = req.get('firstName'),
                     last_name = req.get('lastName'),
@@ -161,6 +167,9 @@ class Signup(Resource):
             for review in user_dict['customer']['reviews']:
                 if review.get('item'):
                     apply_json_loads_to_item(review['item'])
+        else:   # seller account
+            for item in user_dict['seller']['items']:
+                apply_json_loads_to_item(item)
         return make_response(user_dict, 201)
                 
 class Customer_by_id(Resource):

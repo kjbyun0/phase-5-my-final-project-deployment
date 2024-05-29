@@ -7,7 +7,7 @@ import { Form, FormField, Input, FormButton, Button, Divider, } from 'semantic-u
 
 
 function Signin() {
-    const { onSetUser, onSetCartItems, onSetOrders, onSetReviews } = useOutletContext();
+    const { onSetUser, onSetCartItems, onSetOrders, onSetReviews, onSetSellerItems } = useOutletContext();
     const [ isSigninFail, setIsSigninFail ] = useState(false);
     const navigate = useNavigate();
 
@@ -37,7 +37,7 @@ function Signin() {
                     if (r.ok) {
                         console.log('In Signin, data: ', data);
                         // onSetUser(data);
-                        setUserInfo(data, onSetUser, onSetCartItems, onSetOrders, onSetReviews);
+                        setUserInfo(data, onSetUser, onSetCartItems, onSetOrders, onSetReviews, onSetSellerItems);
                         navigate('/');
                     } else {
                         console.log('in Signin, error: ', data.message);
@@ -71,7 +71,7 @@ function Signin() {
                     <div style={{color: 'red',}}>{isSigninFail ? 'Invalid username or password. Please, try again.' : null}</div>
                     <Button type='submit' color='yellow' style={{width: '100%',}}>Continue</Button>
                 </Form>
-                <Divider horizontal>New to Flatzone</Divider>
+                <Divider />
                 {/* <hr style={{margin: '20px 0', color: 'red', }}/> */}
                 <Button type='button' onClick={()=> navigate('/signup')} 
                     basic style={{width: '100%',}}>Create your account</Button>

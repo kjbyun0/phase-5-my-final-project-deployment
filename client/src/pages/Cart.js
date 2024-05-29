@@ -221,6 +221,8 @@ function Cart() {
                                         alert(`Server Error - Can't add an order item: ${data2.message}`);
 
                                         // delete this order. Don't need to take care of promise.
+                                        // ??? - I don't think it works... check it out again....
+                                        // To check, set 'processed_data = None,' in class OrderItems of app.py
                                         fetch(`/orders/${orderTmp.id}`, {
                                             method: 'DELETE',
                                         })

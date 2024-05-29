@@ -286,6 +286,7 @@ class Orders(Resource):
         req = request.get_json()
         try:
             o = Order(
+                closed_date = None,
                 street_1 = req.get('street_1'),
                 street_2 = req.get('street_2'),
                 city = req.get('city'),
@@ -331,6 +332,7 @@ class OrderItems(Resource):
             oi = OrderItem(
                 quantity = req.get('quantity'),
                 price = req.get('price'),
+                processed_date = None,
                 item_idx = req.get('item_idx'),
                 item_id = req.get('item_id'),
                 order_id = req.get('order_id')

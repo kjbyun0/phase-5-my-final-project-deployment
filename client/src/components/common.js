@@ -1,17 +1,20 @@
 
 
-function setUserInfo(userData, setUser, setCartItems, setOrders, setReviews) {
-    const { customer, ...userRemaings } = userData;
+function setUserInfo(userData, setUser, setCartItems, setOrders, setReviews, setSellerItems) {
+    const { customer, seller, ...userRemaings } = userData;
     const { cart_items, orders, reviews, ...customerRemainings } = customer ? customer : {};
+    const { items, ...sellerRemainings } = seller ? seller : {};
 
     // userData can't be null because fetch operation for user data is succeeded.
     setUser({
         ...userRemaings,
         customer: Object.keys(customerRemainings).length === 0 ? null : customerRemainings,
+        seller: Object.keys(sellerRemainings).length === 0 ? null : sellerRemainings,
     });
     setCartItems(cart_items === undefined ? [] : cart_items);
     setOrders(orders === undefined ? [] : orders);
     setReviews(reviews === undefined ? [] : reviews);
+    setSellerItems(items === undefined ? [] : items);
 }
 
 function dispPrice(item, idx) {
@@ -198,7 +201,8 @@ function applyUTCToOrders(orders) {
         return (
             {
                 ...order,
-                date: convertUTCDate(order.date),
+                ordered_date: convertUTCDate(order.ordered_date),
+                closed_date: order.closed_date ? convertUTCDate(order.ordered_date) : null,
             }
         );
     });

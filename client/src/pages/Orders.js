@@ -25,7 +25,7 @@ function Orders() {
         navigate(`/items/${itemId}`);
     }
 
-    // apply UTC time to order dates.
+    // apply UTC time to ordered dates.
     const ordersLocalTime = applyUTCToOrders(orders);
     // console.log('ordersLocalTime: ', ordersLocalTime);
 
@@ -33,27 +33,27 @@ function Orders() {
     const ordersInPeriod = ordersLocalTime.filter(order => {
         switch(period) {
             case 1:
-                return new Date() - order.date < thirtyDaysInMillisec;
+                return new Date() - order.ordered_date < thirtyDaysInMillisec;
             case 2: 
                 const threeMonthsAgo = new Date();
                 const threeMonthsAgoTS = threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-                return order.date > threeMonthsAgoTS;
+                return order.ordered_date > threeMonthsAgoTS;
             case 3: 
-                return new Date(order.date).getFullYear() === new Date().getFullYear();
+                return new Date(order.ordered_date).getFullYear() === new Date().getFullYear();
             case 4:
-                return new Date(order.date).getFullYear() === new Date().getFullYear() - 1;
+                return new Date(order.ordered_date).getFullYear() === new Date().getFullYear() - 1;
             case 5:
-                return new Date(order.date).getFullYear() === new Date().getFullYear() - 2;
+                return new Date(order.ordered_date).getFullYear() === new Date().getFullYear() - 2;
             default:
                 return true;
         }
     });
 
     // Sort ordersInPeriod.
-    ordersInPeriod.sort((a, b) => b.date - a.date);
+    ordersInPeriod.sort((a, b) => b.ordered_date - a.ordered_date);
 
     const dispOrders = ordersInPeriod.map(order => {
-        const total = order.order_items.reduce((accum, oi) => accum + (oi.quantity * oi.price), 0);
+        const total = Math.round(order.order_items.reduce((accum, oi) => accum + (oi.quantity * oi.price), 0) * 100) / 100;
 
         const dispOrderedItems = order.order_items.map(oi => {
             return (
@@ -84,7 +84,7 @@ function Orders() {
                     marginTop: '10px', }}>
                     <div style={{margin: '16px 30px 16px 20px', }}>
                         <div style={{fontSize: '0.9em', }}>ORDER PLACED</div>
-                        <div style={{fontSize: '1.1em', }}>{formatDate(order.date)}</div>
+                        <div style={{fontSize: '1.1em', }}>{formatDate(order.ordered_date)}</div>
                     </div>
                     <div style={{margin: '16px 30px', }}>
                         <div style={{fontSize: '0.9em', }}>TOTAL</div>
@@ -98,6 +98,17 @@ function Orders() {
                 <div style={{display: 'grid', gridTemplateColumns: '1fr max-content',
                     borderRadius: '0 0 10px 10px', border: '1px solid lightgray', }}>
                     <div style={{margin: '5px 20px', }}>
+                        <div style={{fontSize: '1.5em', fontWeight: 'bold', color: 'darkcyan', 
+                            margin: '15px 0', 
+                        }}>
+                            {
+                                order.closed_date ? 
+                                    period <= 3 ?
+                                        formatDate(order.ordered_date).slice(0, -6) : 
+                                        formatDate(order.ordered_date) : 
+                                    'In progress'
+                            }
+                        </div>
                         {dispOrderedItems}
                     </div>
                     <div style={{margin: '15px 20px', }}>

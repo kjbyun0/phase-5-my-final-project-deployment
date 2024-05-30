@@ -98,15 +98,13 @@ function Orders() {
                 <div style={{display: 'grid', gridTemplateColumns: '1fr max-content',
                     borderRadius: '0 0 10px 10px', border: '1px solid lightgray', }}>
                     <div style={{margin: '5px 20px', }}>
-                        <div style={{fontSize: '1.5em', fontWeight: 'bold', color: 'darkcyan', 
-                            margin: '15px 0', 
-                        }}>
+                        <div style={{fontSize: '1.5em', fontWeight: 'bold', margin: '15px 0', }}>
                             {
-                                order.closed_date ? 
-                                    period <= 3 ?
-                                        formatDate(order.ordered_date).slice(0, -6) : 
-                                        formatDate(order.ordered_date) : 
-                                    'In progress'
+                                !order.closed_date ? 
+                                    <div style={{color: 'darkcyan', }}>In progress</div> : 
+                                    period <= 3 ? 
+                                        <div>Delivered {formatDate(order.ordered_date).slice(0, -6)}</div> :
+                                        <div>Delivered {formatDate(order.ordered_date)}</div>
                             }
                         </div>
                         {dispOrderedItems}

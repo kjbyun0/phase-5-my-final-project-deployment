@@ -16,97 +16,103 @@ function OrdersInProgress() {
     const itemOptions = [{key: -1, text: 'All', value: -1,}, ...otherItemOptions];
 
     async function handleOrderItem(orderItem, sellerItem) {
-        // const now = new Date();
-        // const year = now.getUTCFullYear();
-        // const month = String(now.getUTCMonth() + 1).padStart(2, '0');
-        // const day = String(now.getUTCDate()).padStart(2, '0');
-        // const hours = String(now.getUTCHours()).padStart(2, '0');
-        // const minutes = String(now.getUTCMinutes()).padStart(2, '0');
-        // const seconds = String(now.getUTCSeconds()).padStart(2, '0');
+        const now = new Date();
+        const year = now.getUTCFullYear();
+        const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(now.getUTCDate()).padStart(2, '0');
+        const hours = String(now.getUTCHours()).padStart(2, '0');
+        const minutes = String(now.getUTCMinutes()).padStart(2, '0');
+        const seconds = String(now.getUTCSeconds()).padStart(2, '0');
 
-        // const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         // console.log('formattedDate: ', formattedDate);
 
-        // let curOrder = null;
-        // await fetch(`/orders/${orderItem.order.id}`)
-        // .then(async r => {
-        //     await r.json().then(data => {
-        //         if (r.ok) {
-        //             curOrder = data;
-        //         } else {
-        //             if (r.status === 401 || r.status === 403) {
-        //                 console.log(data);
-        //                 alert(data.message);
-        //             } else {
-        //                 console.log("Server Error - Can't retrieve the order: ", data);
-        //                 alert(`Server Error - Can't retrieve the order: ${data.message}`);
-        //                 return;
-        //             }
-        //         }
-        //     })
-        // });
+        let curOrder = null;
+        await fetch(`/orders/${orderItem.order_id}`)
+        .then(async r => {
+            await r.json().then(data => {
+                if (r.ok) {
+                    curOrder = data;
+                } else {
+                    if (r.status === 401 || r.status === 403) {
+                        console.log(data);
+                        alert(data.message);
+                    } else {
+                        console.log("Server Error - Can't retrieve the order: ", data);
+                        alert(`Server Error - Can't retrieve the order: ${data.message}`);
+                        return;
+                    }
+                }
+            })
+        });
         // console.log('in handleOrderItem, curOrder: ', curOrder);
+        
+        await fetch(`/orderitems/${orderItem.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                processed_date: formattedDate,
+            })
+        })
+        .then(async r => {
+            await r.json().then(async data => {
+                if (r.ok) {
+                    const si = {
+                        ...sellerItem,
+                        order_items: sellerItem.order_items.map(oi => 
+                            oi.id === data.id ? {...oi, ...data} : oi),
+                    }
+                    // console.log('in handleOrderItem, sellerItem-after: ', si);
+                    onSetSellerItems(sellerItems.map(item => item.id === si.id ? si : item));
 
-        // await fetch(`/orderitems/${orderItem.id}`, {
-        //     method: 'PATCH',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({
-        //         processed_date: formattedDate,
-        //     })
-        // })
-        // .then(async r => {
-        //     await r.json().then(async data => {
-        //         if (r.ok) {
-        //             const si = sellerItem.order_items.map(oi => oi.id === data.id ? data : oi);
-        //             onSetSellerItems(sellerItems.map(item => item.id === si.id ? si : item));
+                    if (!curOrder) return;
+                    const isCompleteOrder = curOrder.order_items.reduce((acc, oi) => {
+                        return acc && (oi.id === data.id ? true : !!oi.processed_date);
+                    }, true);
+                    // console.log('in handleOrderItem, isCompleteOrder: ', isCompleteOrder);
 
-        //             if (!curOrder) return;
-        //             const isCompleteOrder = curOrder.order_items.reduce((acc, oi) => {
-        //                 return acc || (oi.id === data.id ? true : !!oi.processed_date);
-        //             }, true);
-        //             console.log('handleOrderItem, isCompleteOrder: ', isCompleteOrder);
-
-        //             if (isCompleteOrder) {
-        //                 await fetch(`/orders/${curOrder.id}`, {
-        //                     method: 'PATCH',
-        //                     headers: {
-        //                         'Content-Type': 'application/json',
-        //                     },
-        //                     body: JSON.stringify({
-        //                         closed_date: formattedDate,
-        //                     })
-        //                 })
-        //                 .then(async r => {
-        //                     await r.json().then(data => {
-        //                         if (r.ok) {
-        //                             // ??? - don't need to update order for seller account. 
-        //                             // please, check it out again.
-        //                         } else {
-        //                             if (r.status === 401 || r.status === 403) {
-        //                                 console.log(data);
-        //                                 alert(data.message);
-        //                             } else {
-        //                                 console.log("Server Error - Can't update the order: ", data);
-        //                                 alert(`Server Error - Can't update the order: ${data.message}`);
-        //                                 return;
-        //                             }
-        //                         }
-        //                     });
-        //                 });
-        //             }
-        //         } else {
-        //             if (r.status === 401 || r.status === 403) {
-        //                 console.log(data);
-        //                 alert(data.message);
-        //             } else {
-        //                 console.log("Server Error - Can't update an order item: ", data);
-        //                 alert(`Server Error - Can't update an order item: ${data.message}`);
-        //             }
-        //         }
-        //     })
-        // });
+                    if (isCompleteOrder) {
+                        await fetch(`/orders/${curOrder.id}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                closed_date: formattedDate,
+                            })
+                        })
+                        .then(async r => {
+                            await r.json().then(data => {
+                                if (r.ok) {
+                                    // ??? - don't need to update order for seller account. 
+                                    // please, check it out again.
+                                    // console.log('in handleOrderItem, after setting order closed_date: ', data);
+                                } else {
+                                    if (r.status === 401 || r.status === 403) {
+                                        console.log(data);
+                                        alert(data.message);
+                                    } else {
+                                        console.log("Server Error - Can't update the order: ", data);
+                                        alert(`Server Error - Can't update the order: ${data.message}`);
+                                        return;
+                                    }
+                                }
+                            });
+                        });
+                    }
+                } else {
+                    if (r.status === 401 || r.status === 403) {
+                        console.log(data);
+                        alert(data.message);
+                    } else {
+                        console.log("Server Error - Can't update an order item: ", data);
+                        alert(`Server Error - Can't update an order item: ${data.message}`);
+                    }
+                }
+            })
+        });
     }
 
     const filteredSellerItems = sellerItems.filter(item => filteritemId === -1 || item.id === filteritemId);

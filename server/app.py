@@ -11,6 +11,7 @@ from config import app, db, api
 # Add your model imports
 from models import User, Seller, Customer, Category, Item, CartItem, OrderItem, Order, Review
 import json
+from datetime import datetime
 
 app.secret_key=b'\xaf\x88\x87_\x1a\xf4\x97\x93f\xf5q\x0b\xad\xef,\xb3'
 
@@ -324,7 +325,12 @@ class Order_by_id(Resource):
         if o:
             try:
                 for key in req:
-                    setattr(o, key, req[key])
+                    if key != 'closed_date':
+                        setattr(o, key, req[key])
+                    else:
+                        d = datetime.strptime(req[key], '%Y-%m-%d %H:%M:%S')
+                        # setattr(o, key, db.func.now())
+                        setattr(o, key, d)
                 db.session.commit()
             except Exception as exc:
                 return make_response({
@@ -385,7 +391,12 @@ class OrderItem_by_id(Resource):
         if oi:
             try:
                 for key in req:
-                    setattr(oi, key, req[key])
+                    if key != 'processed_date':
+                        setattr(oi, key, req[key])
+                    else:
+                        d = datetime.strptime(req[key], '%Y-%m-%d %H:%M:%S')
+                        # setattr(oi, key, db.func.now())
+                        setattr(oi, key, d)
                 db.session.commit()
             except Exception as exc:
                 return make_response({

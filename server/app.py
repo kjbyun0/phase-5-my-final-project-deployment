@@ -309,6 +309,34 @@ class Orders(Resource):
         return make_response(order_dict, 201)
     
 class Order_by_id(Resource):
+    def get(self, id):
+        o = Order.query.filter_by(id=id).first()
+        if o:
+            return make_response(o.to_dict(), 200)
+        
+        return make_response({
+            'message': f'Order {id} not found.'
+        }, 404) 
+    
+    def patch(self, id):
+        req = request.get_json()
+        o = Order.query.filter_by(id=id).first()
+        if o:
+            try:
+                for key in req:
+                    setattr(o, key, req[key])
+                db.session.commit()
+            except Exception as exc:
+                return make_response({
+                    'message': f'{exc}',
+                }, 400)
+            
+            return make_response(o.to_dict(), 200)
+        
+        return make_response({
+            'message': f'Order {id} not found.'
+        })
+
     def delete(self, id):
         o = Order.query.filter_by(id=id).first()
         if o:
@@ -349,6 +377,27 @@ class OrderItems(Resource):
         if oi_dict.get('item'):
             apply_json_loads_to_item(oi_dict['item'])
         return make_response(oi_dict, 201)
+    
+class OrderItem_by_id(Resource):
+    def patch(self, id):
+        req = request.get_json()
+        oi = OrderItem.query.filter_by(id=id).first()
+        if oi:
+            try:
+                for key in req:
+                    setattr(oi, key, req[key])
+                db.session.commit()
+            except Exception as exc:
+                return make_response({
+                    'message': f'{exc}',
+                }, 400)
+
+            return make_response(oi.to_dict(), 200)
+        
+        return make_response({
+            'message': f'OrderItem {id} not found.',
+        }, 404)
+
     
 class Reviews(Resource):
     def post(self):
@@ -434,6 +483,7 @@ api.add_resource(CartItem_by_id, '/cartitems/<int:id>', endpoint='cartitem_by_id
 api.add_resource(Orders, '/orders') # Authentication required
 api.add_resource(Order_by_id, '/orders/<int:id>') # Authentication required
 api.add_resource(OrderItems, '/orderitems') # Authentication required
+api.add_resource(OrderItem_by_id, '/orderitems/<int:id>') # Authentication required
 api.add_resource(Reviews, '/reviews') # Authentication required
 api.add_resource(Review_by_id, '/reviews/<int:id>') # Authentication required
 api.add_resource(Reviews_by_itemId, '/reviews/items/<int:iid>', endpoint='reviews_by_itemid')

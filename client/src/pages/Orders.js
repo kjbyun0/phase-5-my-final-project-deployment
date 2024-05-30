@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import { applyUTCToOrders, formatDate } from '../components/common';
+import { applyUTCToOrder, formatDate } from '../components/common';
 import { Dropdown, Button, } from 'semantic-ui-react';
 
 function Orders() {
@@ -26,7 +26,7 @@ function Orders() {
     }
 
     // apply UTC time to ordered dates.
-    const ordersLocalTime = applyUTCToOrders(orders);
+    const ordersLocalTime = orders.map(order => applyUTCToOrder(order));
     // console.log('ordersLocalTime: ', ordersLocalTime);
 
     const thirtyDaysInMillisec = 1000 * 60 * 60 * 24 * 30;

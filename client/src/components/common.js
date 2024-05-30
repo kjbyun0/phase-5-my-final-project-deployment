@@ -196,16 +196,14 @@ function convertUTCDate(utcDate) {
     ));
 }
 
-function applyUTCToOrders(orders) {
-    return orders.map(order => {
-        return (
-            {
-                ...order,
-                ordered_date: convertUTCDate(order.ordered_date),
-                closed_date: order.closed_date ? convertUTCDate(order.ordered_date) : null,
-            }
-        );
-    });
+function applyUTCToOrder(order) {
+    return (
+        {
+            ...order,
+            ordered_date: convertUTCDate(order.ordered_date),
+            closed_date: order.closed_date ? convertUTCDate(order.ordered_date) : null,
+        }
+    );
 }
 
 
@@ -332,5 +330,5 @@ function dispRating(itemId, review, user, reviews, onSetReviews) {
 
 export { setUserInfo, dispPrice, dispListPrice, 
     handleCItemDelete, handleCItemAdd, handleCItemChange, 
-    formatDate, convertUTCDate, applyUTCToOrders, 
+    formatDate, convertUTCDate, applyUTCToOrder, 
     handleReviewDelete, handleReviewAdd, handleReviewChange, handleStarClick, dispRating };

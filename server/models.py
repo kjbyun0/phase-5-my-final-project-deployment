@@ -18,7 +18,10 @@ class User(db.Model, SerializerMixin):
         '-seller.items.category',
         '-seller.items.seller',
         '-seller.items.cart_items',
-        '-seller.items.order_items.order.customer',
+        '-seller.items.order_items.order.customer.user',
+        '-seller.items.order_items.order.customer.cart_items',
+        '-seller.items.order_items.order.customer.orders',
+        '-seller.items.order_items.order.customer.reviews',
         '-seller.items.order_items.order.order_items',
         '-seller.items.order_items.item',
         '-seller.items.reviews',
@@ -234,7 +237,8 @@ class Order(db.Model, SerializerMixin):
 
     serialize_rules = (
         '-customer',
-        'order_items',
+        '-order_items.order',
+        '-order_items.item',
     )
 
     id = db.Column(db.Integer, primary_key=True)

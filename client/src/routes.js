@@ -7,6 +7,7 @@ import Orders from './pages/Orders';
 import ReviewApp from './pages/ReviewApp';
 import ReviewList from './pages/ReviewList';
 import Review from './pages/Review';
+import OrdersInProgress from './pages/OrdersInProgress';
 import Signin from './pages/Signin';
 import Signout from './pages/Signout';
 import Signup from './pages/Signup';
@@ -51,6 +52,10 @@ const routes = [
                         element: <Review />
                     }
                 ],
+            },
+            {
+                path: '/ordersinprogress',
+                element: <OrdersInProgress />
             },
             {
                 path: '/signin',

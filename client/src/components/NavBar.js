@@ -36,21 +36,29 @@ function NavBar({ user, cartItems }) {
                 <NavLink to='/signout' className='nav-link'>Sign Out</NavLink> :
                 <NavLink to='/signin' className='nav-link'>Sign in</NavLink>
             }
-            <NavLink to='/orders' className='nav-link'>Orders</NavLink>
-            <NavLink to='/cart' className='nav-link'>
-                <div style={{display: 'grid', gridTemplateColumns: 'max-content max-content'}}>
-                    <IconGroup>
-                        <Icon name='cart' size='big' />
-                        <Icon >
-                            <div style={{fontFamily: 'sans-serif', fontSize: '0.8em', 
-                                fontWeight: 'bold', color: 'darkorange', marginLeft: '5px', }}>
-                                {cartItems.length}
-                            </div>
-                        </Icon>
-                    </IconGroup>
-                    <div style={{alignSelf: 'end', fontSize: '0.8em', fontWeight: 'bold'}}>Cart</div>
-                </div>
-            </NavLink>
+            {
+                user && user.seller ? 
+                <NavLink to='/ordersinprogress' className='nav-link'>Orders In Progress</NavLink> : 
+                <NavLink to='/orders' className='nav-link'>Orders</NavLink>
+            }
+            {
+                user && user.seller ? 
+                null : 
+                <NavLink to='/cart' className='nav-link'>
+                    <div style={{display: 'grid', gridTemplateColumns: 'max-content max-content'}}>
+                        <IconGroup>
+                            <Icon name='cart' size='big' />
+                            <Icon >
+                                <div style={{fontFamily: 'sans-serif', fontSize: '0.8em', 
+                                    fontWeight: 'bold', color: 'darkorange', marginLeft: '5px', }}>
+                                    {cartItems.length}
+                                </div>
+                            </Icon>
+                        </IconGroup>
+                        <div style={{alignSelf: 'end', fontSize: '0.8em', fontWeight: 'bold'}}>Cart</div>
+                    </div>
+                </NavLink>
+            }
         </nav>
     )
 }

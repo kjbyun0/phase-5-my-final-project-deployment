@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import { applyUTCToOrders, dispRating, } from '../components/common';
+import { applyUTCToOrder, dispRating, } from '../components/common';
 import { Button, Divider, CardGroup, Card, CardContent,} from 'semantic-ui-react';
 
 function ReviewList() {
@@ -123,14 +123,14 @@ function ReviewList() {
     }
 
     // Apply UTC time to order dates.
-    const ordersInUTC = applyUTCToOrders(orders);
+    const ordersLocalTime = orders.map(order => applyUTCToOrder(order));
     // Sort orders in descending order
-    ordersInUTC.sort((a, b) => b.date - a.date);
+    ordersLocalTime.sort((a, b) => b.date - a.date);
 
     // Get a list of ordered items, that are not reviewed, in descending order.
     const itemsNotReviewed = [];
     const itemsInList = {};
-    ordersInUTC.forEach(order => {
+    ordersLocalTime.forEach(order => {
         order.order_items.forEach(oi => {
             // oi.review_done must be fixed
             // if (!oi.review_done && !itemsInList.hasOwnProperty(oi.id)) {

@@ -147,9 +147,10 @@ function SearchResult() {
                 <Label>
                     <span style={{fontSize: '1.2em',  fontWeight: 'bold', }}>
                         {
-                            `${item.amounts[item.default_item_idx]} \
+                            `${item.amounts[item.default_item_idx].toLocaleString('en-US', 
+                                { minimumFractionDigits: 2, maximumFractionDigits: 2})} \
                             ${item.units[item.default_item_idx].charAt(0).toUpperCase() + item.units[item.default_item_idx].slice(1)} \
-                            (Pack of ${item.packs[item.default_item_idx]})`
+                            (Pack of ${item.packs[item.default_item_idx].toLocaleString('en-US')})`
                         }
                     </span>
                 </Label>

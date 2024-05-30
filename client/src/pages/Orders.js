@@ -88,7 +88,8 @@ function Orders() {
                     </div>
                     <div style={{margin: '16px 30px', }}>
                         <div style={{fontSize: '0.9em', }}>TOTAL</div>
-                        <div style={{fontSize: '1.1em', }}>${total}</div>
+                        <div style={{fontSize: '1.1em', }}>${total.toLocaleString('en-US', 
+                            { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                     </div>
                     <div style={{margin: '16px 30px', }}>
                         <div style={{fontSize: '0.9em', }}>SHIP TO</div>

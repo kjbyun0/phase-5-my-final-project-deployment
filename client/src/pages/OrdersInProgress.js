@@ -144,7 +144,8 @@ function OrdersInProgress() {
                                 {item.name}</div>
                             <ul style={{marginLeft: '15px', }}>
                                 <li>Ordered Date: {formatDate(oi.order.ordered_date)}</li>
-                                <li>Price: ${oi.price}</li>
+                                <li>Price: ${oi.price.toLocaleString('en-US', 
+                                    { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</li>
                             </ul>
                         </div>
                     </div>
@@ -155,13 +156,14 @@ function OrdersInProgress() {
                                 <span>Size: </span>
                                 <span>
                                     {
-                                        `${item.amounts[oi.item_idx]} \
+                                        `${item.amounts[oi.item_idx].toLocaleString('en-US', 
+                                            { minimumFractionDigits: 2, maximumFractionDigits: 2})} \
                                         ${item.units[oi.item_idx].charAt(0).toUpperCase() + 
-                                            item.units[oi.item_idx].slice(1)} (Pack of ${item.packs[oi.item_idx]})`
+                                            item.units[oi.item_idx].slice(1)} (Pack of ${item.packs[oi.item_idx].toLocaleString('en-US')})`
                                     }
                                 </span>
                             </li>
-                            <li style={{margin: '3px 0', }}>Quantity: {oi.quantity}</li>
+                            <li style={{margin: '3px 0', }}>Quantity: {oi.quantity.toLocaleString('en-US')}</li>
                             <li style={{margin: '3px 0', }}>Shipping Address: 
                                 <div>{oi.order.customer.first_name} {oi.order.customer.last_name}</div>
                                 <div>{oi.order.street_1}</div>
@@ -188,7 +190,7 @@ function OrdersInProgress() {
                     <div style={{fontSize: '2.0em', }}>Orders in progress</div>
                     <div>
                         <div style={{fontSize: '1.1em', marginTop: '20px', }}>
-                            <span>{'filter by '}</span>
+                            <span>{'Filter by '}</span>
                             <Dropdown button style={{fontSize: '1.1em', padding: '7px 10px', margin: '10px 0 0 0', 
                                 borderRadius: '10px', background: 'whitesmoke', border: '1px solid lightgray', 
                                 boxShadow: '0 2 10 10 red', }}

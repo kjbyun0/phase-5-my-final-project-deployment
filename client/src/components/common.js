@@ -25,15 +25,16 @@ function dispPrice(item, idx) {
         <>
             <span style={{fontSize: '1em', verticalAlign: '50%', }}>$</span>
             <span style={{fontSize: '2em', }}>
-                {Math.floor(item.discount_prices[idx])}
+                {(Math.floor(item.discount_prices[idx]).toLocaleString('en-US'))}
             </span>
             <span style={{fontSize: '1em', verticalAlign: '50%', marginRight: '5px', }}>
                 {Math.round((item.discount_prices[idx] - 
                     Math.floor(item.discount_prices[idx]))*100)}
             </span>
             <span style={{fontSize: '1em', verticalAlign: '30%', }}>
-                $({Math.round(item.discount_prices[idx] / 
-                    (item.amounts[idx] * item.packs[idx])*100)/100} 
+                $({(Math.round(item.discount_prices[idx] / 
+                    (item.amounts[idx] * item.packs[idx])*100)/100).toLocaleString('en-US', 
+                        { minimumFractionDigits: 2, maximumFractionDigits: 2 })} 
                 / {item.units[idx]})
             </span>
         </>
@@ -42,7 +43,8 @@ function dispPrice(item, idx) {
 
 function dispListPrice(item, idx) {
     return (
-        <span><s>${item.prices[idx]}</s></span>
+        <span><s>${(item.prices[idx]).toLocaleString('en-US', 
+            { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</s></span>
     );
 }
 

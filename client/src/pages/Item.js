@@ -480,9 +480,10 @@ function Item() {
                                 <span style={{fontSize: '1.2em', marginRight: '10px', }}>Size:</span>
                                 <span style={{fontSize: '1.2em',  fontWeight: 'bold', }}>
                                     {
-                                        `${item.amounts[activeItemIdx]} \
+                                        `${item.amounts[activeItemIdx].toLocaleString('en-US', 
+                                            { minimumFractionDigits: 2, maximumFractionDigits:2 })} \
                                         ${item.units[activeItemIdx].charAt(0).toUpperCase() + item.units[activeItemIdx].slice(1)} \
-                                        (Pack of ${item.packs[activeItemIdx]})`
+                                        (Pack of ${item.packs[activeItemIdx].toLocaleString('en-US')})`
                                     }
                                 </span>
                             </div>

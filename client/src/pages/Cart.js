@@ -265,7 +265,8 @@ function Cart() {
                             Subtotal ({cartItems.length} {cartItems.length <= 1 ? 'item' : 'items'}):
                         </span>
                         <span style={{fontSize: '1.5em', fontWeight: 'bold', }}>
-                            ${Math.round(subTotal*100)/100}
+                            ${(Math.round(subTotal*100)/100).toLocaleString('en-US', 
+                                { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                     </> : 
                     <span style={{fontSize: '1.5em', marginRight: '10px', }}>No items selected</span>
@@ -340,7 +341,7 @@ function Cart() {
                     margin: '10px', }}>
                     <div></div>
                     <div style={{fontSize: '1.4em', fontWeight: 'bold', marginRight: '10px', }}>
-                        ${itemTotal}
+                        ${itemTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                 </div>
             </div>

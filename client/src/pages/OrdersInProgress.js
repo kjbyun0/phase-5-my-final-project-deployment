@@ -16,16 +16,16 @@ function OrdersInProgress() {
     const itemOptions = [{key: -1, text: 'All', value: -1,}, ...otherItemOptions];
 
     async function handleOrderItem(orderItem, sellerItem) {
-        const now = new Date();
-        const year = now.getUTCFullYear();
-        const month = String(now.getUTCMonth() + 1).padStart(2, '0');
-        const day = String(now.getUTCDate()).padStart(2, '0');
-        const hours = String(now.getUTCHours()).padStart(2, '0');
-        const minutes = String(now.getUTCMinutes()).padStart(2, '0');
-        const seconds = String(now.getUTCSeconds()).padStart(2, '0');
+        const curDate = new Date();
+        const year = curDate.getUTCFullYear();
+        const month = String(curDate.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(curDate.getUTCDate()).padStart(2, '0');
+        const hours = String(curDate.getUTCHours()).padStart(2, '0');
+        const minutes = String(curDate.getUTCMinutes()).padStart(2, '0');
+        const seconds = String(curDate.getUTCSeconds()).padStart(2, '0');
 
-        const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-        // console.log('formattedDate: ', formattedDate);
+        const curDateUTC = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        // console.log('curDateUTC: ', curDateUTC);
 
         let curOrder = null;
         await fetch(`/orders/${orderItem.order_id}`)
@@ -53,7 +53,7 @@ function OrdersInProgress() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                processed_date: formattedDate,
+                processed_date: curDateUTC,
             })
         })
         .then(async r => {
@@ -80,7 +80,7 @@ function OrdersInProgress() {
                                 'Content-Type': 'application/json',
                             },
                             body: JSON.stringify({
-                                closed_date: formattedDate,
+                                closed_date: curDateUTC,
                             })
                         })
                         .then(async r => {
@@ -186,12 +186,13 @@ function OrdersInProgress() {
         <div style={{display: 'grid', gridTemplateColumns: '1fr 800px 1fr', margin: '40px 0'}}>
             <div />
             <div>
-                <div style={{display: 'grid', gridTemplateColumns: '1fr max-content', alignItems: 'center',}}>
-                    <div style={{fontSize: '2.0em', }}>Orders in progress</div>
+                <div style={{display: 'grid', gridTemplateColumns: '1fr max-content', alignItems: 'end', 
+                    margin: '10px 0', }}>
+                    <div style={{alignSelf: 'center', fontSize: '2.0em', }}>Orders in progress</div>
                     <div>
-                        <div style={{fontSize: '1.1em', marginTop: '20px', }}>
+                        <div style={{fontSize: '1.1em', }}>
                             <span>{'Filter by '}</span>
-                            <Dropdown button style={{fontSize: '1.1em', padding: '7px 10px', margin: '10px 0 0 0', 
+                            <Dropdown button style={{fontSize: '1.1em', padding: '7px 10px', 
                                 borderRadius: '10px', background: 'whitesmoke', border: '1px solid lightgray', 
                                 boxShadow: '0 2 10 10 red', }}
                                 options={itemOptions} 

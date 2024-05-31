@@ -1,17 +1,50 @@
+import { useState, forwardRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
+import { convertUTCDate } from '../components/common';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { format } from 'date-fns';
+import { Input } from 'semantic-ui-react';
 
 
 function SalesPerf() {
     const { user, sellerItems } = useOutletContext();
-    
+    const [ periodStart, setPeriodStart ] = useState(initStartDate());
+    const [ periodEnd, setPeriodEnd] = useState(initEndDate());
+
+    console.log('in SalesPerf, periodStart: ', periodStart, ', periodEnd: ', periodEnd);
     console.log('in SalesPerf, sellerItems: ', sellerItems);
+
+    function initStartDate() {
+        const d = new Date();
+        d.setHours(0); d.setMinutes(0); d.setSeconds(0); d.setMilliseconds(0);
+        d.setDate(d.getDate() - 7);
+        return d;
+    }
+
+    function initEndDate() {
+        const d = new Date();
+        d.setHours(23); d.setMinutes(59); d.setSeconds(59); d.setMilliseconds(999);
+        return d;
+    }
+
+    const CustomInput = forwardRef(({ value, onClick }, ref) => (
+        <Input style={{width: '120px', height: '30px',}} 
+            value={value} onClick={onClick} ref={ref} />
+      ));
 
     const dispSalesPerfs = sellerItems.map(item => {
         const itemSalesPerf = item.order_items.reduce((acc, oi) => {
             if (oi.processed_date) {
-                acc.netSales += (oi.price * oi.quantity);
-                acc.salesCnt += 1;
-                acc.totalQty += oi.quantity;
+                const processed_dateUTC = convertUTCDate(oi.processed_date);
+                // console.log('oi: ', oi, ', processed_dateUTC: ', processed_dateUTC);
+                // if ((periodStart && periodEnd && processed_dateUTC >= periodStart && processed_dateUTC <= periodEnd) || 
+                //     (!periodStart || !periodEnd)) {
+                if (processed_dateUTC >= periodStart && processed_dateUTC <= periodEnd) {
+                    acc.netSales += (oi.price * oi.quantity);
+                    acc.salesCnt += 1;
+                    acc.totalQty += oi.quantity;
+                }
             } else {
                 acc.netSalesSalesIP += (oi.price * oi.quantity);
                 acc.salesCntSalesIP += 1;
@@ -36,7 +69,7 @@ function SalesPerf() {
         itemSalesPerf.avgPriceSalesIP = !itemSalesPerf.totalQtySalesIP ? 
             0 : itemSalesPerf.netSalesSalesIP / itemSalesPerf.totalQtySalesIP;
 
-        console.log('SalesPerf, itemSalesPerf: ', itemSalesPerf);
+        // console.log('SalesPerf, itemSalesPerf: ', itemSalesPerf);
 
         return (
             <div key={`${item.id}`} style={{marginTop: '10px', }}>
@@ -94,17 +127,25 @@ function SalesPerf() {
         <div style={{display: 'grid', gridTemplateColumns: '1fr 800px 1fr', margin: '40px 0'}}>
             <div />
             <div>
-                <div style={{display: 'grid', gridTemplateColumns: '1fr max-content', alignItems: 'center',}}>
-                    <div style={{fontSize: '2.0em', }}>Sales Performance</div>
-                    <div>
-                        <div style={{fontSize: '1.1em', marginTop: '20px', }}>
-                            <span>{'Period: '}</span>
-                            {/* <Dropdown button style={{fontSize: '1.1em', padding: '7px 10px', margin: '10px 0 0 0', 
-                                borderRadius: '10px', background: 'whitesmoke', border: '1px solid lightgray', 
-                                boxShadow: '0 2 10 10 red', }}
-                                options={itemOptions} 
-                                value={filteritemId} onChange={(e, d) => setFilterItemId(d.value)}/> */}
-                        </div>
+                <div style={{display: 'grid', gridTemplateColumns: '1fr max-content max-content max-content max-content', 
+                    alignItems: 'center', margin: '10px 0', fontSize: '1.1em'}}>
+                    <div style={{alignSelf: 'center', fontSize: '2.0em', }}>Sales Performance</div>
+                    <div style={{marginRight: '5px', }}>{'Period: '}</div>
+                    <div >
+                        <DatePicker style={{border: '1px solid lightgray', }} 
+                            showIcon selected={periodStart} onChange={(d) => setPeriodStart(d)} 
+                            dateFormat="yyyy-MM-dd" 
+                            customInput={<CustomInput />} />
+                    </div>
+                    <div style={{margin: '0 5px', }}>~</div>
+                    <div >
+                        <DatePicker style={{}} 
+                            showIcon selected={periodEnd} onChange={(d) => {
+                                d.setHours(23); d.setMinutes(59); d.setSeconds(59); d.setMilliseconds(999);
+                                setPeriodEnd(d);
+                            }} 
+                            dateFormat="yyyy-MM-dd" 
+                            customInput={<CustomInput />} />
                     </div>
                 </div>
                 <div style={{marginTop: '20px', }}>{dispSalesPerfs}</div>

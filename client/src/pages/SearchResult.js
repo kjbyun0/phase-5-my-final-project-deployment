@@ -197,7 +197,7 @@ function SearchResult() {
                 </div>
                 {/* <Menu compact size='tiny' style={{float: 'inline-end', }}> */}
                 <Dropdown options={sortOptions} simple item button 
-                    text='Dropdown' value={sort} onChange={(e, d) => setSort(d.value)} />
+                    text={`Sort by: ${sortOptions[sort-1].text}`} value={sort} onChange={(e, d) => setSort(d.value)} />
             </div>
             <hr style={{boxShadow: '0 2px 6px 1px lightgray'}}/>
             <div style={{ padding: '15px', width: '100%', height: '100%', }}>

@@ -59,6 +59,11 @@ function NavBar({ user, cartItems }) {
                     </div>
                 </NavLink>
             }
+            {
+                user && user.seller ?
+                <NavLink to='/additem' className='nav-link'>Add Product</NavLink> : 
+                null
+            }
         </nav>
     )
 }

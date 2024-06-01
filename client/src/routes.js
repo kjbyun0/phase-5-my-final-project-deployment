@@ -9,6 +9,7 @@ import ReviewList from './pages/ReviewList';
 import Review from './pages/Review';
 import OrdersInProgress from './pages/OrdersInProgress';
 import SalesPerf from './pages/SalesPerf';
+import AddItem from './pages/AddItem';
 import Signin from './pages/Signin';
 import Signout from './pages/Signout';
 import Signup from './pages/Signup';
@@ -61,6 +62,10 @@ const routes = [
             {
                 path: '/salesperf',
                 element: <SalesPerf />,
+            },
+            {
+                path: '/additem',
+                element: <AddItem />,
             },
             {
                 path: '/signin',

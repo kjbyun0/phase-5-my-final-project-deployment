@@ -208,6 +208,38 @@ class Search(Resource):
         return make_response(results, 200)
 
 
+class Items(Resource): 
+    def post(self):
+        req = request.get_json()
+        try:
+            item = Item(
+                name = req.get('name'),
+                brand = req.get('brand'),
+                default_item_idx = req.get('default_item_idx'),
+                prices = json.dumps(req.get('prices')),
+                discount_prices = json.dumps(req.get('discount_prices')),
+                amounts = json.dumps(req.get('amounts')),
+                units = json.dumps(req.get('units')),
+                packs = json.dumps(req.get('packs')),
+                about_item = json.dumps(req.get('about_item')),
+                details_1 = json.dumps(req.get('details_1')),
+                details_2 = json.dumps(req.get('details_2')),
+                card_thumbnail = req.get('card_thumbnail'),
+                thumbnails = json.dumps(req.get('thumbnails')),
+                images = json.dumps(req.get('images')),
+                category_id = req.get('category_id'),
+                seller_id = req.get('seller_id'),
+            )
+            db.session.add(item)
+            db.session.commit()
+        except Exception as exc:
+            return make_response({
+                'message': f'{exc}',
+            }, 400)
+        
+        return make_response(apply_json_loads_to_item(item.to_dict()), 201)
+
+
 class Item_by_id(Resource):
     def get(self, id):
         item = Item.query.filter_by(id=id).first()
@@ -242,6 +274,7 @@ class CartItems(Resource):
         if ci_dict.get('item'):
             apply_json_loads_to_item(ci_dict['item'])
         return make_response(ci_dict, 201)
+
 
 class CartItem_by_id(Resource):
     def patch(self, id):
@@ -282,6 +315,7 @@ class CartItem_by_id(Resource):
             'message': f'Cart Item {id} not found.',
         }, 404)
 
+
 class Orders(Resource):
     def post(self):
         req = request.get_json()
@@ -308,7 +342,8 @@ class Orders(Resource):
             if order_item.get('item'):
                 apply_json_loads_to_item(order_item['item'])
         return make_response(order_dict, 201)
-    
+
+
 class Order_by_id(Resource):
     def get(self, id):
         o = Order.query.filter_by(id=id).first()
@@ -359,6 +394,7 @@ class Order_by_id(Resource):
             'message': f'Order {id} not found.',
         }, 404)
 
+
 class OrderItems(Resource):
     def post(self):
         req = request.get_json()
@@ -383,7 +419,8 @@ class OrderItems(Resource):
         if oi_dict.get('item'):
             apply_json_loads_to_item(oi_dict['item'])
         return make_response(oi_dict, 201)
-    
+
+
 class OrderItem_by_id(Resource):
     def patch(self, id):
         req = request.get_json()
@@ -434,7 +471,8 @@ class Reviews(Resource):
         if r_dict.get('item'):
             apply_json_loads_to_item(r_dict['item'])
         return make_response(r_dict, 201)
-    
+
+
 class Review_by_id(Resource):
     def patch(self, id):
         req = request.get_json()
@@ -488,6 +526,7 @@ api.add_resource(Authenticate, '/authenticate', endpoint='authenticate')
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(Customer_by_id, '/customers/<int:id>') # Authentication required
 api.add_resource(Search, '/search/<string:keys>', endpoint='search')
+api.add_resource(Items, '/items') # Authentication required because we are using it to post an item... ???*** Think about checking authentication only for POST request.
 api.add_resource(Item_by_id, '/items/<int:id>', endpoint='item_by_id')
 api.add_resource(CartItems, '/cartitems', endpoint='cartitems') # Authentication required
 api.add_resource(CartItem_by_id, '/cartitems/<int:id>', endpoint='cartitem_by_id') # Authentication required

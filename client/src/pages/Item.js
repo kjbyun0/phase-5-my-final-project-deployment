@@ -32,7 +32,7 @@ function Item() {
             value: i
         });
 
-    console.log('In Item, user: ', user, ', it1em: ', item, ', cartItems: ', cartItems, 
+    console.log('In Item, user: ', user, ', item: ', item, ', cartItems: ', cartItems, 
         ', orders: ', orders, ', itemReviews: ', itemReviews);
     console.log('quantity: ', quantity);
     console.log('avgRating: ', avgRating, ', starCounts: ', starCounts);

@@ -4,7 +4,7 @@ import { dispPrice, dispListPrice, handleCItemAdd, handleCItemChange,
     formatDate, convertUTCDate, } from '../components/common';
 import { useFormik, FormikProvider, FieldArray, } from 'formik';
 import * as yup from 'yup';
-import { Divider, Form, TextArea, Input, Button, Icon, Radio, } from 'semantic-ui-react';
+import { Divider, Form, TextArea, Input, Button, Icon, Radio, FormField, } from 'semantic-ui-react';
 
 
 function AddItem() {
@@ -232,6 +232,21 @@ function AddItem() {
         );
     }
 
+    function handleAddKVPair() {
+        const key = formik.values.newKVPair?.key;
+        const value = formik.values.newKVPair?.value;
+        if (key && value) {
+            formik.setFieldValue(`details_1.${key}`, value);
+            formik.setFieldValue('newKVPair.key', '');
+            formik.setFieldValue('newKVPair.value', '');
+        }
+    }
+
+    function handleRemoveKVPair(key) {
+        delete formik.values.details_1[key];
+        formik.setFieldValue('details_1', formik.values.details_1);
+    }
+
     console.log('onSubmit, values: ', formik.values);
 
     return (
@@ -276,7 +291,46 @@ function AddItem() {
                     </div>
                     {/* Product details_1 */}
                     <div style={{marginTop: '20px', }}>
-                        {/* {dispDetail_1()} */}
+                        <div style={{fontSize: '1.2em', marginRight: '10px', }}>Product details - 1</div>
+                        {
+                            Object.keys(formik.values.details_1).map((key) => {
+                                return (
+                                    <div key={key} 
+                                        style={{display: 'grid', gridTemplateColumns: '1fr 1.5fr 1fr', 
+                                        alignItems: 'center'}}>
+                                        <div style={{width: '210px', }}>{key}</div>
+                                        <div style={{width: '310px', }}>{formik.values.details_1[key]}</div>
+                                        <Icon 
+                                            name='minus circle' size='large' color='red' 
+                                            style={{margin: '4.5px 0'}} 
+                                            onClick={() => handleRemoveKVPair(key)}
+                                        />
+                                    </div>
+                                );
+                            })
+                        }
+                        <div style={{display: 'grid', gridTemplateColumns: '1fr 1.5fr 1fr', 
+                            alignItems: 'center'}}>
+                            <Input 
+                                id='key' name='newKVPair.key' 
+                                style={{width: '210px', height: '30px', }} 
+                                value={formik.values.newKVPair?.key || ''}
+                                onChange={formik.handleChange}
+                            />
+                            <Input 
+                                id='value' name='newKVPair.value' 
+                                style={{width: '310px', height: '30px', }}
+                                value={formik.values.newKVPair?.value || ''}
+                                onChange={formik.handleChange}
+                            />
+                            <Icon 
+                                name='plus circle' size='large' color='blue' 
+                                style={{margin: '4.5px 0'}}
+                                onClick={handleAddKVPair}
+                            />
+                        </div>
+
+
                     </div>
                     <Divider />
                     <div style={{marginTop: '20px', }}>

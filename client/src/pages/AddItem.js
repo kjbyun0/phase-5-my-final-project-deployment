@@ -4,6 +4,7 @@ import { dispPrice, dispListPrice, handleCItemAdd, handleCItemChange,
     formatDate, convertUTCDate, } from '../components/common';
 import { useFormik, FormikProvider, FieldArray, } from 'formik';
 import * as yup from 'yup';
+import ImgDropzone from '../components/ImgDropzone';
 import { Divider, Form, TextArea, Input, Button, Icon, Radio, FormField, } from 'semantic-ui-react';
 
 
@@ -11,11 +12,8 @@ function AddItem() {
 
     const [ activeItemIdx, setActiveItemIdx ] = useState(null);
     const [ activeImageIdx, setActiveImageIdx ] = useState(null);
-    
     const { user, cartItems, onSetCartItems, orders, onSetOrders, } = useOutletContext();
     const navigate = useNavigate();
-    
-    // console.log('In Item, user: ', user, ', cartItems: ', cartItems, ', orders: ', orders);
 
     const formSchema = yup.object().shape({
         // need to be tested and the apply to similar oens, too.
@@ -74,6 +72,22 @@ function AddItem() {
             })
         },
     });
+
+    const [imgFiles, setImgFiles] = useState({});
+
+    function handleImgDrop(acceptedFiles) {
+        const imgFilesTmp = {...imgFiles};
+        acceptedFiles.forEach(file => imgFilesTmp[file.path] = {
+            ...file,
+            preview: URL.createObjectURL(file),
+        });
+        setImgFiles(imgFilesTmp);
+    };
+
+    console.log('imgFiles: ', imgFiles);
+    console.log('in AddItem, formik values: ', formik.values);
+    // console.log('In Item, user: ', user, ', cartItems: ', cartItems, ', orders: ', orders);
+
 
     // function dispAllSizes() {
     //     // console.log('activeItemIdx: ', activeItemIdx);
@@ -294,22 +308,26 @@ function AddItem() {
         );
     }
 
-
-
-
-
-
-
-
-
-    console.log('onSubmit, values: ', formik.values);
-
     return (
         <div style={{ padding: '15px', width: '100%', height: '100%', }}>
             <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', }} >
     
                 {/* Images */}
                 <div>
+                    <div style={{display: 'flex', flexWrap: 'wrap', marginTop: '20px',}}>
+                        {
+                            Object.keys(imgFiles).map((key, i) => {
+                                return (
+                                    <div key={i} style={{margin: '10px', }} >
+                                        <img src={imgFiles[key].preview} alt={imgFiles[key].name} 
+                                            style={{width: '20px', height: '20px', objectFit: 'cover',}} />
+                                    </div>
+                                );
+                            })
+                        }
+                    </div>
+                    <ImgDropzone onDrop={handleImgDrop} /> 
+
                     {/* <div className='sticky'>
                         <div style={{display: 'grid', gridTemplateColumns: '10% 90%',
                             width: '100%', height: '100%', margin: '14px', }}>
@@ -346,7 +364,7 @@ function AddItem() {
                     </div>
                     {/* Product details_1 */}
                     <div style={{marginTop: '20px', }}>
-                        <div style={{marginBottom: '10px', fontSize: '1.2em', fontWeight: 'bold', }}>Product details - 1:</div>
+                        <div style={{marginBottom: '10px', fontSize: '1.2em', fontWeight: 'bold', }}>Product details 1:</div>
                         {dispKVPair('details_1')}
                         {addKVPair('details_1')}
                     </div>
@@ -399,7 +417,7 @@ function AddItem() {
             {/* Product details_2 */}
             <Divider />
             <div>
-                <div style={{fontSize: '1.8em', fontWeight: 'bold', marginTop: '20px'}}>Product details:</div>
+                <div style={{fontSize: '1.8em', fontWeight: 'bold', marginTop: '20px', marginBottom: '10px',}}>Product details 2:</div>
                 {dispKVPair('details_2')}
                 {addKVPair('details_2')}
             </div>

@@ -23,11 +23,6 @@ function AddItem() {
           )
     });
 
-    const pricesFn = {insert: null, remove: null, push: null};
-    const discount_pricesFn = {insert: null, remove: null, push: null};
-    const amountsFn = {insert: null, remove: null, push: null};
-    const unitsFn = {insert: null, remove: null, push: null};
-    const packsFn = {insert: null, remove: null, push: null};
     const formik = useFormik({
         initialValues: {
             name: '',
@@ -39,8 +34,12 @@ function AddItem() {
             units: [''],
             packs: [''],
             about_item: [''], // bullet points
-            details_1: {},
-            details_2: {},
+            // details_1: {},
+            details_1_key: [''],
+            details_1_val: [''],
+            // details_2: {},
+            details_2_key: [''],
+            details_2_val: [''],
             card_thumbnail: '',
             thumbnails: [],
             images: [],
@@ -110,6 +109,27 @@ function AddItem() {
         },
     });
 
+    const pricesFA = {value: 'prices', placeholder: 'Price', insert: null, remove: null, push: null, width: '100px', };
+    const discount_pricesFA = {value: 'discount_prices', placeholder: 'Dis. Price', insert: null, remove: null, push: null, width: '100px', };
+    const amountsFA = {value: 'amounts', placeholder: 'Volume', insert: null, remove: null, push: null, width: '100px', };
+    const unitsFA = {value: 'units', placeholder: 'Vol. Unit', insert: null, remove: null, push: null, width: '100px', };
+    const packsFA = {value: 'packs', placeholder: 'Unit Pack', insert: null, remove: null, push: null, width: '100px', };
+    const priceSizeFAs = [pricesFA, discount_pricesFA, amountsFA, unitsFA, packsFA];
+
+    const aboutThisItemFAs = [{value: 'about_item', placeholder: '', insert: null, remove: null, push: null, width: '520px', }];
+
+    const details_1_FAs = [
+        {value: 'details_1_key', placeholder: '', insert: null, remove: null, push: null, width: '210px', },
+        {value: 'details_1_val', placeholder: '', insert: null, remove: null, push: null, width: '334.77px', }
+    ];
+
+    const details_2_FAs = [
+        {value: 'details_2_key', placeholder: '', insert: null, remove: null, push: null, width: '210px', },
+        {value: 'details_2_val', placeholder: '', insert: null, remove: null, push: null, width: '334.77px', }
+    ];
+
+
+
     function handleImgDrop(acceptedFiles) {
         const imgFilesDict = {};
         imgFiles.forEach(file => imgFilesDict[file.name] = file);
@@ -134,115 +154,35 @@ function AddItem() {
     // console.log('In Item, user: ', user, ', cartItems: ', cartItems, ', orders: ', orders);
 
 
-    // function dispAllSizes() {
-    //     // console.log('activeItemIdx: ', activeItemIdx);
-    //     const packs = item.packs.map((pack, i) => {
-    //         return (
-    //             <div key={pack} className={`${i === activeItemIdx ? 'size-active-link' : 'size-link'} link`}
-    //                 onClick={() => setActiveItemIdx(i)}>
-    //                 {
-    //                     `${item.amounts[i]} \
-    //                     ${item.units[i].charAt(0).toUpperCase() + item.units[i].slice(1)} \
-    //                     (Pack of ${pack})`
-    //                 }
-    //             </div>
-    //         );
-    //     });
-    //     return packs;
-    // }
-
-    // function dispDetail_1() {
-    //     return (
-    //         <Table style={{border: '0'}}>
-    //             <TableBody>
-    //                 {
-    //                     Object.keys(item.details_1).map(key =>
-    //                         <TableRow key={key}>
-    //                             <TableCell style={{width: '40%', fontWeight: 'bold', paddingLeft: '0', }}>{key}</TableCell>
-    //                             <TableCell style={{width: '60%', paddingLeft: '0', }}>{item.details_1[key]}</TableCell>
-    //                         </TableRow>
-    //                     )
-    //                 }
-    //             </TableBody>
-    //         </Table>
-    //     );
-    // }
-
-    // function dispDetail_2() {
-    //     return (
-    //         <div style={{margin: '15px', fontSize: '1.1em'}}>
-    //             {
-    //                 Object.keys(item.details_2).map(key =>
-    //                     <div key={key} style={{marginBottom: '8px', }}>
-    //                         <span style={{fontWeight: 'bold', }}>{`${key} : `}</span>
-    //                         <span>{item.details_2[key]}</span>
-    //                     </div>
-    //                 )
-    //             }
-    //         </div>
-    //     );
-    // }
-
-    // function dispAboutItem() {
-    //     return (
-    //         <ul style={{marginLeft: '15px', }}>
-    //             {item.about_item.map((info, i) =>
-    //                 <li key={i}>{info}</li>
-    //             )}
-    //         </ul>
-    //     );
-    // }
-
-    // function handleThumnailMouseEnter(idx) {
-    //     console.log('handleThumnailMouseEnter, idx: ', idx);
-    //     setActiveImageIdx(idx);
-    // }
-
-    // function dispThumbnails() {
-    //     return item.thumbnails.map((thumbnail, i) =>
-    //         <Image key={i} className='item-thumbnail'
-    //             src={thumbnail}
-    //             onMouseEnter={() => handleThumnailMouseEnter(i)}
-    //         />
-    //     );
-    // }
-
-    function addItemCats(faName, placeholder,func) {
+    function addFieldArrays(fieldArrays, bUpdateRadioBtn) {
+        const gridColumnsRadio = fieldArrays.map(fa => '1fr');
+        // For insert buttons
+        gridColumnsRadio.push('1fr');
+        // For remove buttons
+        gridColumnsRadio.push('1fr');
+        if (bUpdateRadioBtn)
+            gridColumnsRadio.push('1fr');
+        const gridColumnsRadioStr = gridColumnsRadio.join(' ');
+        // console.log('in addFieldArrays, gridColumnsRadioStr: ', gridColumnsRadioStr);
+        
         return (
-            <FormikProvider value={formik}>
-                <FieldArray name={faName}>
-                    {({ insert, remove, push }) => {
-                        func.insert = insert;
-                        func.remove = remove;
-                        func.push = push;
 
-                        return (
-                            <div>{
-                                formik.values[faName].map((val, i) => (
-                                    <div key={i}>
-                                        <Input name={`${faName}.${i}`}
-                                            style={{width: '100px', height: '30px', }} placeholder={placeholder}
-                                            value={formik.values[faName][i]}
-                                            onChange={formik.handleChange} onBlur={formik.handleBlur} />
-                                        {
-                                            formik.errors[faName] && formik.errors[faName][i] &&
-                                            formik.touched[faName] && formik.touched[faName][i] ?
-                                            <div>{formik.errors[faName][i]}</div> :
-                                            null
-                                        }
-                                    </div>
-                                ))
-                            }</div>
-                        );
-                    }}
-                </FieldArray>
-            </FormikProvider>
+            <div style={{display: 'grid', gridTemplateColumns: gridColumnsRadioStr, alignItems: 'center', }}>
+                {bUpdateRadioBtn ?<div>{addRadioBtns(fieldArrays[0])}</div> : null}
+                {
+                    fieldArrays.map(fa => (
+                        <div>{addFieldArray(fa)}</div>
+                    ))
+                }
+                <div>{addInsertBtns(fieldArrays)}</div>
+                <div>{addRemoveBtns(fieldArrays, bUpdateRadioBtn)}</div>
+            </div>
         );
     }
 
-    function addItemCatRadioBtns() {
+    function addRadioBtns(fieldArray) {
         return (
-            formik.values.prices.map((prices, i) => (
+            formik.values[fieldArray.value].map((val, i) => (
                 <Radio
                     key={i}
                     style={{margin: '7.5px 5px 2.8px 0', }}
@@ -255,101 +195,70 @@ function AddItem() {
         );
     }
 
-    function addItemCatInsertBtns() {
+    function addFieldArray(fieldArray) {
         return (
-            formik.values.prices.map((price, i) => (
+            <FormikProvider value={formik}>
+                <FieldArray name={fieldArray.value}>
+                    {({ insert, remove, push }) => {
+                        fieldArray.insert = insert;
+                        fieldArray.remove = remove;
+                        fieldArray.push = push;
+
+                        return (
+                            <div>{
+                                formik.values[fieldArray.value].map((val, i) => (
+                                    <div key={i}>
+                                        <Input name={`${fieldArray.value}.${i}`}
+                                            style={{width: fieldArray.width, height: '30px', }} 
+                                            placeholder={fieldArray.placeholder}
+                                            value={formik.values[fieldArray.value][i]}
+                                            onChange={formik.handleChange} onBlur={formik.handleBlur} />
+                                        {
+                                            formik.errors[fieldArray.value] && formik.errors[fieldArray.value][i] &&
+                                            formik.touched[fieldArray.value] && formik.touched[fieldArray.value][i] ?
+                                            <div>{formik.errors[fieldArray.value][i]}</div> :
+                                            null
+                                        }
+                                    </div>
+                                ))
+                            }</div>
+                        );
+                    }}
+                </FieldArray>
+            </FormikProvider>
+        );
+    }
+
+    function addInsertBtns(fieldArrays) {
+        return (
+            formik.values[fieldArrays[0].value].map((val, i) => (
                 <Icon
                     name='plus circle' size='large' color='blue'
                     style={{margin: '4.5px 0'}}
                     onClick={() => {
-                        pricesFn.insert(i+1, '');
-                        discount_pricesFn.insert(i+1, '');
-                        amountsFn.insert(i+1, '');
-                        unitsFn.insert(i+1, '');
-                        packsFn.insert(i+1, '');
+                        fieldArrays.forEach(fa => {
+                            fa.insert(i+1, '');
+                        });
                     }} />
             ))
         );
     }
 
-    function addItemCatRemoveBtns() {
+    function addRemoveBtns(fieldArrays, bUpdateRadioBtn) {
         return (
-            formik.values.prices.map((price, i) => (
+            formik.values[fieldArrays[0].value].map((val, i) => (
                 <Icon
                     name='minus circle' size='large' color='red' disabled={i === 0}
                     style={{margin: '4.5px 0'}}
                     onClick={() => {
-                        pricesFn.remove(i);
-                        discount_pricesFn.remove(i);
-                        amountsFn.remove(i);
-                        unitsFn.remove(i);
-                        packsFn.remove(i);
-                        if (formik.values.default_item_idx === i)
+                        fieldArrays.forEach(fa => {
+                            fa.remove(i);
+                        });
+
+                        if (bUpdateRadioBtn && formik.values.default_item_idx === i)
                             formik.setFieldValue('default_item_idx', i-1);
                     }} />
             ))
-        );
-    }
-
-    function handleAddKVPair(oName) {
-        const newKVPair = `new${oName}KV`;
-        const key = formik.values[newKVPair]?.key;
-        const value = formik.values[newKVPair]?.value;
-        if (key && value) {
-            formik.setFieldValue(`${oName}.${key}`, value);
-            formik.setFieldValue(`${newKVPair}.key`, '');
-            formik.setFieldValue(`${newKVPair}.value`, '');
-        }
-    }
-
-    function handleRemoveKVPair(oName, key) {
-        delete formik.values[oName][key];
-        formik.setFieldValue(oName, formik.values[oName]);
-    }
-
-
-    function dispKVPair(oName) {
-        return (
-            Object.keys(formik.values[oName]).map(key =>
-                <div key={key}
-                    style={{display: 'grid', gridTemplateColumns: '1fr 1.5fr 1fr',
-                    alignItems: 'center'}}>
-                    <div style={{width: '210px', }}>{key}</div>
-                    <div style={{width: '334.77px', }}>{formik.values[oName][key]}</div>
-                    <Icon
-                        name='minus circle' size='large' color='red'
-                        style={{margin: '4.5px 0'}}
-                        onClick={() => handleRemoveKVPair(oName, key)}
-                    />
-                </div>
-            )
-        );
-    }
-
-    function addKVPair(oName) {
-        const newKVPair = `new${oName}KV`;
-
-        return (
-            <div style={{display: 'grid', gridTemplateColumns: '1fr 1.5fr 1fr',
-                alignItems: 'center'}}>
-                <Input
-                    id='key' name={`${newKVPair}.key`}
-                    style={{width: '210px', height: '30px', }}
-                    value={formik.values[newKVPair]?.key || ''}
-                    onChange={formik.handleChange}
-                />
-                <Input
-                    id='value' name={`${newKVPair}.value`}
-                    style={{width: '334.77px', height: '30px', }}
-                    value={formik.values[newKVPair]?.value || ''}
-                    onChange={formik.handleChange}
-                />
-                <Icon
-                    name='plus circle' size='large' color='blue'
-                    style={{margin: '4.5px 0'}}
-                    onClick={() => handleAddKVPair(oName)}
-                />
-            </div>
         );
     }
 
@@ -403,65 +312,17 @@ function AddItem() {
                         <Divider />
                         {/* Prices & Sizes*/}
                         <div style={{marginBottom: '10px', fontSize: '1.2em', fontWeight: 'bold', }}>Prices & Sizes:</div>
-                        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr',
-                            alignItems: 'start', }}>
-                            <div>{addItemCatRadioBtns()}</div>
-                            <div>{addItemCats('prices', 'Price', pricesFn)}</div>
-                            <div>{addItemCats('discount_prices', 'Dis. Price',discount_pricesFn)}</div>
-                            <div>{addItemCats('amounts', 'Volume',amountsFn)}</div>
-                            <div>{addItemCats('units', 'Vol. Unit',unitsFn)}</div>
-                            <div>{addItemCats('packs', 'Unit Pack',packsFn)}</div>
-                            <div>{addItemCatInsertBtns()}</div>
-                            <div>{addItemCatRemoveBtns()}</div>
-                        </div>
+                        {addFieldArrays(priceSizeFAs, true)}
                         {/* Product details_1 */}
                         <div style={{marginTop: '20px', }}>
                             <div style={{marginBottom: '10px', fontSize: '1.2em', fontWeight: 'bold', }}>Product details 1:</div>
-                            {dispKVPair('details_1')}
-                            {addKVPair('details_1')}
+                            {addFieldArrays(details_1_FAs, false)}
                         </div>
                         <Divider />
                         <div style={{marginTop: '20px', }}>
                             {/* {dispAboutItem()} */}
                             <div style={{marginBottom: '10px', fontSize: '1.2em', fontWeight: 'bold', }}>About this item:</div>
-
-                            <FormikProvider value={formik}>
-                                <FieldArray name='about_item'>
-                                    {({ insert, remove, push }) => {
-                                        return (
-                                            <div>{
-                                                formik.values.about_item.map((val, i) => (
-                                                    <div key={i}>
-                                                        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr',
-                                                            alignItems: 'center', }}>
-                                                            <Input name={`about_item.${i}`}
-                                                                style={{width: '520px', height: '30px', }}
-                                                                value={formik.values.about_item[i]}
-                                                                onChange={formik.handleChange} onBlur={formik.handleBlur} />
-                                                            <Icon
-                                                                name='plus circle' size='large' color='blue'
-                                                                style={{margin: '4.5px 0'}}
-                                                                onClick={() => insert(i+1, '')}
-                                                            />
-                                                            <Icon
-                                                                name='minus circle' size='large' color='red' disabled={i === 0}
-                                                                style={{margin: '4.5px 0'}}
-                                                                onClick={() => remove(i)}
-                                                            />
-                                                        </div>
-                                                        {
-                                                            formik.errors.about_item && formik.errors.about_item[i] &&
-                                                            formik.touched.about_item && formik.touched.about_item[i] ?
-                                                            <div>{formik.errors.about_item[i]}</div> :
-                                                            null
-                                                        }
-                                                    </div>
-                                                ))
-                                            }</div>
-                                        );
-                                    }}
-                                </FieldArray>
-                            </FormikProvider>
+                            {addFieldArrays(aboutThisItemFAs, false)}
                         </div>
                     </div>
                 </div>
@@ -470,8 +331,7 @@ function AddItem() {
                 <Divider />
                 <div>
                     <div style={{fontSize: '1.8em', fontWeight: 'bold', marginTop: '20px', marginBottom: '10px',}}>Product details 2:</div>
-                    {dispKVPair('details_2')}
-                    {addKVPair('details_2')}
+                    {addFieldArrays(details_2_FAs, false)}
                 </div>
                 <Button type='submit' >Add this project</Button>
             </Form>

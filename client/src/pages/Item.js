@@ -97,12 +97,16 @@ function Item() {
             <Table style={{border: '0'}}>
                 <TableBody>
                     {
-                        Object.keys(item.details_1).map(key => 
-                            <TableRow key={key}>
-                                <TableCell style={{width: '40%', fontWeight: 'bold', paddingLeft: '0', }}>{key}</TableCell>
-                                <TableCell style={{width: '60%', paddingLeft: '0', }}>{item.details_1[key]}</TableCell>
-                            </TableRow>
-                        )
+                        item.details_1.map((pair, i) => {
+                            const pairArray = pair.split(';');
+
+                            return (
+                                <TableRow key={i}>
+                                    <TableCell style={{width: '40%', fontWeight: 'bold', paddingLeft: '0', }}>{pairArray[0]}</TableCell>
+                                    <TableCell style={{width: '60%', paddingLeft: '0', }}>{pairArray[1]}</TableCell>
+                                </TableRow>
+                            );
+                        })
                     }
                 </TableBody>
             </Table>
@@ -113,12 +117,16 @@ function Item() {
         return (
             <div style={{margin: '15px', fontSize: '1.1em'}}>
                 {
-                    Object.keys(item.details_2).map(key => 
-                        <div key={key} style={{marginBottom: '8px', }}>
-                            <span style={{fontWeight: 'bold', }}>{`${key} : `}</span>
-                            <span>{item.details_2[key]}</span>
-                        </div>
-                    )
+                    item.details_2.map((pair, i) => {
+                        const pairArray = pair.split(';');
+
+                        return (
+                            <div key={i} style={{marginBottom: '8px', }}>
+                                <span style={{fontWeight: 'bold', }}>{`${pairArray[0]} : `}</span>
+                                <span>{pairArray[1]}</span>
+                            </div>
+                        );
+                    })
                 }
             </div>
         );

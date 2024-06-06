@@ -25,7 +25,6 @@ def apply_json_loads_to_item(item):
     item['about_item'] = json.loads(item['about_item'])
     item['details_1'] = json.loads(item['details_1'])
     item['details_2'] = json.loads(item['details_2'])
-    item['thumbnails'] = json.loads(item['thumbnails'])
     item['images'] = json.loads(item['images'])
     return item
 
@@ -224,8 +223,6 @@ class Items(Resource):
                 about_item = json.dumps(req.get('about_item')),
                 details_1 = json.dumps(req.get('details_1')),
                 details_2 = json.dumps(req.get('details_2')),
-                card_thumbnail = req.get('card_thumbnail'),
-                thumbnails = json.dumps(req.get('thumbnails')),
                 images = json.dumps(req.get('images')),
                 category_id = req.get('category_id'),
                 seller_id = req.get('seller_id'),

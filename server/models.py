@@ -162,8 +162,6 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
     about_item = db.Column(db.String)   # object: item characteristics
     details_1 = db.Column(db.String)    # object: item details
     details_2 = db.Column(db.String)    # object: item details
-    card_thumbnail = db.Column(db.String)
-    thumbnails = db.Column(db.String)   # list:
     images = db.Column(db.String)   # list:
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
     seller_id = db.Column(db.Integer, db.ForeignKey('sellers.id'))

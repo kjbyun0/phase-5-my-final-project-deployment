@@ -124,15 +124,6 @@ if __name__ == '__main__':
                  'ASIN;B0016FWFDI',
                  'Country of Origin;USA',
             ]),
-            card_thumbnail = 'https://m.media-amazon.com/images/I/71P6h4i-EHL._AC_UL480_FMwebp_QL65_.jpg',
-            thumbnails = json.dumps([
-                 'https://m.media-amazon.com/images/I/41WqRQbrVDL._SS40_.jpg',
-                 'https://m.media-amazon.com/images/I/419XMv6kx4L._SS40_.jpg',
-                 'https://m.media-amazon.com/images/I/419EQLU0a2L._SS40_.jpg',
-                 'https://m.media-amazon.com/images/I/418FHbDtnAL._SS40_.jpg',
-                 'https://m.media-amazon.com/images/I/31jcHkrNL+L._SS40_.jpg',
-                 'https://m.media-amazon.com/images/I/41f9bv1xdML._SS40_.jpg',
-            ]),
             images = json.dumps([
                  'https://m.media-amazon.com/images/I/71P6h4i-EHL._SX679_.jpg',
                  'https://m.media-amazon.com/images/I/71Z4oxHuxpL._SX679_.jpg',
@@ -174,15 +165,6 @@ if __name__ == '__main__':
                 'Manufacturer;BodyRefresh',
                 'ASIN;B0CF58LSJN',
             ]),
-            card_thumbnail = 'https://m.media-amazon.com/images/I/81J+Ff0wPYL._AC_UL480_FMwebp_QL65_.jpg',
-            thumbnails = json.dumps([
-                'https://m.media-amazon.com/images/I/51XymofYLdL._AC_US40_.jpg',
-                'https://m.media-amazon.com/images/I/51che3im24L._AC_US40_.jpg',
-                'https://m.media-amazon.com/images/I/51che3im24L._AC_US40_.jpg',
-                'https://m.media-amazon.com/images/I/51lOYvbx6FL._AC_US40_.jpg',
-                'https://m.media-amazon.com/images/I/415O43ympzL._AC_US40_.jpg',
-                'https://m.media-amazon.com/images/I/51VPBBbaBIL._AC_US40_.jpg', 
-            ]),
             images = json.dumps([
                 'https://m.media-amazon.com/images/I/81J+Ff0wPYL._AC_SX679_.jpg',
                 'https://m.media-amazon.com/images/I/81q3m+sFAPL._AC_SX679_.jpg',
@@ -222,15 +204,6 @@ if __name__ == '__main__':
             details_2 = json.dumps([
                 'Manufacturer;eos',
                 'ASIN;B0CCZKRRCX',
-            ]),
-            card_thumbnail = 'https://m.media-amazon.com/images/I/61pZYk39B+L._AC_UL480_FMwebp_QL65_.jpg',
-            thumbnails = json.dumps([
-                'https://m.media-amazon.com/images/I/31qfcnEuzhL._SS40_.jpg',
-                'https://m.media-amazon.com/images/I/51ej7ChbVGL._SS40_.jpg',
-                'https://m.media-amazon.com/images/I/51Muz80LPSL._SS40_.jpg',
-                'https://m.media-amazon.com/images/I/51hY87DcYDL._SS40_.jpg',
-                'https://m.media-amazon.com/images/I/41ejQqio5BL._SS40_.jpg',
-                'https://m.media-amazon.com/images/I/41FKh6qMOvL._SS40_.jpg',
             ]),
             images = json.dumps([
                 'https://m.media-amazon.com/images/I/61pZYk39B+L._SX679_.jpg',
@@ -275,15 +248,6 @@ if __name__ == '__main__':
                 'ASIN;B0B1PP1XCM',
                 'Country of Origin;USA',
             ]),
-            card_thumbnail = 'https://m.media-amazon.com/images/I/71iJfJSDcQL._AC_UL480_FMwebp_QL65_.jpg',
-            thumbnails = json.dumps([
-                'https://m.media-amazon.com/images/I/31kOCqV2+BL._SS40_.jpg', 
-                'https://m.media-amazon.com/images/I/51QuRrC2AvL._SS40_.jpg', 
-                'https://m.media-amazon.com/images/I/614lS4iyCEL._SS40_.jpg', 
-                'https://m.media-amazon.com/images/I/51quzlRbXQL._SS40_.jpg', 
-                'https://m.media-amazon.com/images/I/41Fy-k1aGKL._SS40_.jpg', 
-                'https://m.media-amazon.com/images/I/51WnYPjt2ML._SS40_.jpg', 
-            ]),
             images = json.dumps([
                 'https://m.media-amazon.com/images/I/71iJfJSDcQL._SX679_.jpg', 
                 'https://m.media-amazon.com/images/I/A1eX8t35npL._SX679_.jpg', 
@@ -324,15 +288,6 @@ if __name__ == '__main__':
                 'Manufacturer;UNILEVER INTL',
                 'ASIN;B0C1TGGKH8',
                 'Country of Origin;India',
-            ]),
-            card_thumbnail = 'https://m.media-amazon.com/images/I/71YIpAQ9WYL._AC_UL480_FMwebp_QL65_.jpg',
-            thumbnails = json.dumps([
-                'https://m.media-amazon.com/images/I/41zkCYddYeL._SS40_.jpg', 
-                'https://m.media-amazon.com/images/I/41COJTWkwzL._SS40_.jpg', 
-                'https://m.media-amazon.com/images/I/41NhDKtiE2L._SS40_.jpg', 
-                'https://m.media-amazon.com/images/I/41DoTAT5Q5L._SS40_.jpg', 
-                'https://m.media-amazon.com/images/I/41X16A1oSyS._SS40_.jpg', 
-                'https://m.media-amazon.com/images/I/41+U8OUquVS._SS40_.jpg', 
             ]),
             images = json.dumps([
                 'https://m.media-amazon.com/images/I/71YIpAQ9WYL._SX679_.jpg', 

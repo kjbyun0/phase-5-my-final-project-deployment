@@ -62,7 +62,7 @@ function Orders() {
                     margin: '2px 0'}}>
                     <div>
                         <div style={{width: '125px', height: '150px', 
-                            backgroundImage: `url(${oi.item.card_thumbnail})`, 
+                            backgroundImage: `url(${oi.item.images[0]})`,  // image change from card_thumbnail
                             backgroundSize: 'contain', backgroundRepeat: 'no-repeat', 
                             backgroundPosition: 'center', }} 
                             className='link' 

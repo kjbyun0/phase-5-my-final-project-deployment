@@ -148,7 +148,7 @@ function ReviewList() {
         return (
             <Card key={item.id} style={{minWidth: '200px', borderWidth: '0', alignItems: 'center', }}>
                 <div className='link' style={{width: '90%', height: '250px', margin: 'auto', 
-                    backgroundImage: `url(${item.card_thumbnail})`, 
+                    backgroundImage: `url(${item.images[0]})`,     // image change from card_thumbnail
                     backgroundSize: 'contain', backgroundRepeat: 'no-repeat', 
                     backgroundPosition: 'center', }} 
                     onClick={() => handleNavigateReview(item.id)} />

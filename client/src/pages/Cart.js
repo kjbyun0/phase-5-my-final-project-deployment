@@ -286,7 +286,7 @@ function Cart() {
                 <Checkbox checked={Boolean(cItem.checked)} style={{margin: 'auto', }}
                     onChange={() => handleCItemChange({...cItem, checked: !cItem.checked}, cartItems, onSetCartItems)} />
                 <div style={{width: '100%', height: '220px', 
-                    backgroundImage: `url(${cItem.item.card_thumbnail})`, 
+                    backgroundImage: `url(${cItem.item.images[0]})`, // image change from card_thumbnail
                     backgroundSize: 'contain', backgroundRepeat: 'no-repeat', 
                     backgroundPosition: 'center', }} 
                     className='link' 

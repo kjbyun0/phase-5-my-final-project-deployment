@@ -45,7 +45,7 @@ function Item() {
                     // console.log('In Istem, fetched item: ', data);
                     setItem(data);
                     setActiveItemIdx(data.default_item_idx);
-                    if (data.thumbnails.length)
+                    if (data.images.length) // image change from thumbnails
                         setActiveImageIdx(0);
                 } else {
                     console.log('Error: ', data.message);
@@ -140,7 +140,7 @@ function Item() {
     }
 
     function dispThumbnails() {
-        return item.thumbnails.map((thumbnail, i) => 
+        return item.images.map((thumbnail, i) =>    // image change from thumbnails
             <Image key={i} className='item-thumbnail' 
                 src={thumbnail}
                 onMouseEnter={() => handleThumnailMouseEnter(i)}

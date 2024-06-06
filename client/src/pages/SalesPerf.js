@@ -77,7 +77,7 @@ function SalesPerf() {
                     backgroundColor: 'whitesmoke', borderRadius: '10px 10px 0 0', 
                     border: '1px solid lightgray', borderBottom: '0px', }}>
                     <div style={{width: '80px', height: '100px', marginLeft: '15px', 
-                        backgroundImage: `url(${item.card_thumbnail})`, 
+                        backgroundImage: `url(${item.images[0]})`,     // image change from card_thumbnail
                         backgroundSize: 'contain', backgroundRepeat: 'no-repeat', 
                         backgroundPosition: 'center', }} 
                     />

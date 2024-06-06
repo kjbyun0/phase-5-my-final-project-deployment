@@ -99,7 +99,7 @@ function Review() {
             <div style={{display: 'grid', gridTemplateColumns: 'max-content 1fr', alignItems: 'center', 
                 marginTop: '25px', }}>
                 <div style={{width: '65px', height: '77px', 
-                    backgroundImage: `url(${itemReview.item.card_thumbnail})`, 
+                    backgroundImage: `url(${itemReview.item.images[0]})`,  // image change from card_thumbnail
                     backgroundSize: 'contain', backgroundRepeat: 'no-repeat', 
                     backgroundPosition: 'center', }} 
                 />

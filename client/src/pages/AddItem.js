@@ -18,9 +18,9 @@ function AddItem() {
 
     const formSchema = yup.object().shape({
         // need to be tested and the apply to similar oens, too.
-        prices: yup.array().of(
-            yup.string().required('Required')
-          )
+        // prices: yup.array().of(
+        //     yup.string().required('Required')
+        //   )
     });
 
     const formik = useFormik({
@@ -40,8 +40,6 @@ function AddItem() {
             // details_2: {},
             details_2_key: [''],
             details_2_val: [''],
-            card_thumbnail: '',
-            thumbnails: [],
             images: [],
             category_id: null,
             seller_id: null,
@@ -50,7 +48,6 @@ function AddItem() {
         onSubmit: async values => {
 
             console.log('OnSubmit: formik.values: ', values);
-            console.log('OnSubmit: imgFiles: ', imgFiles);
 
             // if (imgFiles.length) {
             //     const formData = new FormData();
@@ -67,45 +64,97 @@ function AddItem() {
             //     console.log(data);
             // }
 
+            
+            const uploadedImages = [];
             const cloudName = 'dfsqyivhu';
-            imgFiles.forEach(async file => {
+            for (const file of imgFiles) {
                 const publicId = file.name.split('.').slice(0, -1).join('.');
                 const formData = new FormData();
                 formData.append('file', file);
                 formData.append('upload_preset', 'flatiron_p5_pjt_imgs');
                 formData.append('public_id', publicId);
 
-                const data = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
-                    method: 'POST',
-                    body: formData,
-                }).then(res => res.json());
+                try {
+                    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
+                        method: 'POST',
+                        body: formData,
+                    });
+                    const data = await response.json();
+                    uploadedImages.push(data.secure_url);
+                } catch (error) {
+                    console.log('Cloudinary Image Upload Error: ', error);
+                }
+            };
+            values.images = uploadedImages;
+            console.log('values.images: ', values.images);
 
-                console.log(data);
+
+            if (values.prices[values.prices.length-1] === '')
+                values.prices.pop();
+            if (values.discount_prices[values.discount_prices.length-1] === '')
+                values.discount_prices.pop();
+            if (values.amounts[values.amounts.length-1] === '')
+                values.amounts.pop();
+            if (values.units[values.units.length-1] === '')
+                values.units.pop();
+            if (values.packs[values.packs.length-1] === '')
+                values.packs.pop();
+            if (values.about_item[values.about_item.length-1] === '')
+                values.about_item.pop();
+            if (values.details_1_key[values.details_1_key.length-1] === '')
+                values.details_1_key.pop();
+            if (values.details_1_val[values.details_1_val.length-1] === '')
+                values.details_1_val.pop();
+            if (values.details_2_key[values.details_2_key.length-1] === '')
+                values.details_2_key.pop();
+            if (values.details_2_val[values.details_2_val.length-1] === '')
+                values.details_2_val.pop();
+
+            console.log('values: ', values);
+            const details_1 = values.details_1_key.map((key, i) => key + ';' + values.details_1_val[i]);
+            const details_2 = values.details_2_key.map((key, i) => key + ';' + values.details_2_val[i]);
+
+            const postValues = {
+                name: values.name,
+                brand: values.brand,  // It is not needed because brand is already included in the name.
+                default_item_idx: values.default_item_idx,
+                prices: values.prices,
+                discount_prices: values.discount_prices,
+                amounts: values.amounts,
+                units: values.units,
+                packs: values.packs,
+                about_item: values.about_item, // bullet points
+                details_1: details_1,
+                details_2: details_2,
+                images: uploadedImages,
+                category_id: null,
+                seller_id: user.seller.id,
+            };
+            console.log('postValues: ', postValues);
+
+            console.log('***** before item POST fetch, values: ', values);
+            await fetch('/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(postValues),
+            })
+            .then(async r => {
+                await r.json().then(data => {
+                    if (r.ok) {
+                        console.log('New item is sucessfully posted: ', data);
+                    } else {
+                        if (r.status === 401 || r.status === 403) {
+                            console.log(data);
+                            alert(data.message);
+                        } else {
+                            console.log("Server Error - Can't post this item: ", data);
+                            alert(`Server Error - Can't post this item: ${data.message}`);
+                        }
+                    }
+                })
             });
-
-
-            // await fetch('/items', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify(values),
-            // })
-            // .then(async r => {
-            //     if (r.ok) {
-            //         console.log('New item is sucessfully posted.');
-            //     } else {
-            //         await r.json().then(data => {
-            //             if (r.status === 401 || r.status === 403) {
-            //                 console.log(data);
-            //                 alert(data.message);
-            //             } else {
-            //                 console.log("Server Error - Can't post this item: ", data);
-            //                 alert(`Server Error - Can't post this item: ${data.message}`);
-            //             }
-            //         })
-            //     }
-            // });
         },
     });
 
@@ -131,6 +180,8 @@ function AddItem() {
 
 
     function handleImgDrop(acceptedFiles) {
+        console.log('in handleImgDrop, acceptedFiles: ', acceptedFiles);
+
         const imgFilesDict = {};
         imgFiles.forEach(file => imgFilesDict[file.name] = file);
 

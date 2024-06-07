@@ -17,6 +17,7 @@ function ImgDropzone({ onDrop }) {
       'image/*': []
     },
     maxSize: 1024 * 100,
+    maxFiles: 1,
   });
 
   return (
@@ -26,9 +27,12 @@ function ImgDropzone({ onDrop }) {
       })}>
       <input {...getInputProps()} />
       {isDragActive ? (
-        <p>Drop the images here ...</p>
+        <p>Drop the image here ...</p>
       ) : (
-        <p>Drag 'n' drop product images here, or click to select images</p>
+        <div>
+          <p>Drag 'n' drop a product image here, or click to select a image</p>
+          <div>The images in the product page will be shown in the same order as they are here.</div>
+        </div>
       )}
     </div>
   );

@@ -320,7 +320,12 @@ function AddItem() {
     return (
         <div style={{ padding: '15px', }}>
             <Form onSubmit={formik.handleSubmit}>
-                <Button type='submit' >Add this project</Button>
+                <div style={{display: 'grid', gridTemplateColumns: '1fr max-content', alignItems: 'center'}}>
+                    <div />
+                    <Button type='submit' color='yellow' size='large' 
+                        style={{color: 'black', borderRadius: '10px', width: '250px', marginBottom: '20px', }}>
+                        Add this product</Button>
+                </div>
                 <div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', }} >
 
                     {/* Images */}
@@ -376,7 +381,12 @@ function AddItem() {
                     <div style={{fontSize: '1.8em', fontWeight: 'bold', marginTop: '20px', marginBottom: '10px',}}>Product details 2:</div>
                     {addFieldArrays(details_2_FAs, false)}
                 </div>
-                <Button type='submit' >Add this project</Button>
+                <div style={{display: 'grid', gridTemplateColumns: '1fr max-content', alignItems: 'center'}}>
+                    <div />
+                    <Button type='submit' color='yellow' size='large' 
+                        style={{color: 'black', borderRadius: '10px', width: '250px', marginTop: '20px', }}>
+                        Add this product</Button>
+                </div>
             </Form>
         </div>
     );

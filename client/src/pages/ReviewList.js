@@ -180,11 +180,11 @@ function ReviewList() {
 
     // padding: '15px 150px'
     return (
-        <div style={{width: '100%', height: '100%', padding: '0 140px', }}>
+        <div style={{padding: '0 140px', }}>
             <div style={{fontSize: '2.0em', margin: '30px 0'}}>
                 Review Your Purchases</div>
             <Divider />
-            <CardGroup itemsPerRow={3} style={{marginTop: '5px', }} >
+            <CardGroup itemsPerRow={3} style={{marginTop: '5px', minWidth: '815px', }} >
                 {dispReviewCards}
             </CardGroup>
         </div>

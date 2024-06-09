@@ -124,7 +124,7 @@ function SalesPerf() {
     });
 
     return (
-        <div style={{display: 'grid', gridTemplateColumns: '1fr 800px 1fr', margin: '40px 0'}}>
+        <div style={{display: 'grid', gridTemplateColumns: '1fr 800px 1fr', margin: '40px 0', }}>
             <div />
             <div>
                 <div style={{display: 'grid', gridTemplateColumns: '1fr max-content max-content max-content max-content', 

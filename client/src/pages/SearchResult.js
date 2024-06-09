@@ -188,8 +188,8 @@ function SearchResult() {
 
 
     return (
-        <div style={{width: '100%', height: '100%', }}>
-            <div style={{display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center',}}>
+        <div>
+            <div style={{display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', }}>
                 <div>
                     <div style={{display: 'inline-block', fontSize: '1.2em', margin: '10px 0 10px 10px', }}>{searchItems.length} results for "</div>
                     <div style={{display: 'inline-block', fontSize: '1.2em', margin: '10px 10px 10px 0', 
@@ -200,11 +200,11 @@ function SearchResult() {
                     text={`Sort by: ${sortOptions[sort-1].text}`} value={sort} onChange={(e, d) => setSort(d.value)} />
             </div>
             <hr style={{boxShadow: '0 2px 6px 1px lightgray'}}/>
-            <div style={{ padding: '15px', width: '100%', height: '100%', }}>
+            <div style={{padding: '15px', }}>
 
                 <div style={{fontSize: '1.5em', fontWeight: 'bold', margin: '5px 0', }}>Results</div>
                 <div style={{fontSize: '1.1em', }}>Check each product page for other buying options.</div>
-                <CardGroup itemsPerRow={5} style={{marginTop: '5px', }}>
+                <CardGroup itemsPerRow={5} style={{marginTop: '5px', minWidth: '815px',}}>
                     {dispItemCards}
                 </CardGroup>
             </div>

@@ -32,13 +32,13 @@ function App() {
         orders, ', reviews: ', reviews, ', sellerItems: ', sellerItems);
 
     return (
-        <div style={{display: 'grid', width: '100%', height: '100%', 
-            gridTemplateRows: 'max-content 1fr',}}>
-            <header style={{minWidth: '0', minHeight: '0',}}>
+        <div style={{display: 'grid', gridTemplateRows: 'max-content 1fr', minWidth: '815px'}}>
+            {/* <header style={{minWidth: '0', minHeight: '0',}}> */}
+            <header>
                 <NavBar user={user} cartItems={cartItems} />
             </header>
-            <main style={{minWidth: '0', minHeight: '0',}}>
-                {/* <h1>I'm at App.</h1> */}
+            {/* <main style={{minWidth: '0', minHeight: '0', }}> */}
+            <main>
                 <TestProvider>
                     <Outlet context={{
                         user: user,

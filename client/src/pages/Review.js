@@ -93,7 +93,7 @@ function Review() {
 
 
     return (
-        <div style={{width: '100%', height: '100%', padding: '0 160px', }}>
+        <div style={{padding: '0 160px', }}>
             <div style={{fontSize: '1.9em', fontWeight: 'bold', marginTop: '40px', }}>
                 Create Review</div>
             <div style={{display: 'grid', gridTemplateColumns: 'max-content 1fr', alignItems: 'center', 

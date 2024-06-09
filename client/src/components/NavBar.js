@@ -43,7 +43,7 @@ function NavBar({ user, cartItems }) {
             }
             {
                 user && user.seller ? 
-                <NavLink to='/salesperf' className='nav-link'>Sales Perf.</NavLink> : 
+                <NavLink to='/salesperf' className='nav-link'>Sales Perf</NavLink> : 
                 <NavLink to='/cart' className='nav-link'>
                     <div style={{display: 'grid', gridTemplateColumns: 'max-content max-content'}}>
                         <IconGroup>

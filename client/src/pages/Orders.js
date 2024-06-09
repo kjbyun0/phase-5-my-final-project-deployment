@@ -122,10 +122,8 @@ function Orders() {
         );
     });
 
-
-    // ??? - Why didn't margin work???
     return (
-        <div style={{width: '100%', height: '100%', padding: '40px', }} >
+        <div style={{padding: '40px', }} >
             <div style={{fontSize: '2.0em', }}>Your Orders</div>
             <div style={{fontSize: '1.1em', marginTop: '20px', }}>
                 <span style={{fontWeight: 'bold', }}>{`${ordersInPeriod.length} order${ordersInPeriod.length <= 1 ? ' ' : 's '}`} </span>

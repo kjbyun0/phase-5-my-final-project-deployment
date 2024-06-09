@@ -64,7 +64,7 @@ function AddItem() {
             //     console.log(data);
             // }
 
-            
+
             const uploadedImages = [];
             const cloudName = 'dfsqyivhu';
             for (const file of imgFiles) {
@@ -158,23 +158,23 @@ function AddItem() {
         },
     });
 
-    const pricesFA = {value: 'prices', placeholder: 'Price', insert: null, remove: null, push: null, width: '100px', };
-    const discount_pricesFA = {value: 'discount_prices', placeholder: 'Dis. Price', insert: null, remove: null, push: null, width: '100px', };
-    const amountsFA = {value: 'amounts', placeholder: 'Volume', insert: null, remove: null, push: null, width: '100px', };
-    const unitsFA = {value: 'units', placeholder: 'Vol. Unit', insert: null, remove: null, push: null, width: '100px', };
-    const packsFA = {value: 'packs', placeholder: 'Unit Pack', insert: null, remove: null, push: null, width: '100px', };
+    const pricesFA = {value: 'prices', placeholder: 'Price', insert: null, remove: null, push: null, width: '1fr', };
+    const discount_pricesFA = {value: 'discount_prices', placeholder: 'Dis. Price', insert: null, remove: null, push: null, width: '1fr', };
+    const amountsFA = {value: 'amounts', placeholder: 'Volume', insert: null, remove: null, push: null, width: '1fr', };
+    const unitsFA = {value: 'units', placeholder: 'Vol. Unit', insert: null, remove: null, push: null, width: '1fr', };
+    const packsFA = {value: 'packs', placeholder: 'Unit Pack', insert: null, remove: null, push: null, width: '1fr', };
     const priceSizeFAs = [pricesFA, discount_pricesFA, amountsFA, unitsFA, packsFA];
 
-    const aboutThisItemFAs = [{value: 'about_item', placeholder: '', insert: null, remove: null, push: null, width: '520px', }];
+    const aboutThisItemFAs = [{value: 'about_item', placeholder: '', insert: null, remove: null, push: null, width: '1fr', }];
 
     const details_1_FAs = [
-        {value: 'details_1_key', placeholder: '', insert: null, remove: null, push: null, width: '210px', },
-        {value: 'details_1_val', placeholder: '', insert: null, remove: null, push: null, width: '334.77px', }
+        {value: 'details_1_key', placeholder: '', insert: null, remove: null, push: null, width: '1fr', },
+        {value: 'details_1_val', placeholder: '', insert: null, remove: null, push: null, width: '1.6fr', }
     ];
 
     const details_2_FAs = [
-        {value: 'details_2_key', placeholder: '', insert: null, remove: null, push: null, width: '210px', },
-        {value: 'details_2_val', placeholder: '', insert: null, remove: null, push: null, width: '334.77px', }
+        {value: 'details_2_key', placeholder: '', insert: null, remove: null, push: null, width: '1fr', },
+        {value: 'details_2_val', placeholder: '', insert: null, remove: null, push: null, width: '1.6fr', }
     ];
 
 
@@ -206,19 +206,19 @@ function AddItem() {
 
 
     function addFieldArrays(fieldArrays, bUpdateRadioBtn) {
-        const gridColumnsRadio = fieldArrays.map(fa => '1fr');
-        // For insert buttons
-        gridColumnsRadio.push('1fr');
-        // For remove buttons
-        gridColumnsRadio.push('1fr');
+        const gridColumns = [];
         if (bUpdateRadioBtn)
-            gridColumnsRadio.push('1fr');
-        const gridColumnsRadioStr = gridColumnsRadio.join(' ');
-        // console.log('in addFieldArrays, gridColumnsRadioStr: ', gridColumnsRadioStr);
-        
-        return (
+            gridColumns.push('17px');
+        fieldArrays.forEach(fa => gridColumns.push(fa.width));
+        // For insert buttons
+        gridColumns.push('28.27px');
+        // For remove buttons
+        gridColumns.push('28.27px');
+        const gridColumnsStr = gridColumns.join(' ');
+        console.log('in addFieldArrays, gridColumnsStr: ', gridColumnsStr);
 
-            <div style={{display: 'grid', gridTemplateColumns: gridColumnsRadioStr, alignItems: 'center', }}>
+        return (
+            <div style={{display: 'grid', gridTemplateColumns: gridColumnsStr, alignItems: 'center', }}>
                 {bUpdateRadioBtn ?<div>{addRadioBtns(fieldArrays[0])}</div> : null}
                 {
                     fieldArrays.map(fa => (
@@ -231,13 +231,14 @@ function AddItem() {
         );
     }
 
+    // style={{margin: '7.5px 5px 2.8px 0', }}
     function addRadioBtns(fieldArray) {
         return (
             formik.values[fieldArray.value].map((val, i) => (
                 <Radio
                     key={i}
-                    style={{margin: '7.5px 5px 2.8px 0', }}
                     name='default_item_idx'
+                    style={{margin: '7.5px 5px 5.8px 0', }}
                     value={i}
                     checked={formik.values.default_item_idx === i}
                     onChange={(e, d) => formik.setFieldValue('default_item_idx', d.value)}
@@ -246,6 +247,7 @@ function AddItem() {
         );
     }
 
+    // style={{width: '100%', height: '30px', }}
     function addFieldArray(fieldArray) {
         return (
             <FormikProvider value={formik}>
@@ -260,7 +262,7 @@ function AddItem() {
                                 formik.values[fieldArray.value].map((val, i) => (
                                     <div key={i}>
                                         <Input name={`${fieldArray.value}.${i}`}
-                                            style={{width: fieldArray.width, height: '30px', }} 
+                                            style={{width: '100%', height: '30px', marginBottom: '3px',}}
                                             placeholder={fieldArray.placeholder}
                                             value={formik.values[fieldArray.value][i]}
                                             onChange={formik.handleChange} onBlur={formik.handleBlur} />
@@ -280,12 +282,13 @@ function AddItem() {
         );
     }
 
+    // style={{margin: '4.5px 0'}}
     function addInsertBtns(fieldArrays) {
         return (
             formik.values[fieldArrays[0].value].map((val, i) => (
                 <Icon
                     name='plus circle' size='large' color='blue'
-                    style={{margin: '4.5px 0'}}
+                    style={{margin: '4.5px 0 7.5px 0'}}
                     onClick={() => {
                         fieldArrays.forEach(fa => {
                             fa.insert(i+1, '');
@@ -295,12 +298,13 @@ function AddItem() {
         );
     }
 
+    // style={{margin: '4.5px 0'}}
     function addRemoveBtns(fieldArrays, bUpdateRadioBtn) {
         return (
             formik.values[fieldArrays[0].value].map((val, i) => (
                 <Icon
                     name='minus circle' size='large' color='red' disabled={i === 0}
-                    style={{margin: '4.5px 0'}}
+                    style={{margin: '4.5px 0 7.5px 0'}}
                     onClick={() => {
                         fieldArrays.forEach(fa => {
                             fa.remove(i);
@@ -314,18 +318,18 @@ function AddItem() {
     }
 
     return (
-        <div style={{ padding: '15px', width: '100%', height: '100%', }}>
+        <div style={{ padding: '15px', }}>
             <Form onSubmit={formik.handleSubmit}>
                 <Button type='submit' >Add this project</Button>
-                <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', }} >
+                <div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', }} >
 
                     {/* Images */}
                     <div>
-                        <div style={{display: 'flex', flexWrap: 'wrap', marginTop: '20px',}}>
+                        <div style={{display: 'flex', flexWrap: 'wrap', marginTop: '20px', }}>
                             {
                                 imgFiles.map((imgFile, i) => {
                                     return (
-                                        <div key={i} style={{margin: '10px', }} >
+                                        <div key={i} style={{margin: 'auto', }} >
                                             <IconGroup size='big'>
                                                 <img src={imgFile.preview} alt={imgFile.name}
                                                     style={{width: '200px', height: '200px', objectFit: 'cover',}} />
@@ -339,22 +343,10 @@ function AddItem() {
                             }
                         </div>
                         <ImgDropzone onDrop={handleImgDrop} />
-
-                        {/* <div className='sticky'>
-                            <div style={{display: 'grid', gridTemplateColumns: '10% 90%',
-                                width: '100%', height: '100%', margin: '14px', }}>
-                                <div style={{padding: '14px 0 0 0',}}>
-                                    {dispThumbnails()}
-                                </div>
-                                <div style={{padding: '0'}}>
-                                    <Image src={item.images[activeImageIdx]} />
-                                </div>
-                            </div>
-                        </div> */}
                     </div>
 
                     {/* Item name and descriptions */}
-                    <div style={{padding: '15px 10px 10px 30px', }}>
+                    <div style={{padding: '15px 0 10px 30px', }}>
                         {/* name */}
                         <div style={{fontSize: '2.0em', }}>Name:</div>
                         <TextArea id='name' name='name' rows={3}

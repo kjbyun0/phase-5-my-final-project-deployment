@@ -429,7 +429,7 @@ function Item() {
         return;
 
     return (
-        <div style={{ padding: '15px', width: '100%', height: '100%', }}>
+        <div style={{ padding: '15px', minWidth: '850px', }}>
             <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', }} >
                 {/* Images */}
                 <div>
@@ -566,9 +566,6 @@ function Item() {
                     {dispReviews()}
                 </div>
             </div>
-
-            
-
         </div>
     );
 }

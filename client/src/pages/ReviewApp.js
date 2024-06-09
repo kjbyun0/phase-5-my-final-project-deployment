@@ -47,8 +47,8 @@ function ReviewApp() {
     }
 
     return (
-        <div style={{width: '100%', height: '100%', }}>
-            <div style={{width: '100%', height: '60px', padding: '0 140px', backgroundColor: 'lightcyan', fontSize: '1.1em', 
+        <div>
+            <div style={{height: '60px', padding: '0 140px', backgroundColor: 'lightcyan', fontSize: '1.1em', 
                  display: 'grid', gridTemplateColumns: '1fr', alignItems: 'center', }}>
                 <div>
                     <Icon name='user circle outline' size='big' inverted 

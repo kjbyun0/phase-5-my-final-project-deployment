@@ -44,7 +44,10 @@ function Item() {
                 if (r.ok) {
                     // console.log('In Istem, fetched item: ', data);
                     setItem(data);
-                    setActiveItemIdx(data.default_item_idx);
+                    if (data.default_item_idx >= 0 && data.default_item_idx < data.prices.length)
+                        setActiveItemIdx(data.default_item_idx);
+                    else
+                        setActiveItemIdx(0);
                     if (data.images.length) // image change from thumbnails
                         setActiveImageIdx(0);
                 } else {
@@ -98,7 +101,7 @@ function Item() {
                 <TableBody>
                     {
                         item.details_1.map((pair, i) => {
-                            const pairArray = pair.split(';');
+                            const pairArray = pair.split(';-;');
 
                             return (
                                 <TableRow key={i}>
@@ -118,7 +121,7 @@ function Item() {
             <div style={{margin: '15px', fontSize: '1.1em'}}>
                 {
                     item.details_2.map((pair, i) => {
-                        const pairArray = pair.split(';');
+                        const pairArray = pair.split(';-;');
 
                         return (
                             <div key={i} style={{marginBottom: '8px', }}>

@@ -149,8 +149,8 @@ function AddItem() {
                 values.details_2_val.pop();
 
             console.log('values: ', values);
-            const details_1 = values.details_1_key.map((key, i) => key + ';' + values.details_1_val[i]);
-            const details_2 = values.details_2_key.map((key, i) => key + ';' + values.details_2_val[i]);
+            const details_1 = values.details_1_key.map((key, i) => key + ';-;' + values.details_1_val[i]);
+            const details_2 = values.details_2_key.map((key, i) => key + ';-;' + values.details_2_val[i]);
 
             const postValues = {
                 name: values.name,

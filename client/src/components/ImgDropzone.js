@@ -26,17 +26,15 @@ function ImgDropzone({ onDrop }) {
         padding: '0', textAlign: 'center', cursor: 'pointer',}
       })}>
       <input {...getInputProps()} />
-      <div style={{color: 'dodgerblue', }}>
-          {isDragActive ? 
-            "Drop the image here ..." : 
-            "Drag & drop a product image here, or click to select one.\n"}
-      </div>
       <div style={{width: '100%', height: '150px', 
                 backgroundImage: 'url("/img_dropzone.png")',     // image change from card_thumbnail
                 backgroundSize: 'contain', backgroundRepeat: 'no-repeat', 
                 backgroundPosition: 'center',
-                display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-
+                display: 'flex', alignItems: 'center', justifyContent: 'center' }} />
+      <div style={{color: 'dodgerblue', }}>
+          {isDragActive ? 
+            "Drop the image here ..." : 
+            "Drag & drop a product image here, or click to select one.\n"}
       </div>
     </div>
   );

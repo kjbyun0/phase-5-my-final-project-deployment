@@ -17,10 +17,48 @@ function AddItem() {
     const navigate = useNavigate();
 
     const formSchema = yup.object().shape({
-        // need to be tested and the apply to similar oens, too.
-        // prices: yup.array().of(
-        //     yup.string().required('Required')
-        //   )
+        name: yup.string().required('Required')
+            .max(200, 'Please, enter name upto 200 characters.'),
+        prices: yup.array().of(
+            yup.string().required('Required')
+                .matches(/^[0-9]*([.]{1}[0-9]{2})?$/, 
+                    'Please, enter a decimal number with two digits of fractional part. ')
+        ),
+        discount_prices: yup.array().of(
+            yup.string().required('Required')
+                .matches(/^[0-9]*([.]{1}[0-9]{2})?$/, 
+                    'Please, enter a decimal number with two digits of fractional part. ')
+        ),
+        amounts: yup.array().of(
+            yup.string().required('Required')
+                .matches(/^([0-9]*)([.]{1}[0-9]{1,2})?$/, 
+                    'Please, enter a decimal number with one or two digits of fractional part. ')
+        ),
+        units: yup.array().of(
+            yup.string().required('Required')
+        ),
+        packs: yup.array().of(
+            yup.string().required('Required')
+                .matches(/^[1-9]+[0-9]*$/, 
+                    'Plase, enter an integer.'
+                )
+        ),
+        details_1_key: yup.array().of(
+            yup.string().required('required')
+        ),
+        details_1_val: yup.array().of(
+            yup.string().required('required')
+        ),
+        about_item: yup.array().of(
+            yup.string().required('Required')
+        ), 
+        details_2_key: yup.array().of(
+            yup.string().required('required')
+        ),
+        details_2_val: yup.array().of(
+            yup.string().required('required')
+        ),
+        images: yup.array().min(1, 'At least one image must be uploaded.').max(6, 'Upto 6 images are allowed to upload.')
     });
 
     const formik = useFormik({
@@ -158,23 +196,23 @@ function AddItem() {
         },
     });
 
-    const pricesFA = {value: 'prices', placeholder: 'Price', insert: null, remove: null, push: null, width: '1fr', };
-    const discount_pricesFA = {value: 'discount_prices', placeholder: 'Dis. Price', insert: null, remove: null, push: null, width: '1fr', };
-    const amountsFA = {value: 'amounts', placeholder: 'Volume', insert: null, remove: null, push: null, width: '1fr', };
-    const unitsFA = {value: 'units', placeholder: 'Vol. Unit', insert: null, remove: null, push: null, width: '1fr', };
-    const packsFA = {value: 'packs', placeholder: 'Unit Pack', insert: null, remove: null, push: null, width: '1fr', };
+    const pricesFA = {field: 'prices', placeholder: 'Price', insert: null, remove: null, push: null, width: '1fr', };
+    const discount_pricesFA = {field: 'discount_prices', placeholder: 'Dis. Price', insert: null, remove: null, push: null, width: '1fr', };
+    const amountsFA = {field: 'amounts', placeholder: 'Volume', insert: null, remove: null, push: null, width: '1fr', };
+    const unitsFA = {field: 'units', placeholder: 'Vol. Unit', insert: null, remove: null, push: null, width: '1fr', };
+    const packsFA = {field: 'packs', placeholder: 'Unit Pack', insert: null, remove: null, push: null, width: '1fr', };
     const priceSizeFAs = [pricesFA, discount_pricesFA, amountsFA, unitsFA, packsFA];
 
-    const aboutThisItemFAs = [{value: 'about_item', placeholder: '', insert: null, remove: null, push: null, width: '1fr', }];
+    const aboutThisItemFAs = [{field: 'about_item', placeholder: '', insert: null, remove: null, push: null, width: '1fr', }];
 
     const details_1_FAs = [
-        {value: 'details_1_key', placeholder: '', insert: null, remove: null, push: null, width: '1fr', },
-        {value: 'details_1_val', placeholder: '', insert: null, remove: null, push: null, width: '1.6fr', }
+        {field: 'details_1_key', placeholder: 'Key', insert: null, remove: null, push: null, width: '1fr', },
+        {field: 'details_1_val', placeholder: 'Value', insert: null, remove: null, push: null, width: '1.6fr', }
     ];
 
     const details_2_FAs = [
-        {value: 'details_2_key', placeholder: '', insert: null, remove: null, push: null, width: '1fr', },
-        {value: 'details_2_val', placeholder: '', insert: null, remove: null, push: null, width: '1.6fr', }
+        {field: 'details_2_key', placeholder: 'Key', insert: null, remove: null, push: null, width: '1fr', },
+        {field: 'details_2_val', placeholder: 'Value', insert: null, remove: null, push: null, width: '1.6fr', }
     ];
 
 
@@ -193,17 +231,44 @@ function AddItem() {
                 imgFilesTmp.push(Object.assign(file, {preview: URL.createObjectURL(file)}));
             }
         });
+        formik.setFieldValue('images', imgFilesTmp);
         setImgFiles(imgFilesTmp);
     };
 
     function removeImgFile(imgFile) {
-        setImgFiles(files => files.filter(file => file.name !== imgFile.name));
+        const imgFilesTmp = imgFiles.filter(file => file.name !== imgFile.name);
+        formik.setFieldValue('images', imgFilesTmp);
+        setImgFiles(files => imgFilesTmp);
     }
 
     console.log('imgFiles: ', imgFiles);
     console.log('in AddItem, formik values: ', formik.values);
     // console.log('In Item, user: ', user, ', cartItems: ', cartItems, ', orders: ', orders);
 
+
+    function getFirstErrorInFieldArrays(fieldArrays) {
+        for (const fa of fieldArrays) {
+            if (isErrorFieldArray(fa)) {
+                for (let i = 0; i < formik.values[fa.field].length; i++) {
+                    if (formik.errors[fa.field][i] && formik.touched[fa.field][i]) {
+                        return (
+                            <div className='formik-warning'>
+                                <Icon name='warning circle' />
+                                {
+                                    fa.placeholder ? 
+                                    `${fa.placeholder}: ${formik.errors[fa.field][i]}` : 
+                                    `${formik.errors[fa.field][i]}`
+                                }
+                            </div>
+                        );
+                    }
+                }
+            } else
+                continue;
+        }
+
+        return null;
+    }
 
     function addFieldArrays(fieldArrays, bUpdateRadioBtn) {
         const gridColumns = [];
@@ -215,26 +280,28 @@ function AddItem() {
         // For remove buttons
         gridColumns.push('28.27px');
         const gridColumnsStr = gridColumns.join(' ');
-        console.log('in addFieldArrays, gridColumnsStr: ', gridColumnsStr);
+        // console.log('in addFieldArrays, gridColumnsStr: ', gridColumnsStr);
 
         return (
-            <div style={{display: 'grid', gridTemplateColumns: gridColumnsStr, alignItems: 'center', }}>
-                {bUpdateRadioBtn ?<div>{addRadioBtns(fieldArrays[0])}</div> : null}
-                {
-                    fieldArrays.map(fa => (
-                        <div>{addFieldArray(fa)}</div>
-                    ))
-                }
-                <div>{addInsertBtns(fieldArrays)}</div>
-                <div>{addRemoveBtns(fieldArrays, bUpdateRadioBtn)}</div>
+            <div>
+                <div style={{display: 'grid', gridTemplateColumns: gridColumnsStr, alignItems: 'center', }}>
+                    {bUpdateRadioBtn ?<div>{addRadioBtns(fieldArrays[0])}</div> : null}
+                    {
+                        fieldArrays.map(fa => (
+                            <div key={fa.field}>{addFieldArray(fa)}</div>
+                        ))
+                    }
+                    <div>{addInsertBtns(fieldArrays)}</div>
+                    <div>{addRemoveBtns(fieldArrays, bUpdateRadioBtn)}</div>
+                </div>
+                {getFirstErrorInFieldArrays(fieldArrays)}
             </div>
         );
     }
 
-    // style={{margin: '7.5px 5px 2.8px 0', }}
     function addRadioBtns(fieldArray) {
         return (
-            formik.values[fieldArray.value].map((val, i) => (
+            formik.values[fieldArray.field].map((val, i) => (
                 <Radio
                     key={i}
                     name='default_item_idx'
@@ -247,33 +314,53 @@ function AddItem() {
         );
     }
 
-    // style={{width: '100%', height: '30px', }}
+    function isErrorFieldArray(fieldArray) {
+        // console.log('***** ', 'field: ', fieldArray.field, ' *****');
+        // console.log('formik errors: ', formik.errors[fieldArray.field], ', touched: ', formik.touched[fieldArray.field]);
+        return formik.errors[fieldArray.field] && formik.touched[fieldArray.field];
+    }
+
+    function isErrorFieldArrayVal(fieldArray, index) {
+        // console.log('***** ', 'index: ', index, ' *****');
+
+        return isErrorFieldArray(fieldArray) && formik.errors[fieldArray.field][index] && 
+            formik.touched[fieldArray.field][index];
+    }
+
     function addFieldArray(fieldArray) {
         return (
             <FormikProvider value={formik}>
-                <FieldArray name={fieldArray.value}>
+                <FieldArray name={fieldArray.field}>
                     {({ insert, remove, push }) => {
                         fieldArray.insert = insert;
                         fieldArray.remove = remove;
                         fieldArray.push = push;
 
+                        // backgroundColor: IsErrorFieldArrayVal(fieldArray, i) ? '#ffecec' : '#ffffff', 
                         return (
                             <div>{
-                                formik.values[fieldArray.value].map((val, i) => (
-                                    <div key={i}>
-                                        <Input name={`${fieldArray.value}.${i}`}
-                                            style={{width: '100%', height: '30px', marginBottom: '3px',}}
-                                            placeholder={fieldArray.placeholder}
-                                            value={formik.values[fieldArray.value][i]}
-                                            onChange={formik.handleChange} onBlur={formik.handleBlur} />
-                                        {
-                                            formik.errors[fieldArray.value] && formik.errors[fieldArray.value][i] &&
-                                            formik.touched[fieldArray.value] && formik.touched[fieldArray.value][i] ?
-                                            <div>{formik.errors[fieldArray.value][i]}</div> :
-                                            null
-                                        }
-                                    </div>
-                                ))
+                                formik.values[fieldArray.field].map((val, i) => {
+                                    // console.log('IsErrorFieldArrayVal: ', isErrorFieldArrayVal(fieldArray, i), 
+                                    //     ', field: ', fieldArray.field, ', index: ', i);
+                                    
+                                    return (
+                                        <div key={`${fieldArray.field}-${i}`}>
+                                            <input name={`${fieldArray.field}.${i}`}
+                                                style={{width: '100%', height: '30px', marginBottom: '3px',
+                                                    borderColor: isErrorFieldArrayVal(fieldArray, i) ? '#ff8080' : '#e0e0e0',
+                                                }}
+                                                placeholder={fieldArray.placeholder}
+                                                value={formik.values[fieldArray.field][i]}
+                                                onChange={formik.handleChange} onBlur={formik.handleBlur} />
+                                            {/* {
+                                                formik.errors[fieldArray.field] && formik.errors[fieldArray.field][i] &&
+                                                formik.touched[fieldArray.field] && formik.touched[fieldArray.field][i] ?
+                                                <div>{formik.errors[fieldArray.field][i]}</div> :
+                                                null
+                                            } */}
+                                        </div>
+                                    );
+                                })
                             }</div>
                         );
                     }}
@@ -282,10 +369,9 @@ function AddItem() {
         );
     }
 
-    // style={{margin: '4.5px 0'}}
     function addInsertBtns(fieldArrays) {
         return (
-            formik.values[fieldArrays[0].value].map((val, i) => (
+            formik.values[fieldArrays[0].field].map((val, i) => (
                 <Icon
                     name='plus circle' size='large' color='blue'
                     style={{margin: '4.5px 0 7.5px 0'}}
@@ -298,10 +384,9 @@ function AddItem() {
         );
     }
 
-    // style={{margin: '4.5px 0'}}
     function addRemoveBtns(fieldArrays, bUpdateRadioBtn) {
         return (
-            formik.values[fieldArrays[0].value].map((val, i) => (
+            formik.values[fieldArrays[0].field].map((val, i) => (
                 <Icon
                     name='minus circle' size='large' color='red' disabled={i === 0}
                     style={{margin: '4.5px 0 7.5px 0'}}
@@ -348,6 +433,12 @@ function AddItem() {
                             }
                         </div>
                         <ImgDropzone onDrop={handleImgDrop} />
+                        {formik.errors.images && 
+                            <div className='formik-warning'>
+                                <Icon name='warning circle' />
+                                {formik.errors.images}
+                            </div>
+                        }
                     </div>
 
                     {/* Item name and descriptions */}
@@ -357,6 +448,12 @@ function AddItem() {
                         <TextArea id='name' name='name' rows={3}
                             style={{width: '100%', padding: '5px', marginTop: '10px', }}
                             value={formik.values.name} onChange={formik.handleChange} onBlur={formik.handleBlur}/>
+                        {formik.errors.name && formik.touched.name && 
+                            <div className='formik-warning'>
+                                <Icon name='warning circle' />
+                                {formik.errors.name}
+                            </div>
+                        }
                         <Divider />
                         {/* Prices & Sizes*/}
                         <div style={{marginBottom: '10px', fontSize: '1.2em', fontWeight: 'bold', }}>Prices & Sizes:</div>

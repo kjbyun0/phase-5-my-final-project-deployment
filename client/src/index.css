@@ -127,3 +127,11 @@ body {
   text-decoration: underline;
   text-decoration-color: brown;
 }
+
+.formik-warning {
+  color: #ff8080;
+}
+
+.formik-info {
+  color: deepskyblue;
+}

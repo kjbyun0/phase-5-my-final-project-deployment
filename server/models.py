@@ -72,24 +72,24 @@ class User(db.Model, SerializerMixin):
         self._password_hash = password_hash.decode('utf-8')
 
     def authenticate(self, password):
-        print('in models authenticate func, password: ', password)
+        # print('in models authenticate func, password: ', password)
         return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
 
     @validates('username', 'password', 'email', 'phone', 'zip_code')
     def validate(self, key, value):
         if key == 'username':
             if not isinstance(value, str):
-                raise TypeError('Server validation Error: Invalid type for username')
+                raise TypeError('Server validation error: Invalid type for username')
             elif len(value) < 5 or len(value) > 20:
-                raise ValueError('Server validation Error: Invalid username')
+                raise ValueError('Server validation error: Invalid username')
         elif key == 'password':
             if len(value) < 5:
-                raise ValueError('Server validation Error: Invalid password length')
+                raise ValueError('Server validation error: Invalid password length')
         elif key == 'email':
             email = r"[A-Za-z]+[A-Za-z0-9]*\.?[A-Za-z0-9]+@[A-Za-z_\-]+\.[A-Za-z]{2,3}"
             email_regex = re.compile(email)
             if not email_regex.fullmatch(value):
-                raise ValueError('Server validation Error: Invalid email address')
+                raise ValueError('Server validation error: Invalid email address')
         elif key == 'phone':
             phone = r"((([\(]?[0-9]{3,4}[\)]\s?)|([0-9]{3,4}[\-]))[0-9]{3,4}[\-][0-9]{4})|([0-9]{10,12})"
             phone_regex = re.compile(phone)
@@ -295,14 +295,11 @@ class CartItem(db.Model, SerializerMixin):
     item = db.relationship('Item', back_populates='cart_items')
     customer = db.relationship('Customer', back_populates='cart_items')
 
-    @validates('checked', 'quantity')
+    @validates('quantity')
     def validate(self, key, value):
-        if key == 'checked':
-            if value in [0, 1]:
-                raise ValueError('Server Validation Error: Invalid checked value')
-        elif key == 'quantity':
+        if key == 'quantity':
             if value <= 0:
-                raise ValueError('Server Validation Error: Invalid quantity')
+                raise ValueError('Server validation error: Invalid quantity')
         
         return value
 
@@ -337,7 +334,7 @@ class OrderItem(db.Model, SerializerMixin):
     def validate(self, key, value):
         if key == 'quantity':
             if value <= 0:
-                raise ValueError('Server Validation Error: Invalid quantity')
+                raise ValueError('Server validation error: Invalid quantity')
             
         return value
 
@@ -412,6 +409,17 @@ class Review(db.Model, SerializerMixin):
 
     item = db.relationship('Item', back_populates='reviews')
     customer = db.relationship('Customer', back_populates='reviews')
+
+    @validates('rating', 'review_done')
+    def validate(self, key, value):
+        if key == 'rating':
+            if value < 1 or value > 5:
+                raise ValueError('Server validation error: Invalid rating')
+        elif key == 'review_done':
+            if value not in [0, 1]:
+                raise ValueError('Server validation error: Invalid review_done')
+
+        return value
 
     def __repr__(self):
         return f'<Review {self.id}>'

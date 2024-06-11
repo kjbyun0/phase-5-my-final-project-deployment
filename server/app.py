@@ -149,7 +149,7 @@ class Signup(Resource):
             db.session.commit()
         except Exception as exc:
             return make_response({
-                'Message': f'{exc}',
+                'message': f'{exc}',
             }, 400)
         
         session['user_id'] = user.id

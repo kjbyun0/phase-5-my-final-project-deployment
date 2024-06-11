@@ -6,6 +6,7 @@ from sqlalchemy.orm import validates
 # from datetime import datetime
 from config import db, bcrypt
 import json
+import re
 
 from search import SearchableMixin
 
@@ -51,7 +52,7 @@ class User(db.Model, SerializerMixin):
     username = db.Column(db.String, unique=True, nullable=False)
     _password_hash = db.Column(db.String, nullable=False)
     email = db.Column(db.String)
-    phone = db.Column(db.String)
+    phone = db.Column(db.String)    
     street_1 = db.Column(db.String)
     street_2 = db.Column(db.String)
     city = db.Column(db.String)
@@ -74,6 +75,34 @@ class User(db.Model, SerializerMixin):
         print('in models authenticate func, password: ', password)
         return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
 
+    @validates('username', 'password', 'email', 'phone', 'zip_code')
+    def validate(self, key, value):
+        if key == 'username':
+            if not isinstance(value, str):
+                raise TypeError('Server validation Error: Invalid type for username')
+            elif len(value) < 5 or len(value) > 20:
+                raise ValueError('Server validation Error: Invalid username')
+        elif key == 'password':
+            if len(value) < 5:
+                raise ValueError('Server validation Error: Invalid password length')
+        elif key == 'email':
+            email = r"[A-Za-z]+[A-Za-z0-9]*\.?[A-Za-z0-9]+@[A-Za-z_\-]+\.[A-Za-z]{2,3}"
+            email_regex = re.compile(email)
+            if not email_regex.fullmatch(value):
+                raise ValueError('Server validation Error: Invalid email address')
+        elif key == 'phone':
+            phone = r"((([\(]?[0-9]{3,4}[\)]\s?)|([0-9]{3,4}[\-]))[0-9]{3,4}[\-][0-9]{4})|([0-9]{10,12})"
+            phone_regex = re.compile(phone)
+            if not phone_regex.fullmatch(value):
+                raise ValueError('Server validation error: Invalid phone number')
+        elif key == 'zip_code':
+            zip_code = r"[0-9]{5}"
+            zip_code_regex = re.compile(zip_code)
+            if not zip_code_regex.fullmatch(value):
+                raise ValueError('Server validation error: Invalid zip code')
+
+        return value
+
     def __repr__(self):
         return f'<User {self.id}>'
 
@@ -92,6 +121,14 @@ class Seller(db.Model, SerializerMixin):
 
     user = db.relationship('User', back_populates='seller')
     items = db.relationship('Item', back_populates='seller', cascade='all, delete-orphan')
+
+    @validates('name')
+    def validate(self, key, value):
+        if key == 'name':
+            if len(value) == 0:
+                raise ValueError('Server validation error: No name')
+        
+        return value
 
     def __repr__(self):
         return f'<Seller {self.id}>'
@@ -120,7 +157,20 @@ class Customer(db.Model, SerializerMixin):
     reviews = db.relationship('Review', back_populates='customer', cascade='all, delete-orphan')
 
     items_thru_cart = association_proxy('cart_items', 'item',
-                        creator=lambda item_obj: CartItem(item=iem_obj))
+                        creator=lambda item_obj: CartItem(item=item_obj))
+    
+    @validates('first_name', 'last_name', 'mobile')
+    def validate(self, key, value):
+        if key == 'first_name' or key == 'last_name':
+            if len(value) == 0:
+                raise ValueError(f'Server validation error: No {"first name" if key == "first_name" else "last name"}')
+        elif key == 'mobile':
+            mobile = r"((([\(]?[0-9]{3,4}[\)]\s?)|([0-9]{3,4}[\-]))[0-9]{3,4}[\-][0-9]{4})|([0-9]{10,12})"
+            mobile_regex = re.compile(mobile)
+            if not mobile_regex.fullmatch(value):
+                raise ValueError('Server validation error: Invalid mobile number')
+            
+        return value
 
     def __repr__(self):
         return f'<Customer {self.id}>'
@@ -245,6 +295,17 @@ class CartItem(db.Model, SerializerMixin):
     item = db.relationship('Item', back_populates='cart_items')
     customer = db.relationship('Customer', back_populates='cart_items')
 
+    @validates('checked', 'quantity')
+    def validate(self, key, value):
+        if key == 'checked':
+            if value in [0, 1]:
+                raise ValueError('Server Validation Error: Invalid checked value')
+        elif key == 'quantity':
+            if value <= 0:
+                raise ValueError('Server Validation Error: Invalid quantity')
+        
+        return value
+
     def __repr__(self):
         return f'<CartItem {self.id}>'
 
@@ -271,6 +332,14 @@ class OrderItem(db.Model, SerializerMixin):
 
     # association proxy may be needed later
     # from Order model class to Item model class and vice versa
+
+    @validates('quantity')
+    def validate(self, key, value):
+        if key == 'quantity':
+            if value <= 0:
+                raise ValueError('Server Validation Error: Invalid quantity')
+            
+        return value
 
     def __repr__(self):
         return f'<OrderItem {self.id}>'
@@ -300,6 +369,17 @@ class Order(db.Model, SerializerMixin):
     # relationship
     customer = db.relationship('Customer', back_populates='orders')
     order_items = db.relationship('OrderItem', back_populates='order', cascade='all, delete-orphan')
+
+    @validates('zip_code')
+    def validate(self, key, value):
+        if key == 'zip_code':
+            zip_code = r"[0-9]{5}"
+            zip_code_regex = re.compile(zip_code)
+            if not zip_code_regex.fullmatch(value):
+                raise ValueError('Server validation error: Invalid zip code')
+
+        return value
+            
 
     def __repr__(self):
         return f'<Order {self.id}>'

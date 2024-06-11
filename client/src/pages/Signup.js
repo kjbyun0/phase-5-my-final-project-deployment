@@ -3,7 +3,7 @@ import { useOutletContext, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { setUserInfo } from '../components/common';
-import { Form, FormField, Input, Button, Checkbox, } from 'semantic-ui-react';
+import { Form, FormField, Input, Button, Checkbox, Icon, } from 'semantic-ui-react';
 
 function Signup() {
     const [ isSeller, setIsSeller ] = useState(false);
@@ -84,8 +84,10 @@ function Signup() {
     }
 
     return (
-        <div style={{width: '100%', height: '100%',}}>
-            <div style={{width: '400px', height: 'auto', padding: '20px 30px', margin: '100px auto 0', 
+        <div style={{display: 'grid', gridTemplateColumns: '1fr max-content 1fr', alignItems: 'center', 
+            minWidth: '815px', }}>
+            <div />
+            <div style={{width: '400px', height: 'auto', padding: '20px 30px', margin: '100px 20px', 
                 border: '1px solid lightgrey', borderRadius: '5px', }}>
                 <h1>Create acount</h1>
                 <Form onSubmit={formik.handleSubmit}>
@@ -101,7 +103,10 @@ function Signup() {
                                 value={formik.values.name}
                                 onChange={formik.handleChange} onBlur={formik.handleBlur} />
                             {formik.errors.name && formik.touched.name ? 
-                                <div style={{color: 'red', }}>{formik.errors.name}</div> : <br/>}
+                                <div>
+                                    <Icon className='formik-info' name='info' />
+                                    {formik.errors.name}
+                                </div> : <br/>}
                         </> :
                         <>
                             <label id='firstName' name='firstName' style={{display: 'inline-block', 
@@ -110,14 +115,20 @@ function Signup() {
                                 value={formik.values.firstName} 
                                 onChange={formik.handleChange} onBlur={formik.handleBlur} />
                             {formik.errors.firstName && formik.touched.firstName ? 
-                                <div style={{color: 'red', }}>{formik.errors.firstName}</div> : <br/>}
+                                <div>
+                                    <Icon className='formik-info' name='info' />
+                                    {formik.errors.firstName}
+                                </div> : <br/>}
                             <label id='lastName' name='lastName' style={{display: 'inline-block', 
                                 width: '22%', fontWeight: 'bold', }}>Last name</label>
                             <Input id='lastName' name='lastName' type='text' style={{width: '78%', marginTop: '5px', }}
                                 value={formik.values.lastName} 
                                 onChange={formik.handleChange} onBlur={formik.handleBlur} />
                             {formik.errors.lastName && formik.touched.lastName ? 
-                                <div style={{color: 'red', }}>{formik.errors.lastName}</div> : <br/>}
+                                <div>
+                                    <Icon className='formik-info' name='info' />
+                                    {formik.errors.lastName}
+                                </div> : <br/>}
                         </>
                     }
                     <label id='username' name='username' style={{display: 'inline-block', width: '22%', 
@@ -126,35 +137,55 @@ function Signup() {
                         value={formik.values.username} 
                         onChange={formik.handleChange} onBlur={formik.handleBlur} />
                     {formik.errors.username && formik.touched.username ? 
-                        <div style={{color: 'red', }}>{formik.errors.username}</div> : <br/>}
+                        <div>
+                            <Icon className='formik-info' name='info' />
+                            {formik.errors.username}
+                        </div> : <br/>}
                     <label id='password' name='password' style={{display: 'inline-block', width: '22%', 
                         fontWeight: 'bold', }}>Password</label>
                     <Input id='password' name='password' type='password' style={{width: '78%', marginTop: '5px', }}
                         value={formik.values.password} 
                         onChange={formik.handleChange} onBlur={formik.handleBlur} />
                     {formik.errors.password && formik.touched.password ? 
-                        <div style={{color: 'red', }}>{formik.errors.password}</div> : <br/>}
+                        <div>
+                            <Icon className='formik-info' name='info' />
+                            {formik.errors.password}
+                        </div> : <br/>}
                     <label id='email' name='email' style={{display: 'inline-block', width: '22%', 
                         fontWeight: 'bold', }}>Email</label>
                     <Input id='email' naem='email' type='text' style={{width: '78%', marginTop: '5px', }}
                         value={formik.values.email} 
                         onChange={formik.handleChange} onBlur={formik.handleBlur} />
                     {formik.errors.email && formik.touched.email ? 
-                        <div style={{color: 'red', }}>{formik.errors.email}</div> : <br/>}
-                    <label id='mobiel' name='mobile' style={{display: 'inline-block', width: '22%', 
-                        fontWeight: 'bold', }}>Mobile</label>
-                    <Input id='mobile' name='mobile' text='text' style={{width: '78%', marginTop: '5px', }} 
-                        value={formik.values.mobile} 
-                        onChange={formik.handleChange} onBlur={formik.handleBlur} />
-                    {formik.errors.mobile && formik.touched.mobile ? 
-                        <div style={{color: 'red', }}>{formik.errors.mobile}</div> : <br/>}
+                        <div>
+                            <Icon className='formik-info' name='info' />
+                            {formik.errors.email}
+                        </div> : <br/>}
+                    {
+                        isSeller ? null : 
+                        <>
+                            <label id='mobile' name='mobile' style={{display: 'inline-block', width: '22%', 
+                                fontWeight: 'bold', }}>Mobile</label>
+                            <Input id='mobile' name='mobile' text='text' style={{width: '78%', marginTop: '5px', }} 
+                                value={formik.values.mobile} 
+                                onChange={formik.handleChange} onBlur={formik.handleBlur} />
+                            {formik.errors.mobile && formik.touched.mobile ? 
+                                <div>
+                                    <Icon className='formik-info' name='info' />
+                                    {formik.errors.mobile}
+                                </div> : <br/>}
+                        </>
+                    }
                     <label id='phone' name='phone' style={{display: 'inline-block', width: '22%', 
                         fontWeight: 'bold', }}>Phone</label>
                     <Input id='phone' name='phone' text='text' style={{width: '78%', marginTop: '5px', }}
                         value={formik.values.phone} 
                         onChange={formik.handleChange} onBlur={formik.handleBlur} />
                     {formik.errors.phone && formik.touched.phone ? 
-                        <div style={{color: 'red', }}>{formik.errors.phone}</div> : <br/>}
+                        <div>
+                            <Icon className='formik-info' name='info' />
+                            {formik.errors.phone}
+                        </div> : <br/>}
                     <FormField style={{marginTop: '15px', }}>
                         <label>Address</label>
                         <Input id='street_1' name='street_1' type='text' placeholder='Street 1' 
@@ -174,12 +205,16 @@ function Signup() {
                             value={formik.values.zipCode} 
                             onChange={formik.handleChange} onBlur={formik.handleBlur} />
                         {formik.errors.zipCode && formik.touched.zipCode && 
-                            <div style={{color: 'red', }}>{formik.errors.zipCode}</div>}
+                            <div>
+                                <Icon className='formik-info' name='info' />
+                                {formik.errors.zipCode}
+                            </div>}
                     </FormField>
                     <Button type='submit' color='yellow' 
                         style={{width: '100%', marginTop: '10px', }}>Continue</Button>
                 </Form>
             </div>
+            <div />
         </div>
     );
 }

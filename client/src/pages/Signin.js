@@ -49,9 +49,10 @@ function Signin() {
     });
 
     return (
-        <div style={{display: 'grid', gridTemplateColumns: '1fr max-content 1fr', alignItems: 'center', }} >
+        <div style={{display: 'grid', gridTemplateColumns: '1fr max-content 1fr', alignItems: 'center', 
+            minWidth: '815px', }} >
             <div />
-            <div style={{width: '400px', height: 'auto', padding: '20px 30px', margin: '100px 10px', 
+            <div style={{width: '400px', height: 'auto', padding: '20px 30px', margin: '100px 20px', 
                 border: '1px solid lightgrey', borderRadius: '5px'}}>
                 <h1>Sign in</h1>
                 <Form onSubmit={formik.handleSubmit}>

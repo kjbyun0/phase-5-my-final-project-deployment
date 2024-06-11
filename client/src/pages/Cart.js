@@ -166,8 +166,9 @@ function Cart() {
     }
 
     async function handlePlaceOrder() {
-        if (!selectStatus) {    // ??? - need to make a popup for this!!!!!!!!!!!!!!!!!!
-            console.log('Please select at least one item to Checkout');
+        const numCheckedItems = cartItems.reduce((acc, cItem) => cItem.checked ? acc + 1 : acc, 0);
+        if (!numCheckedItems) {
+            alert("At least one item must be checked.")
             return;
         }
 
@@ -191,7 +192,7 @@ function Cart() {
                     //console.log('in handlePlaceOrder new order: ', data1);
 
                     const orderTmp = data1;
-                    cartItems.filter(cItems => cItems.checked).forEach(async cItem => {
+                    cartItems.filter(cItem => cItem.checked).forEach(async cItem => {
                         await fetch('/orderitems', {
                             method: 'POST',
                             headers: {

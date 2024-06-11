@@ -258,9 +258,12 @@ function Item() {
     function handleAddToCart() {
         if (!item) return;
 
+        // RBAC
         // if user is not signed in or is a seller
         if (!user || !user.customer) {
+            alert("Please, signin with your customer account.");
             navigate('/signin');
+            return;
         }
 
         const cItem = cartItems.find(cItem => 
@@ -271,36 +274,6 @@ function Item() {
                 ...cItem,
                 quantity: cItem.quantity + quantity,
             }, cartItems, onSetCartItems);
-            // fetch(`/cartitems/${cItem.id}`, {
-            //     method: 'PATCH',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({
-            //         quantity: cItem.quantity + quantity,
-            //     }),
-            // })
-            // .then(r => {
-            //     r.json().then(data => {
-            //         if (r.ok) {
-            //             console.log('In handleAddToCart fetch(PATCH), cartItem: ', data);
-
-            //             onSetCartItems(cartItems.map(cItems => 
-            //                 cItems.item_id === data.item_id && cItems.item_idx === data.item_idx ? 
-            //                 data : cItems));
-
-            //             // navigate to my cart page later...
-            //         } else {
-            //             if (r.status === 401 || r.status === 403) {
-            //                 console.log(data);
-            //                 alert(data.message);
-            //             } else {
-            //                 console.log('Server Error - Updating an item in cart: ', data);
-            //                 alert(`Server Error - Updating an item in cart: ${data.message}`);
-            //             }
-            //         }
-            //     });
-            // });
         } else {
             handleCItemAdd({
                 checked: 1,
@@ -309,40 +282,6 @@ function Item() {
                 item_id: item.id,
                 customer_id: user.customer.id,
             }, cartItems, onSetCartItems);
-            // fetch('/cartitems', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({
-            //         quantity: quantity,
-            //         item_idx: activeItemIdx,
-            //         item_id: item.id,
-            //         customer_id: user.customer.id,
-            //     }),
-            // })
-            // .then(r => {
-            //     r.json().then(data => {
-            //         if (r.ok) {
-            //             console.log('In handleAddToCart fetch(POST), cartItem: ', data);
-
-            //             onSetCartItems([
-            //                 ...cartItems,
-            //                 data
-            //             ]);
-
-            //             // navigate to my cart page later...
-            //         } else {
-            //             if (r.status === 401 || r.status === 403) {
-            //                 console.log(data);
-            //                 alert(data.message);
-            //             } else {
-            //                 console.log("Server Error - Can't add an item to cart: ", data);
-            //                 alert(`Server Error - Can't add an item to cart: ${data.message}`);
-            //             }
-            //         }
-            //     });
-            // });
         }
     }
 
@@ -350,9 +289,12 @@ function Item() {
     function handlePlaceOrder() {
         if (!item) return;
 
+        // RBAC
         // if user is not signed in or is a seller
         if (!user || !user.customer) {
+            alert("Please, signin with your customer account.");
             navigate('/signin');
+            return;
         }
 
         fetch('/orders', {
@@ -439,10 +381,10 @@ function Item() {
                     <div className='sticky'>
                         <div style={{display: 'grid', gridTemplateColumns: '10% 90%',
                             width: '100%', height: '100%', margin: '14px', }}>
-                            <div style={{padding: '14px 0 0 0',}}>
+                            <div style={{padding: '14px 0 0 0', }}>
                                 {dispThumbnails()}
                             </div>
-                            <div style={{padding: '0'}}>
+                            <div style={{padding: '0', marginLeft: '5px', }}>
                                 <Image src={item.images[activeImageIdx]} />
                             </div>
                         </div>

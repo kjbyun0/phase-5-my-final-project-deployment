@@ -196,9 +196,9 @@ class Customer_by_id(Resource):
 class Search(Resource):
     def get(self, keys):
         try: 
-            print(f'keys: {keys}')
+            # print(f'keys: {keys}')
             result_obj, count = Item.search(keys, 1, 500)
-            print(f'result_obj: {result_obj}, count: {count}')
+            # print(f'result_obj: {result_obj}, count: {count}')
             results = [apply_json_loads_to_item(result.to_dict()) for result in result_obj.all()]
         except Exception as exc:
             return make_response({
@@ -250,7 +250,6 @@ class Item_by_id(Resource):
     def get(self, id):
         item = Item.query.filter_by(id=id).first()
         if item: 
-            print("** 3 **")
             item_dict = item.to_dict()
             apply_json_loads_to_item(item_dict)
             return make_response(item_dict, 200)

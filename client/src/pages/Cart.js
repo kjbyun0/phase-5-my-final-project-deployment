@@ -12,6 +12,12 @@ function Cart() {
     const [ qInputs, setQInputs ] = useState({});
 
     useEffect(() => {
+        // RBAC
+        if (!user || !user.customer) {
+            navigate('/signin');
+            return;
+        }
+
         const tmpDict = {};
         cartItems.forEach(cItem => tmpDict[cItem.id] = 
             [cItem.quantity >= 10 ? true : false, cItem.quantity.toString()]);
@@ -45,7 +51,6 @@ function Cart() {
         {key: 10, text: '10+', value: 10},
     ];
 
-    //RBAC need to be implemented. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     console.log('In Cart, user: ', user, ', cartItems: ', cartItems, ', orders: ', orders);
     console.log('In Cart, qInputs: ', qInputs);

@@ -1,5 +1,5 @@
-import { useState, forwardRef } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useState, useEffect, forwardRef } from 'react';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import { convertUTCDate } from '../components/common';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -11,9 +11,18 @@ function SalesPerf() {
     const { user, sellerItems } = useOutletContext();
     const [ periodStart, setPeriodStart ] = useState(initStartDate());
     const [ periodEnd, setPeriodEnd] = useState(initEndDate());
+    const navigate = useNavigate();
 
     console.log('in SalesPerf, periodStart: ', periodStart, ', periodEnd: ', periodEnd);
     console.log('in SalesPerf, sellerItems: ', sellerItems);
+
+    //RBAC
+    useEffect(() => {
+        if (!user || !user.seller) {
+            navigate('/signin');
+            return;
+        }
+    }, []);
 
     function initStartDate() {
         const d = new Date();
@@ -31,7 +40,7 @@ function SalesPerf() {
     const CustomInput = forwardRef(({ value, onClick }, ref) => (
         <Input style={{width: '120px', height: '30px',}} 
             value={value} onClick={onClick} ref={ref} />
-      ));
+    ));
 
     const dispSalesPerfs = sellerItems.map(item => {
         const itemSalesPerf = item.order_items.reduce((acc, oi) => {

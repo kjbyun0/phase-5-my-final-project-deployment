@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useOutletContext, useNavigate, } from 'react-router-dom';
-import { dispPrice, dispListPrice, handleCItemAdd, handleCItemChange,
-    formatDate, convertUTCDate, } from '../components/common';
 import { useFormik, FormikProvider, FieldArray, } from 'formik';
 import * as yup from 'yup';
 import ImgDropzone from '../components/ImgDropzone';
-import { Divider, Form, TextArea, Input, Button, Icon, IconGroup, Radio, FormField, } from 'semantic-ui-react';
+import { Divider, Form, TextArea, Button, Icon, IconGroup, Radio, } from 'semantic-ui-react';
 
 
 function AddItem() {
@@ -15,6 +13,14 @@ function AddItem() {
     const [ imgFiles, setImgFiles ] = useState([]);
     const { user, cartItems, onSetCartItems, orders, onSetOrders, } = useOutletContext();
     const navigate = useNavigate();
+
+    //RBAC
+    useEffect(() => {
+        if (!user || !user.seller) {
+            navigate('/signin');
+            return;
+        }
+    }, []);
 
     const formSchema = yup.object().shape({
         name: yup.string().required('Required')

@@ -88,9 +88,8 @@ function Review() {
         },
     });
     
-    //RBAC need to be implemented. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    if (!itemReview.item) return;
-
+    if (!itemReview.item) 
+        return;
 
     return (
         <div style={{minWidth: '815px', padding: '0 160px', }}>

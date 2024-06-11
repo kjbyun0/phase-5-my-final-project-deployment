@@ -1,11 +1,12 @@
-import { useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import { formatDate, applyUTCToOrder } from '../components/common';
 import { Button, Dropdown, } from 'semantic-ui-react';
 
 function OrdersInProgress() {
     const { user, sellerItems, onSetSellerItems, } = useOutletContext();
     const [ filteritemId, setFilterItemId ] = useState(-1);
+    const navigate = useNavigate();
     const otherItemOptions = sellerItems.map((item, i) => {
         return ({
             key: i,
@@ -14,6 +15,14 @@ function OrdersInProgress() {
         });
     });
     const itemOptions = [{key: -1, text: 'All', value: -1,}, ...otherItemOptions];
+
+    //RBAC
+    useEffect(() => {
+        if (!user || !user.seller) {
+            navigate('/signin');
+            return;
+        }
+    }, []);
 
     async function handleOrderItem(orderItem, sellerItem) {
         const curDate = new Date();

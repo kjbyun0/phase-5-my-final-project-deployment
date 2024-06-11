@@ -33,10 +33,10 @@ function SearchResult() {
         { key: 4, text: 'Avg. Customer Review', value: 4 },
     ];
 
-    console.log('Before useEffect, searchParams: ', searchParams.get('query'));
-    console.log('In SearchResult, searchItems: ', searchItems);
-    console.log('In SearchResult, cartItemsDict: ', cartItemsDict);
-    console.log('In SearchResult, itemInCart: ', itemInCart);
+    // console.log('Before useEffect, searchParams: ', searchParams.get('query'));
+    // console.log('In SearchResult, searchItems: ', searchItems);
+    // console.log('In SearchResult, cartItemsDict: ', cartItemsDict);
+    // console.log('In SearchResult, itemInCart: ', itemInCart);
 
     useEffect(() => {
         console.log('In useEffect, searchParams: ', searchParams.get('query'));
@@ -48,14 +48,15 @@ function SearchResult() {
                     onSetSearchItems(data)
 
                     // Initializing itemInCart state.
-                    console.log('initializing');
                     const itemInCartTmp = {};
                     data.forEach(item => itemInCartTmp[item.id] = false);
                     setItemInCart(itemInCartTmp);
-                } else
-                    console.log('Server error: ', data.message);
-                    //add more actions here....
-            })
+                } else {
+                    console.log('Server error: ', data);
+                    alert(`Server Error: ${data.message}`);
+                    navigate('/');
+                }
+            });
         });
     }, [searchParams]);
 
@@ -85,9 +86,12 @@ function SearchResult() {
     }
 
     function handleAddToCart(item) {
+        // RBAC
         // if user is not signed in or is a seller
         if (!user || !user.customer) {
+            alert("Please, signin with your customer account.");
             navigate('/signin');
+            return;
         }
 
         // const cItem = cartItems.find(cItem => 

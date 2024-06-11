@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useInsertionEffect } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { applyUTCToOrder, formatDate } from '../components/common';
 import { Dropdown, Button, } from 'semantic-ui-react';
@@ -17,9 +17,14 @@ function Orders() {
     ];
 
     //RBAC need to be implemented. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    useEffect(() => {
+        if (!user || !user.customer) {
+            navigate('/signin');
+            return;
+        }
+    }, []);
 
     console.log('in Orders, user: ', user, ', orders: ', orders);
-
 
     function handleNavigateItem(itemId) {
         navigate(`/items/${itemId}`);

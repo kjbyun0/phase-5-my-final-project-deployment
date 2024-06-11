@@ -1,14 +1,19 @@
-import { useState } from 'react';
-import { useOutletContext, Outlet, } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useOutletContext, Outlet, useNavigate, } from 'react-router-dom';
 import { Icon, Input, Button, } from 'semantic-ui-react';
 
 function ReviewApp() {
     const { user, onSetUser, orders, reviews, onSetReviews } = useOutletContext();
     const [ nickname, setNickname ] = useState(null);
+    const navigate = useNavigate();
 
-    //RBAC need to be implemented. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    if (!user) return;
-    
+    //RBAC
+    useEffect(() => {
+        if (!user || !user.customer) {
+            navigate('/signin');
+            return;
+        }
+    }, []);
 
     function handleNickNameChange() {
         console.log('In handleNicknameChange');
@@ -45,6 +50,9 @@ function ReviewApp() {
             })
         });
     }
+
+    if (!user || !user.customer)
+        return;
 
     return (
         <div>

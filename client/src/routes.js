@@ -13,12 +13,13 @@ import AddItem from './pages/AddItem';
 import Signin from './pages/Signin';
 import Signout from './pages/Signout';
 import Signup from './pages/Signup';
+import ErrorPage from './pages/ErrorPage';
 
 const routes = [
     {
         path: '/', 
         element: <App />,
-        // errorElement: ,
+        errorElement: <ErrorPage />,
         children: [
             {
                 path: '/',
@@ -43,7 +44,6 @@ const routes = [
             {
                 path: '/reviewlist',
                 element: <ReviewApp />,
-                // errorElement: ,
                 children: [
                     {
                         path: '/reviewlist',

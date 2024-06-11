@@ -250,6 +250,7 @@ class Item_by_id(Resource):
     def get(self, id):
         item = Item.query.filter_by(id=id).first()
         if item: 
+            print("** 3 **")
             item_dict = item.to_dict()
             apply_json_loads_to_item(item_dict)
             return make_response(item_dict, 200)

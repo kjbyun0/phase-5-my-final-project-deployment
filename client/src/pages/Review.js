@@ -93,7 +93,7 @@ function Review() {
 
 
     return (
-        <div style={{padding: '0 160px', }}>
+        <div style={{minWidth: '815px', padding: '0 160px', }}>
             <div style={{fontSize: '1.9em', fontWeight: 'bold', marginTop: '40px', }}>
                 Create Review</div>
             <div style={{display: 'grid', gridTemplateColumns: 'max-content 1fr', alignItems: 'center', 
@@ -169,7 +169,6 @@ function Review() {
                     onClick={() => setValidateAfterSubmit(validateAfterSubmit => true)} >
                     Submit</Button>
             </Form>
-
         </div>
     );
 }

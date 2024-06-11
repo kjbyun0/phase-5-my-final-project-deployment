@@ -403,7 +403,7 @@ function AddItem() {
     }
 
     return (
-        <div style={{ padding: '15px', }}>
+        <div style={{ minWidth: '815px', padding: '15px', }}>
             <Form onSubmit={formik.handleSubmit}>
                 <div style={{display: 'grid', gridTemplateColumns: '1fr max-content', alignItems: 'center'}}>
                     <div />

@@ -32,7 +32,7 @@ function App() {
         orders, ', reviews: ', reviews, ', sellerItems: ', sellerItems);
 
     return (
-        <div style={{display: 'grid', gridTemplateRows: 'max-content 1fr', minWidth: '815px'}}>
+        <div style={{display: 'grid', gridTemplateRows: 'max-content 1fr', }}>
             {/* <header style={{minWidth: '0', minHeight: '0',}}> */}
             <header>
                 <NavBar user={user} cartItems={cartItems} />

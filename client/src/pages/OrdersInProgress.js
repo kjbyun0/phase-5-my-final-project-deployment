@@ -183,7 +183,7 @@ function OrdersInProgress() {
     });
 
     return (
-        <div style={{display: 'grid', gridTemplateColumns: '1fr 800px 1fr', margin: '40px 0'}}>
+        <div style={{display: 'grid', gridTemplateColumns: '1fr 800px 1fr', margin: '40px 0', minWidth: '815px', }}>
             <div />
             <div>
                 <div style={{display: 'grid', gridTemplateColumns: '1fr max-content', alignItems: 'end', 

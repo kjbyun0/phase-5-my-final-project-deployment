@@ -349,7 +349,7 @@ function Cart() {
     });
 
     return (
-        <div style={{border: '10px solid whitesmoke', }}>
+        <div style={{minWidth: '815px', border: '10px solid whitesmoke', }}>
             <div style={{display: 'grid', gridTemplateColumns: '1fr max-content', alignItems: 'center', 
                 padding: '20px', border: '10px solid whitesmoke', }} >
                 <div>{dispSubTotal()}</div>

@@ -85,13 +85,14 @@ function SalesPerf() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'max-content 1fr', alignItems: 'center', 
                     backgroundColor: 'whitesmoke', borderRadius: '10px 10px 0 0', 
                     border: '1px solid lightgray', borderBottom: '0px', }}>
-                    <div style={{width: '80px', height: '100px', marginLeft: '15px', 
+                    <div className='link' style={{width: '80px', height: '100px', marginLeft: '15px', 
                         backgroundImage: `url(${item.images[0]})`,     // image change from card_thumbnail
                         backgroundSize: 'contain', backgroundRepeat: 'no-repeat', 
                         backgroundPosition: 'center', }} 
-                    />
+                        onClick={() => navigate(`/items/${item.id}`)} />
                     <div style={{margin: '15px', }}>
-                        <div style={{fontSize: '1.2em', }}>
+                        <div className='link link5' style={{fontSize: '1.2em', }} 
+                            onClick={() => navigate(`/items/${item.id}`)}>
                             {item.name}</div>
                     </div>
                 </div>
@@ -129,7 +130,6 @@ function SalesPerf() {
                 </div>
             </div>
         );
-
     });
 
     return (

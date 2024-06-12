@@ -171,20 +171,35 @@ function SearchResult() {
                         null
                     }
                 </div>
-                <Button type='button' size='medium' color='yellow' 
-                    style={{color: 'black', borderRadius: '20px', padding: '10px 15px', 
-                    marginTop: '10px', }} 
-                    onClick={() => handleAddToCart(item)} >Add to cart</Button> 
                 {
-                    itemInCart[item.id] && cartItemsDict.hasOwnProperty(item.id) ?
-                    <div style={{marginTop: '5px', }}>
-                        <span style={{fontSize: '0.9em', fontWeight: 'bold'}}>{cartItemsDict[item.id].quantity} in cart</span>
-                        <span> - </span>
-                        <span className='link3 link' 
-                            onClick={() => handleCItemDelete(cartItemsDict[item.id], onSetCartItems)}>
-                            Remove</span>
-                    </div> :
-                    null
+                    user && user.seller ? 
+                    <div>
+                        {
+                            user.seller.id === item.seller_id ? 
+                            <div style={{marginTop: '10px', }}>
+                                <Button basic icon='edit outline' />
+                                <Button color='red' icon='trash alternate outline' />
+                            </div> : 
+                            null
+                        }
+                     </div> : 
+                    <div>
+                        <Button type='button' size='medium' color='yellow' 
+                            style={{color: 'black', borderRadius: '20px', padding: '10px 15px', 
+                            marginTop: '10px', }} 
+                            onClick={() => handleAddToCart(item)} >Add to cart</Button> 
+                        {
+                            itemInCart[item.id] && cartItemsDict.hasOwnProperty(item.id) ?
+                            <div style={{marginTop: '5px', }}>
+                                <span style={{fontSize: '0.9em', fontWeight: 'bold'}}>{cartItemsDict[item.id].quantity} in cart</span>
+                                <span> - </span>
+                                <span className='link3 link' 
+                                    onClick={() => handleCItemDelete(cartItemsDict[item.id], onSetCartItems)}>
+                                    Remove</span>
+                            </div> :
+                            null
+                        }
+                    </div>
                 }
             </CardContent>
         </Card>
@@ -196,8 +211,9 @@ function SearchResult() {
             <div style={{display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', }}>
                 <div>
                     <div style={{display: 'inline-block', fontSize: '1.2em', margin: '10px 0 10px 10px', }}>{searchItems.length} results for "</div>
-                    <div style={{display: 'inline-block', fontSize: '1.2em', margin: '10px 10px 10px 0', 
-                        fontWeight: 'bold', color: 'chocolate'}}>{searchParams.get('query')}"</div>
+                    <div style={{display: 'inline-block', fontSize: '1.2em', margin: '10px 0', 
+                        fontWeight: 'bold', color: 'chocolate'}}>{searchParams.get('query')}</div>
+                    <div style={{display: 'inline-block', fontSize: '1.2em', margin: '10px 10px 10px 0'}}>"</div>
                 </div>
                 {/* <Menu compact size='tiny' style={{float: 'inline-end', }}> */}
                 <Dropdown options={sortOptions} simple item button 

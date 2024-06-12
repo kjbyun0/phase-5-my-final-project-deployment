@@ -195,6 +195,10 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
     serialize_rules = (
         '-category',
         '-seller',
+        #'-seller.user',
+        # '-seller.user.seller',
+        # '-seller.user.customer',
+        '-seller.items',
         '-cart_items',
         '-order_items',
         '-reviews',

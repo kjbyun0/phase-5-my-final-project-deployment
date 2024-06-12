@@ -447,27 +447,49 @@ function Item() {
                             </div>
                         </div>
                         <div style={{margin: '20px 0 0 20px',}}>
-                            <ButtonGroup>
-                                <Button style={{borderRadius: '20px 0 0 20px', width: '15px', margin: '5px 0 0 5px', 
-                                    color: 'gray', border: '1px solid gray', 
-                                    background: `${quantity <= 1 ? 'lightgray' : 'white'}`, }} 
-                                    disabled={quantity <= 1} onClick={() => setQuantity(quantity - 1)} >-</Button>
-                                <Dropdown style={{width: '135px', height: '37px', border: '1px solid grey', 
-                                    borderRadius: '0', margin: '5px 0 0 0', background: 'white', }} 
-                                    button scrolling compact text={`Quantity: ${quantity}`} 
-                                    options={quantityOptions} value={quantity} 
-                                    onChange={(e, d) => setQuantity(d.value)} />
-                                <Button style={{borderRadius: '0 20px 20px 0', width: '15px', margin: '5px 5px 0 0', 
-                                    color: 'gray', border: '1px solid gray', 
-                                    background: `${quantity >= 30 ? 'lightgray' : 'white'}`, }} 
-                                    disabled={quantity >= 30} onClick={() => setQuantity(quantity + 1)} >+</Button>
-                            </ButtonGroup>
-                            <Button color='yellow' size='medium' 
-                                style={{display: 'block', borderRadius: '20px', width: '220px', margin: '5px', color: 'black', }}
-                                onClick={handleAddToCart}>Add to Cart</Button>
-                            <Button color='orange' size='medium' 
-                                style={{display: 'block', borderRadius: '20px', width: '220px', margin: '5px', color: 'black', }}
-                                onClick={handlePlaceOrder}>Buy Now</Button>
+                            {
+                                user && user.seller ?
+                                <div>
+                                    {
+                                        user.seller.id === item.seller_id ? 
+                                        <div>
+                                            <Button basic size='medium'
+                                                style={{display: 'block', borderRadius: '20px', width: '220px', margin: '5px', color: 'black', }}>
+                                                <Icon name='edit outline'/> Edit
+                                            </Button>
+                                            <Button color='red' size='medium' 
+                                                style={{display: 'block', borderRadius: '20px', width: '220px', margin: '5px', color: 'white', }}>
+                                                <Icon name='trash alternate outline'/> Delete
+                                            </Button>
+                                                
+                                        </div> : 
+                                        null
+                                    }
+                                </div> :
+                                <div>
+                                    <ButtonGroup>
+                                        <Button style={{borderRadius: '20px 0 0 20px', width: '15px', margin: '5px 0 0 5px', 
+                                            color: 'gray', border: '1px solid gray', 
+                                            background: `${quantity <= 1 ? 'lightgray' : 'white'}`, }} 
+                                            disabled={quantity <= 1} onClick={() => setQuantity(quantity - 1)} >-</Button>
+                                        <Dropdown style={{width: '135px', height: '37px', border: '1px solid grey', 
+                                            borderRadius: '0', margin: '5px 0 0 0', background: 'white', }} 
+                                            button scrolling compact text={`Quantity: ${quantity}`} 
+                                            options={quantityOptions} value={quantity} 
+                                            onChange={(e, d) => setQuantity(d.value)} />
+                                        <Button style={{borderRadius: '0 20px 20px 0', width: '15px', margin: '5px 5px 0 0', 
+                                            color: 'gray', border: '1px solid gray', 
+                                            background: `${quantity >= 30 ? 'lightgray' : 'white'}`, }} 
+                                            disabled={quantity >= 30} onClick={() => setQuantity(quantity + 1)} >+</Button>
+                                    </ButtonGroup>
+                                    <Button color='yellow' size='medium' 
+                                        style={{display: 'block', borderRadius: '20px', width: '220px', margin: '5px', color: 'black', }}
+                                        onClick={handleAddToCart}>Add to Cart</Button>
+                                    <Button color='orange' size='medium' 
+                                        style={{display: 'block', borderRadius: '20px', width: '220px', margin: '5px', color: 'black', }}
+                                        onClick={handlePlaceOrder}>Buy Now</Button>
+                                </div>
+                            }
                         </div>
                     </div>
                     {/* Product details_1 */}

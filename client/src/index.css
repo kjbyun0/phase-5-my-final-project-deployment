@@ -128,6 +128,12 @@ body {
   text-decoration-color: brown;
 }
 
+.link5:hover {
+  color: brown;
+  text-decoration: underline;
+  text-decoration-color: brown;
+}
+
 .formik-warning {
   color: #ff8080;
 }

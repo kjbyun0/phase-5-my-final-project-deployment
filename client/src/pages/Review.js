@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useOutletContext } from 'react-router-dom';
+import { useParams, useOutletContext, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { dispRating, handleReviewDelete, handleReviewChange } from '../components/common';
@@ -15,6 +15,7 @@ function Review() {
     const [ validateAfterSubmit, setValidateAfterSubmit ] = useState(false);
     const { itemId } = useParams();
     const iid = parseInt(itemId);
+    const navigate = useNavigate();
 
     console.log('itemId: ', itemId, 'reviews: ', reviews, 'itemReview: ', itemReview);
     console.log('itemReview, item: ', itemReview.item, ', review: ', itemReview.review);
@@ -84,7 +85,7 @@ function Review() {
                 content: formik.values.content,
                 // images: formik.values.images,
                 review_done: 1,
-            }, reviews, onSetReviews);
+            }, reviews, onSetReviews, () => navigate('/reviewlist'));
         },
     });
     

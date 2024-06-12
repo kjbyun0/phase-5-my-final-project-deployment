@@ -1,5 +1,4 @@
 
-
 function setUserInfo(userData, setUser, setCartItems, setOrders, setReviews, setSellerItems) {
     const { customer, seller, ...userRemaings } = userData;
     const { cart_items, orders, reviews, ...customerRemainings } = customer ? customer : {};
@@ -18,18 +17,17 @@ function setUserInfo(userData, setUser, setCartItems, setOrders, setReviews, set
 }
 
 function dispPrice(item, idx) {
-    // console.log('dispPrice, item: ', item);
-    // console.log('dispPrice, idx: ', idx, 'type: ', typeof(idx));
-    // console.log('Dollar: ', item.discount_prices[idx]);
+    const wholePart = Math.floor(item.discount_prices[idx]);
+    const fractionalPart = Math.round((item.discount_prices[idx] - wholePart)*100);
+
     return (
         <>
             <span style={{fontSize: '1em', verticalAlign: '50%', }}>$</span>
             <span style={{fontSize: '2em', }}>
-                {(Math.floor(item.discount_prices[idx]).toLocaleString('en-US'))}
+                {(wholePart.toLocaleString('en-US'))}
             </span>
             <span style={{fontSize: '1em', verticalAlign: '50%', marginRight: '5px', }}>
-                {Math.round((item.discount_prices[idx] - 
-                    Math.floor(item.discount_prices[idx]))*100)}
+                {fractionalPart < 10 ? `0${fractionalPart}` : fractionalPart}
             </span>
             <span style={{fontSize: '1em', verticalAlign: '30%', }}>
                 $({(Math.round(item.discount_prices[idx] / 
@@ -49,7 +47,7 @@ function dispListPrice(item, idx) {
 }
 
 
-async function handleCItemDelete(cartItem, cartItems, onSetCartItems) {
+async function handleCItemDelete(cartItem, onSetCartItems) {
     console.log('in handleCItemDelete, item: ', cartItem);
     if (!cartItem) return;
 
@@ -59,7 +57,7 @@ async function handleCItemDelete(cartItem, cartItems, onSetCartItems) {
     .then(async r => {
         console.log('in handleCItemDelete, r: ', r);
         if (r.ok) {
-            console.log('in handleCItemChange, cItem is successfully deleted.');
+            console.log('in handleCItemDelete, cItem is successfully deleted.');
             onSetCartItems(cartItems => cartItems.filter(cItem => cItem.id !== cartItem.id));
         } else {
             await r.json().then(data => {
@@ -75,7 +73,7 @@ async function handleCItemDelete(cartItem, cartItems, onSetCartItems) {
     });
 }
 
-async function handleCItemAdd(cartItem, cartItems, onSetCartItems) {
+async function handleCItemAdd(cartItem, onSetCartItems, navigateFunc) {
     await fetch('/cartitems', {
         method: 'POST',
         headers: {
@@ -91,6 +89,8 @@ async function handleCItemAdd(cartItem, cartItems, onSetCartItems) {
                     ...cartItems,
                     data
                 ]);
+                if (navigateFunc)
+                    navigateFunc();
             } else {
                 if (r.status === 401 || r.status === 403) {
                     console.log(data);
@@ -104,11 +104,11 @@ async function handleCItemAdd(cartItem, cartItems, onSetCartItems) {
     });
 }
 
-async function handleCItemChange(cartItem, cartItems, onSetCartItems) {
+async function handleCItemChange(cartItem, onSetCartItems, navigateFunc) {
     console.log('in handleCItemChange, item: ', cartItem);
 
     if (cartItem.quantity === 0) {
-        handleCItemDelete(cartItem);
+        handleCItemDelete(cartItem, onSetCartItems);
         return;
     }
 
@@ -127,6 +127,8 @@ async function handleCItemChange(cartItem, cartItems, onSetCartItems) {
             if (r.ok) {
                 console.log('in handleCItemChange, cItem: ', data);
                 onSetCartItems(cartItems => cartItems.map(cItem => cItem.id === data.id ? data : cItem));
+                if (navigateFunc)
+                    navigateFunc();
             } else {
                 if (r.status === 401 || r.status === 403) {
                     console.log(data);
@@ -262,7 +264,7 @@ function handleReviewAdd(review, reviews, onSetReviews) {
     });
 }
 
-function handleReviewChange(review, reviews, onSetReviews) {
+function handleReviewChange(review, reviews, onSetReviews, redirectFunc) {
     console.log('review: ', review);
 
     fetch(`/reviews/${review.id}`, {
@@ -276,6 +278,8 @@ function handleReviewChange(review, reviews, onSetReviews) {
         r.json().then(data => {
             if (r.ok) {
                 onSetReviews(reviews.map(rw => rw.id === data.id ? data : rw));
+                if (redirectFunc)
+                    redirectFunc();
             } else {
                 if (r.status === 401 || r.status === 403) {
                     console.log(data);
@@ -300,7 +304,7 @@ function handleStarClick(itemId, review, rating, user, reviews, onSetReviews) {
             review_done: review.review_done,
             item_id: review.item_Id,
             customer_id: review.customer_id,
-        }, reviews, onSetReviews);
+        }, reviews, onSetReviews, null);
     } else {
         handleReviewAdd({
             rating: rating,

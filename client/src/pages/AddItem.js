@@ -162,11 +162,11 @@ function AddItem() {
                 name: values.name,
                 brand: values.brand,  // It is not needed because brand is already included in the name.
                 default_item_idx: values.default_item_idx,
-                prices: values.prices,
-                discount_prices: values.discount_prices,
-                amounts: values.amounts,
+                prices: values.prices.map(price => parseFloat(price)),
+                discount_prices: values.discount_prices.map(price => parseFloat(price)),
+                amounts: values.amounts.map(amt => parseFloat(amt)),
                 units: values.units,
-                packs: values.packs,
+                packs: values.packs.map(pack => parseFloat(pack)),
                 about_item: values.about_item, // bullet points
                 details_1: details_1,
                 details_2: details_2,
@@ -188,6 +188,8 @@ function AddItem() {
                 await r.json().then(data => {
                     if (r.ok) {
                         console.log('New item is sucessfully posted: ', data);
+                        alert('New item is sucessfully posted.');
+                        navigate(`/items/${data.id}`);
                     } else {
                         if (r.status === 401 || r.status === 403) {
                             console.log(data);

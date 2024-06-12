@@ -55,67 +55,6 @@ function Cart() {
     console.log('In Cart, user: ', user, ', cartItems: ', cartItems, ', orders: ', orders);
     console.log('In Cart, qInputs: ', qInputs);
 
-    // function handleCItemChange(cItem) {
-    //     // console.log('in handleCItemCheckChange, e: ', e, ', d: ', d);
-    //     console.log('in handleCItemCheckChange, item: ', item);
-
-    //     if (item.quantity === 0) {
-    //         handleCItemDelete(item);
-    //         return;
-    //     }
-
-    //     fetch(`/cartitems/${item.id}`, {
-    //         method: 'PATCH',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify({
-    //             checked: item.checked,
-    //             quantity: item.quantity,
-    //         }),
-    //     })
-    //     .then(r => {
-    //         r.json().then(data => {
-    //             if (r.ok) {
-    //                 console.log('in handleCItemChange, cItem: ', data);
-    //                 onSetCartItems(cartItems.map(cItem => cItem.id === data.id ? data : cItem));
-    //             } else {
-    //                 if (r.status === 401 || r.status === 403) {
-    //                     console.log(data);
-    //                     alert(data.message);
-    //                 } else {
-    //                     console.log("Server Error - Can't patch this item in cart: ", data);
-    //                     alert(`Server Error - Can't patch this item in cart: ${data.message}`);
-    //                 }
-    //             }
-    //         });
-    //     });
-    // }
-
-    // function handleCItemDelete(item) {
-    //     console.log('in handleCItemDelete, item: ', item);
-
-    //     fetch(`/cartitems/${item.id}`, {
-    //         method: 'DELETE',
-    //     })
-    //     .then(r => {
-    //         console.log('in handleCItemDelete, r: ', r);
-    //         if (r.ok) {
-    //             console.log('in handleCItemChange, cItem is successfully deleted.');
-    //             onSetCartItems(cartItems.filter(cItem => cItem.id !== item.id));
-    //         } else {
-    //             r.json().then(data => {
-    //                 if (r.status === 401 || r.status === 403) {
-    //                     console.log(data);
-    //                     alert(data.message);
-    //                 } else {
-    //                     console.log("Server Error - Can't delete this item from cart: ", data);
-    //                     alert(`Server Error - Can't delete this item from cart: ${data.message}`);
-    //                 }
-    //             });
-    //         }
-    //     });
-    // }
 
     function handleNavigateItem(itemId) {
         navigate(`/items/${itemId}`);
@@ -145,7 +84,7 @@ function Cart() {
             handleCItemChange({
                 ...cItem,
                 quantity: d.value,
-            }, cartItems, onSetCartItems);
+            }, onSetCartItems, null);
     }
 
     async function handleSelect() {
@@ -160,14 +99,14 @@ function Cart() {
                 await handleCItemChange({
                     ...cartItem,
                     checked: selectStatus === 2 ? 0 : 1,
-                }, cartItems, onSetCartItems);
+                }, onSetCartItems, null);
             }
         }
     }
 
     function deleteCheckedCartItems() {
         cartItems.filter(cItem => cItem.checked)
-        .forEach(cItem => handleCItemDelete(cItem, cartItems, onSetCartItems));
+        .forEach(cItem => handleCItemDelete(cItem, onSetCartItems));
     }
 
     async function handlePlaceOrder() {
@@ -192,12 +131,15 @@ function Cart() {
             })
         })
         .then(async r => {
-            await r.json().then(data1 => {
+            console.log('### 1 ###');
+            await r.json().then(async data1 => {
                 if (r.ok) {
                     //console.log('in handlePlaceOrder new order: ', data1);
 
                     const orderTmp = data1;
-                    cartItems.filter(cItem => cItem.checked).forEach(async cItem => {
+                    const checedCartItems = cartItems.filter(cItem => cItem.checked);
+                    for (const cItem of checedCartItems) {
+                    // cartItems.filter(cItem => cItem.checked).forEach(async cItem => {
                         await fetch('/orderitems', {
                             method: 'POST',
                             headers: {
@@ -212,7 +154,8 @@ function Cart() {
                             })
                         })
                         .then(async r => {
-                            await r.json().then(data2 => {
+                            console.log('### 2 ###');
+                            await r.json().then(async data2 => {
                                 if (r.ok) {
                                     
                                     const orderItemTmp = data2;
@@ -229,18 +172,20 @@ function Cart() {
                                         // delete this order. Don't need to take care of promise.
                                         // ??? - I don't think it works... check it out again....
                                         // To check, set 'processed_data = None,' in class OrderItems of app.py
-                                        fetch(`/orders/${orderTmp.id}`, {
+                                        await fetch(`/orders/${orderTmp.id}`, {
                                             method: 'DELETE',
                                         })
                                         .then(r => {
+                                            console.log('### 3 ###');
                                             return;
                                         })
                                     }
                                 }
                             })
                         })
-                    })
+                    }
 
+                    console.log('### 4 ###');
                     console.log('in handlePlaceOrder, new order: ', orderTmp);
                     onSetOrders([
                         ...orders,
@@ -248,6 +193,7 @@ function Cart() {
                     ]);
 
                     deleteCheckedCartItems();
+                    navigate('/orders');
                 } else {
                     if (r.status === 401 || r.status === 403) {
                         console.log(data1);
@@ -290,7 +236,7 @@ function Cart() {
             <div key={cItem.id} style={{display: 'grid', gridTemplateColumns: '100px 200px 1fr 180px', 
                 alignItems: 'center'}}>
                 <Checkbox checked={Boolean(cItem.checked)} style={{margin: 'auto', }}
-                    onChange={() => handleCItemChange({...cItem, checked: !cItem.checked}, cartItems, onSetCartItems)} />
+                    onChange={() => handleCItemChange({...cItem, checked: !cItem.checked}, onSetCartItems, null)} />
                 <div style={{width: '100%', height: '220px', 
                     backgroundImage: `url(${cItem.item.images[0]})`, // image change from card_thumbnail
                     backgroundSize: 'contain', backgroundRepeat: 'no-repeat', 
@@ -326,7 +272,7 @@ function Cart() {
                                         onClick={() => handleCItemChange({
                                             ...cItem,
                                             quantity: parseInt(qInputs[cItem.id][1], 10),
-                                        }, cartItems, onSetCartItems)} >
+                                        }, onSetCartItems, null)} >
                                         Update
                                     </Button> : 
                                     null
@@ -340,7 +286,7 @@ function Cart() {
                             /> 
                         }
                         <span style={{fontSize: '1.2em', color: 'lightgray', margin: '0 10px',}}>|</span>
-                        <span className='link2 link' onClick={() => handleCItemDelete(cItem, cartItems, onSetCartItems)} >Delete</span>
+                        <span className='link2 link' onClick={() => handleCItemDelete(cItem, onSetCartItems)} >Delete</span>
                     </div>
                 </div>
                 <div style={{display: 'grid', gridTemplateColumns: '1fr max-content', alignItems: 'center', 

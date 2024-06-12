@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useOutletContext, useNavigate, } from 'react-router-dom'; 
 import { dispPrice, dispListPrice, handleCItemAdd, handleCItemChange, 
     formatDate, convertUTCDate, } from '../components/common';
@@ -273,7 +273,7 @@ function Item() {
             handleCItemChange({
                 ...cItem,
                 quantity: cItem.quantity + quantity,
-            }, cartItems, onSetCartItems);
+            }, onSetCartItems, () => navigate('/cart'));
         } else {
             handleCItemAdd({
                 checked: 1,
@@ -281,7 +281,7 @@ function Item() {
                 item_idx: activeItemIdx,
                 item_id: item.id,
                 customer_id: user.customer.id,
-            }, cartItems, onSetCartItems);
+            }, onSetCartItems, () => navigate('/cart'));
         }
     }
 
@@ -340,6 +340,8 @@ function Item() {
                                     ...orders,
                                     orderTmp
                                 ]);
+
+                                navigate('/orders');
                             } else {
                                 if (r.status === 401 || r.status === 403) {
                                     console.log(data2); // it won't occur

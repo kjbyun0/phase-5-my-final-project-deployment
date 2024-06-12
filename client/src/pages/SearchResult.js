@@ -104,7 +104,7 @@ function SearchResult() {
             res = handleCItemChange({
                 ...cItem,
                 quantity: cItem.quantity + 1,
-            }, cartItems, onSetCartItems);
+            }, onSetCartItems, null);
         } else {
             res = handleCItemAdd({
                 checked: 1,
@@ -112,7 +112,7 @@ function SearchResult() {
                 item_idx: item.default_item_idx,
                 item_id: item.id,
                 customer_id: user.customer.id, //????????
-            }, cartItems, onSetCartItems);
+            }, onSetCartItems, null);
         }
 
         // Showing number of item in the cart is better regardless of 
@@ -181,7 +181,7 @@ function SearchResult() {
                         <span style={{fontSize: '0.9em', fontWeight: 'bold'}}>{cartItemsDict[item.id].quantity} in cart</span>
                         <span> - </span>
                         <span className='link3 link' 
-                            onClick={() => handleCItemDelete(cartItemsDict[item.id], cartItems, onSetCartItems)}>
+                            onClick={() => handleCItemDelete(cartItemsDict[item.id], onSetCartItems)}>
                             Remove</span>
                     </div> :
                     null

@@ -1,16 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useParams, useOutletContext, useNavigate, } from 'react-router-dom'; 
 import { dispPrice, dispListPrice, handleCItemAdd, handleCItemChange, 
     formatDate, convertUTCDate, } from '../components/common';
+import { ItemContext } from '../components/ItemProvider';
 import { Divider, Table, TableBody, TableRow, TableCell, 
     Image, ButtonGroup, Button, Dropdown, Icon, Progress, } from 'semantic-ui-react';
 
 
 function Item() {
     const { id } = useParams();
-    const [ item, setItem ] = useState(null);
-    const [ activeItemIdx, setActiveItemIdx ] = useState(null);
-    const [ activeImageIdx, setActiveImageIdx ] = useState(null);
+    // const [ item, setItem ] = useState(null);
+    const { item, setItem } = useContext(ItemContext);
+    const [ activeItemIdx, setActiveItemIdx ] = useState(0);
+    const [ activeImageIdx, setActiveImageIdx ] = useState(0);
     const [ quantity, setQuantity ] = useState(1);
     const [ itemReviews, setItemReviews ] = useState([]);
 
@@ -36,25 +38,31 @@ function Item() {
         ', orders: ', orders, ', itemReviews: ', itemReviews);
     console.log('quantity: ', quantity);
     console.log('avgRating: ', avgRating, ', starCounts: ', starCounts);
+    console.log('id from useParam: ', id);
 
     useEffect(() => {
-        fetch(`/items/${id}`)
-        .then(r => {
-            r.json().then(data => {
-                if (r.ok) {
-                    // console.log('In Istem, fetched item: ', data);
-                    setItem(data);
-                    if (data.default_item_idx >= 0 && data.default_item_idx < data.prices.length)
-                        setActiveItemIdx(data.default_item_idx);
-                    else
-                        setActiveItemIdx(0);
-                    if (data.images.length) // image change from thumbnails
-                        setActiveImageIdx(0);
-                } else {
-                    console.log('Error: ', data.message);
-                }
-            });
-        })
+
+        // if the id of the item in ItemContext is same id from useParam, no need to fetch it again.
+        if (item && item.id === parseInt(id)) {
+            console.log('Already has the item data in ItemContext');
+
+            if (item.default_item_idx >= 0 && item.default_item_idx < item.prices.length)
+                setActiveItemIdx(item.default_item_idx);
+        } else {
+            fetch(`/items/${id}`)
+            .then(r => {
+                r.json().then(data => {
+                    if (r.ok) {
+                        // console.log('In Istem, fetched item: ', data);
+                        setItem(data);
+                        if (data.default_item_idx >= 0 && data.default_item_idx < data.prices.length)
+                            setActiveItemIdx(data.default_item_idx);
+                    } else {
+                        console.log('Error: ', data.message);
+                    }
+                });
+            })
+        }
 
         fetch(`/reviews/items/${id}`)
         .then(r => {
@@ -372,7 +380,7 @@ function Item() {
     }
 
 
-    if (!item)
+    if (!item || item.id !== parseInt(id))
         return;
 
     return (
@@ -387,7 +395,8 @@ function Item() {
                                 {dispThumbnails()}
                             </div>
                             <div style={{padding: '0', marginLeft: '5px', }}>
-                                <Image src={item.images[activeImageIdx]} />
+                                {activeImageIdx !== null ? <Image src={item.images[activeImageIdx]} /> : null}
+                                
                             </div>
                         </div>
                     </div>

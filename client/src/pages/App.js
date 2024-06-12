@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import { setUserInfo } from '../components/common';
-import { TestProvider } from '../components/contexts';
+import { ItemProvider } from '../components/ItemProvider';
 
 
 function App() {
@@ -11,8 +11,6 @@ function App() {
     const [ orders, setOrders ] = useState([]);
     const [ reviews, setReviews ] = useState([]);
     const [ sellerItems, setSellerItems ] = useState([]);
-
-    const [ searchItems, setSearchItems ] = useState([]);
 
     useEffect(() => {
         fetch('/authenticate')
@@ -39,7 +37,7 @@ function App() {
             </header>
             {/* <main style={{minWidth: '0', minHeight: '0', }}> */}
             <main>
-                <TestProvider>
+                <ItemProvider>
                     <Outlet context={{
                         user: user,
                         onSetUser: setUser,
@@ -51,10 +49,8 @@ function App() {
                         onSetReviews: setReviews,
                         sellerItems: sellerItems,
                         onSetSellerItems: setSellerItems, 
-                        searchItems: searchItems,
-                        onSetSearchItems: setSearchItems, 
                     }} />
-                </TestProvider>
+                </ItemProvider>
             </main>
         </div>
     );

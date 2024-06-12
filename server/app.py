@@ -32,11 +32,13 @@ def apply_json_loads_to_item(item):
 
 @app.before_request
 def check_if_signed_in():
+    # print('request.method: ', request.method)
     if not session.get('user_id') \
         and request.endpoint != 'authenticate' \
         and request.endpoint != 'signup' \
         and request.endpoint != 'search' \
-        and request.endpoint != 'item_by_id' \
+        and not (request.endpoint == 'items' and request.method == 'GET') \
+        and not (request.endpoint == 'item_by_id' and request.method == 'GET') \
         and request.endpoint != 'reviews_by_itemid':
         return make_response({
             'message': 'User is not signed in',
@@ -208,6 +210,10 @@ class Search(Resource):
 
 
 class Items(Resource): 
+    def get(self):
+        items = [apply_json_loads_to_item(item.to_dict()) for item in Item.query.all()]
+        return make_response(items, 200)
+
     def post(self):
         req = request.get_json()
         try:
@@ -256,7 +262,43 @@ class Item_by_id(Resource):
         return make_response({
             'message': f'Item {id} not found.',
         }, 404)
+    
+    def patch(self, id):
+        req = request.get_json()
+        item = Item.query.filter_by(id=id).first()
+        if item: 
+            try: 
+                for key in req:
+                    setattr(item, key, req[key])
+                db.session.commit()
+            except Exception as exc:
+                return make_response({
+                    'message': f'{exc}',
+                }, 400)
+            item_dict = item.to_dict()
+            apply_json_loads_to_item(item_dict)
+            return make_response(item_dict, 200)
+        
+        return make_response({
+            'message': f'Item {id} not found.',
+        }, 404)
 
+
+    def delete(self, id):
+        item = Item.query.filter_by(id=id).first()
+        if item: 
+            try: 
+                db.session.delete(item)
+                db.session.commit()
+            except Exception as exc:
+                return make_response({
+                    'message': f'{exc}',
+                }, 400)
+            return make_response({}, 204)
+        
+        return make_response({
+            'message': f'Item {id} not found.',
+        }, 404)
 
 class CartItems(Resource):
     def post(self): 
@@ -532,8 +574,8 @@ api.add_resource(Authenticate, '/authenticate', endpoint='authenticate')
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(Customer_by_id, '/customers/<int:id>') # Authentication required
 api.add_resource(Search, '/search/<string:keys>', endpoint='search')
-api.add_resource(Items, '/items') # Authentication required because we are using it to post an item... ???*** Think about checking authentication only for POST request.
-api.add_resource(Item_by_id, '/items/<int:id>', endpoint='item_by_id')
+api.add_resource(Items, '/items', endpoint='items') # Authentication required because we are using it to post an item... ???*** Think about checking authentication only for POST request.
+api.add_resource(Item_by_id, '/items/<int:id>', endpoint='item_by_id') # Authentication required for patch and delete operation.
 api.add_resource(CartItems, '/cartitems', endpoint='cartitems') # Authentication required
 api.add_resource(CartItem_by_id, '/cartitems/<int:id>', endpoint='cartitem_by_id') # Authentication required
 api.add_resource(Orders, '/orders') # Authentication required

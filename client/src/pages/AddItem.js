@@ -7,11 +7,8 @@ import { Divider, Form, TextArea, Button, Icon, IconGroup, Radio, } from 'semant
 
 
 function AddItem() {
-
-    const [ activeItemIdx, setActiveItemIdx ] = useState(null);
-    const [ activeImageIdx, setActiveImageIdx ] = useState(null);
     const [ imgFiles, setImgFiles ] = useState([]);
-    const { user, cartItems, onSetCartItems, orders, onSetOrders, } = useOutletContext();
+    const { user,  } = useOutletContext();
     const navigate = useNavigate();
 
     //RBAC
@@ -90,25 +87,8 @@ function AddItem() {
         },
         validationSchema: formSchema,
         onSubmit: async values => {
-
             console.log('OnSubmit: formik.values: ', values);
-
-            // if (imgFiles.length) {
-            //     const formData = new FormData();
-            //     imgFiles.forEach(file => formData.append('file', file));
-            //     formData.append('upload_preset', 'flatiron_p5_pjt_imgs');
-            //     console.log('formData: ', formData);
-
-            //     const cloudName = 'dfsqyivhu';
-            //     const data = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
-            //         method: 'POST',
-            //         body: formData,
-            //     }).then(res => res.json());
-
-            //     console.log(data);
-            // }
-
-
+            
             const uploadedImages = [];
             const cloudName = 'dfsqyivhu';
             for (const file of imgFiles) {

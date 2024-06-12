@@ -1,28 +1,27 @@
 import { useEffect, useState, useContext } from 'react';
 import { useSearchParams, useOutletContext, useNavigate } from 'react-router-dom';
 import { dispPrice, dispListPrice, handleCItemChange, handleCItemAdd, handleCItemDelete, } from '../components/common';
-import { TestContext } from '../components/contexts';
+import { ItemContext } from '../components/ItemProvider';
 import { CardGroup, Card, CardContent, CardHeader, Label, Dropdown, 
     Button, } from 'semantic-ui-react';
 
 function SearchResult() {
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const { user, cartItems, onSetCartItems, searchItems, onSetSearchItems } = useOutletContext();
+    const { user, cartItems, onSetCartItems } = useOutletContext();
+    const [ searchItems, setSearchItems ] = useState([]);
     // key: item id and value: cart item of card items. 
     // It is to speed up searching for items in cart among my search result.
     const [ cartItemsDict, setCartItemsDict ] = useState({});
     // key: item id and value: boolean value to indicate if corresponding searched item is added to cart.
-    const [ itemInCart, setItemInCart] = useState({});
+    const [ itemsInCart, setItemsInCart] = useState({});
     const navigate = useNavigate();
 
 
-    
     // ??? - testcode for useContext... delete it later on...
-    const { tContext, setTContext } = useContext(TestContext);
-    console.log('tContext: ', tContext);
-    setTContext('in SearchResult');
+    const { item, setItem } = useContext(ItemContext);
+    // console.log('item: ', item);
+    // setItem('itemContext will be assigned.');
     // ??? - testcode for useContext... delete it later on...
-
 
 
     const [ sort, setSort ] = useState(1);
@@ -36,7 +35,7 @@ function SearchResult() {
     // console.log('Before useEffect, searchParams: ', searchParams.get('query'));
     // console.log('In SearchResult, searchItems: ', searchItems);
     // console.log('In SearchResult, cartItemsDict: ', cartItemsDict);
-    // console.log('In SearchResult, itemInCart: ', itemInCart);
+    // console.log('In SearchResult, itemsInCart: ', itemsInCart);
 
     useEffect(() => {
         console.log('In useEffect, searchParams: ', searchParams.get('query'));
@@ -45,12 +44,12 @@ function SearchResult() {
             r.json().then(data => {
                 if (r.ok) {
                     console.log('In SearchResult, useEffect, searchItems: ', data)
-                    onSetSearchItems(data)
+                    setSearchItems(data)
 
-                    // Initializing itemInCart state.
+                    // Initializing itemsInCart state.
                     const itemInCartTmp = {};
                     data.forEach(item => itemInCartTmp[item.id] = false);
-                    setItemInCart(itemInCartTmp);
+                    setItemsInCart(itemInCartTmp);
                 } else {
                     console.log('Server error: ', data);
                     alert(`Server Error: ${data.message}`);
@@ -81,11 +80,8 @@ function SearchResult() {
         // setInCart(inCartTmp);
     }, [cartItems]);
 
-    function handleNavigateItem(itemId) {
-        navigate(`/items/${itemId}`);
-    }
 
-    function handleAddToCart(item) {
+    function handleAddToCart(itm) {
         // RBAC
         // if user is not signed in or is a seller
         if (!user || !user.customer) {
@@ -96,7 +92,7 @@ function SearchResult() {
 
         // const cItem = cartItems.find(cItem => 
         //     cItem.item_id === item.id && cItem.item_idx === item.default_item_idx);
-        const cItem = cartItemsDict.hasOwnProperty(item.id) ? cartItemsDict[item.id] : null;
+        const cItem = cartItemsDict.hasOwnProperty(itm.id) ? cartItemsDict[itm.id] : null;
         console.log('In handleAddToCart, cItem: ', cItem);
         
         let res = false;
@@ -109,24 +105,34 @@ function SearchResult() {
             res = handleCItemAdd({
                 checked: 1,
                 quantity: 1,
-                item_idx: item.default_item_idx,
-                item_id: item.id,
+                item_idx: itm.default_item_idx,
+                item_id: itm.id,
                 customer_id: user.customer.id, //????????
             }, onSetCartItems, null);
         }
 
         // Showing number of item in the cart is better regardless of 
         // the status of above fetch operation.
-        setItemInCart({...itemInCart, [item.id]: true});
+        setItemsInCart({...itemsInCart, [itm.id]: true});
     }
 
+    function handleNavigateItem(itm) {
+        setItem(itm);
+        navigate(`/items/${itm.id}`);
+    }
+
+    function handleDeleteItem(itm) {
+        console.log('in handleDeleteItem');
+
+    }
+    
     let sortedItems;
     switch(sort) {
         case 2:
-            sortedItems = searchItems.toSorted((item1, item2) => item1.discount_prices[item1.default_item_idx] - item2.discount_prices[item2.default_item_idx])
+            sortedItems = searchItems.toSorted((itm1, itm2) => itm1.discount_prices[itm1.default_item_idx] - itm2.discount_prices[itm2.default_item_idx])
             break;
         case 3:
-            sortedItems = searchItems.toSorted((item1, item2) => item2.discount_prices[item2.default_item_idx] - item1.discount_prices[item1.default_item_idx])
+            sortedItems = searchItems.toSorted((itm1, itm2) => itm2.discount_prices[itm2.default_item_idx] - itm1.discount_prices[itm1.default_item_idx])
             break;
         case 4:
             // need to implement it after reviews feature is implemented. the following code is temporary.
@@ -137,36 +143,36 @@ function SearchResult() {
             break;
     };
 
-    const dispItemCards = sortedItems.map(item => 
-        <Card key={item.id} style={{minWidth: '250px', }}>
+    const dispItemCards = sortedItems.map(itm => 
+        <Card key={itm.id} style={{minWidth: '250px', }}>
             <div style={{width: '100%', height: '300px', margin: 'auto', 
-                backgroundImage: `url(${item.images[0]})`,     // image change from card_thumbnail
+                backgroundImage: `url(${itm.images[0]})`,     // image change from card_thumbnail
                 backgroundSize: 'contain', backgroundRepeat: 'no-repeat', 
                 backgroundPosition: 'center', }} 
                 className='link' 
-                onClick={() => handleNavigateItem(item.id)}
+                onClick={() => handleNavigateItem(itm)}
             />
             <CardContent>
-                <CardHeader className='link' onClick={() => handleNavigateItem(item.id)}>{item.name}</CardHeader>
+                <CardHeader className='link' onClick={() => handleNavigateItem(itm)}>{itm.name}</CardHeader>
                 <Label>
                     <span style={{fontSize: '1.2em',  fontWeight: 'bold', }}>
                         {
-                            `${item.amounts[item.default_item_idx].toLocaleString('en-US', 
+                            `${itm.amounts[itm.default_item_idx].toLocaleString('en-US', 
                                 { minimumFractionDigits: 2, maximumFractionDigits: 2})} \
-                            ${item.units[item.default_item_idx].charAt(0).toUpperCase() + item.units[item.default_item_idx].slice(1)} \
-                            (Pack of ${item.packs[item.default_item_idx].toLocaleString('en-US')})`
+                            ${itm.units[itm.default_item_idx].charAt(0).toUpperCase() + itm.units[itm.default_item_idx].slice(1)} \
+                            (Pack of ${itm.packs[itm.default_item_idx].toLocaleString('en-US')})`
                         }
                     </span>
                 </Label>
-                <div className='link' onClick={() => handleNavigateItem(item.id)}>
-                    {dispPrice(item, item.default_item_idx)}
+                <div className='link' onClick={() => handleNavigateItem(itm)}>
+                    {dispPrice(itm, itm.default_item_idx)}
                 </div>
-                <div className='link' onClick={() => handleNavigateItem(item.id)}>
+                <div className='link' onClick={() => handleNavigateItem(itm)}>
                     {
-                        item.prices[item.default_item_idx] !== item.discount_prices[item.default_item_idx] ?
+                        itm.prices[itm.default_item_idx] !== itm.discount_prices[itm.default_item_idx] ?
                         <>
                             <span style={{marginRight: '5px', }}>List:</span>
-                            {dispListPrice(item, item.default_item_idx)}
+                            {dispListPrice(itm, itm.default_item_idx)}
                         </> :
                         null
                     }
@@ -175,10 +181,12 @@ function SearchResult() {
                     user && user.seller ? 
                     <div>
                         {
-                            user.seller.id === item.seller_id ? 
+                            user.seller.id === itm.seller_id ? 
                             <div style={{marginTop: '10px', }}>
-                                <Button basic icon='edit outline' />
-                                <Button color='red' icon='trash alternate outline' />
+                                <Button basic icon='edit outline' 
+                                     />
+                                <Button color='red' icon='trash alternate outline' 
+                                    onClick={() => handleDeleteItem(itm)} />
                             </div> : 
                             null
                         }
@@ -187,14 +195,14 @@ function SearchResult() {
                         <Button type='button' size='medium' color='yellow' 
                             style={{color: 'black', borderRadius: '20px', padding: '10px 15px', 
                             marginTop: '10px', }} 
-                            onClick={() => handleAddToCart(item)} >Add to cart</Button> 
+                            onClick={() => handleAddToCart(itm)} >Add to cart</Button> 
                         {
-                            itemInCart[item.id] && cartItemsDict.hasOwnProperty(item.id) ?
+                            itemsInCart[itm.id] && cartItemsDict.hasOwnProperty(itm.id) ?
                             <div style={{marginTop: '5px', }}>
-                                <span style={{fontSize: '0.9em', fontWeight: 'bold'}}>{cartItemsDict[item.id].quantity} in cart</span>
+                                <span style={{fontSize: '0.9em', fontWeight: 'bold'}}>{cartItemsDict[itm.id].quantity} in cart</span>
                                 <span> - </span>
                                 <span className='link3 link' 
-                                    onClick={() => handleCItemDelete(cartItemsDict[item.id], onSetCartItems)}>
+                                    onClick={() => handleCItemDelete(cartItemsDict[itm.id], onSetCartItems)}>
                                     Remove</span>
                             </div> :
                             null

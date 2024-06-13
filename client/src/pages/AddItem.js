@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
-import { useOutletContext, useNavigate, } from 'react-router-dom';
+import { useEffect, useState, useContext } from 'react';
+import { useOutletContext, useNavigate, useParams, } from 'react-router-dom';
 import { useFormik, FormikProvider, FieldArray, } from 'formik';
 import * as yup from 'yup';
 import ImgDropzone from '../components/ImgDropzone';
+import { ItemContext } from '../components/ItemProvider';
 import { Divider, Form, TextArea, Button, Icon, IconGroup, Radio, } from 'semantic-ui-react';
 
 
@@ -10,12 +11,52 @@ function AddItem() {
     const [ imgFiles, setImgFiles ] = useState([]);
     const { user,  } = useOutletContext();
     const navigate = useNavigate();
+    const { id } = useParams();
+    const { item, setItem } = useContext(ItemContext);
+
+    console.log('in AddItem, id: ', id, ', item: ', item);
+
 
     //RBAC
     useEffect(() => {
         if (!user || !user.seller) {
             navigate('/signin');
             return;
+        }
+
+        // Editing an existing item.
+        if (id && id == item.id) {
+            formik.setFieldValue('name', item.name);
+            formik.setFieldValue('brand', item.brand);
+            formik.setFieldValue('default_item_idx', item.default_item_idx);
+            formik.setFieldValue('prices', item.prices);
+            formik.setFieldValue('discount_prices', item.discount_prices);
+            formik.setFieldValue('amounts', item.amounts);
+            formik.setFieldValue('units', item.units);
+            formik.setFieldValue('packs', item.packs);
+            formik.setFieldValue('about_item', item.about_item);
+            const details_1_key = [], details_1_val = [];
+            item.details_1.forEach(dtl => {
+                const pair = dtl.split(';-;');
+                details_1_key.push(pair[0]);
+                details_1_val.push(pair[1]);
+            });
+            formik.setFieldValue('details_1_key', details_1_key);
+            formik.setFieldValue('details_1_val', details_1_val);
+
+            const details_2_key = [], details_2_val = [];
+            item.details_2.forEach(dtl => {
+                const pair = dtl.split(';-;');
+                details_2_key.push(pair[0]);
+                details_2_val.push(pair[1]);
+            });
+            formik.setFieldValue('details_2_key', details_2_key);
+            formik.setFieldValue('details_2_val', details_2_val);
+
+            formik.setFieldValue('images', item.images);
+
+            // category_id: null,
+            // seller_id: null,
         }
     }, []);
 
@@ -273,14 +314,14 @@ function AddItem() {
         return (
             <div>
                 <div style={{display: 'grid', gridTemplateColumns: gridColumnsStr, alignItems: 'center', }}>
-                    {bUpdateRadioBtn ?<div>{addRadioBtns(fieldArrays[0])}</div> : null}
+                    {bUpdateRadioBtn ? addRadioBtns(fieldArrays[0]) : null}
                     {
                         fieldArrays.map(fa => (
                             <div key={fa.field}>{addFieldArray(fa)}</div>
                         ))
                     }
-                    <div>{addInsertBtns(fieldArrays)}</div>
-                    <div>{addRemoveBtns(fieldArrays, bUpdateRadioBtn)}</div>
+                    {addInsertBtns(fieldArrays)}
+                    {addRemoveBtns(fieldArrays, bUpdateRadioBtn)}
                 </div>
                 {getFirstErrorInFieldArrays(fieldArrays)}
             </div>
@@ -289,16 +330,23 @@ function AddItem() {
 
     function addRadioBtns(fieldArray) {
         return (
-            formik.values[fieldArray.field].map((val, i) => (
-                <Radio
-                    key={i}
-                    name='default_item_idx'
-                    style={{margin: '7.5px 5px 5.8px 0', }}
-                    value={i}
-                    checked={formik.values.default_item_idx === i}
-                    onChange={(e, d) => formik.setFieldValue('default_item_idx', d.value)}
-                />
-            ))
+            <div>
+                <div>
+                    {fieldArray.placeholder ? <div style={{height: '19.99px', }}> </div> : null}
+                </div>
+                {
+                    formik.values[fieldArray.field].map((val, i) => (
+                        <Radio
+                            key={i}
+                            name='default_item_idx'
+                            style={{margin: '7.5px 5px 5.8px 0', }}
+                            value={i}
+                            checked={formik.values.default_item_idx === i}
+                            onChange={(e, d) => formik.setFieldValue('default_item_idx', d.value)}
+                        />
+                    ))
+                }
+            </div>
         );
     }
 
@@ -326,30 +374,35 @@ function AddItem() {
 
                         // backgroundColor: IsErrorFieldArrayVal(fieldArray, i) ? '#ffecec' : '#ffffff', 
                         return (
-                            <div>{
-                                formik.values[fieldArray.field].map((val, i) => {
-                                    // console.log('IsErrorFieldArrayVal: ', isErrorFieldArrayVal(fieldArray, i), 
-                                    //     ', field: ', fieldArray.field, ', index: ', i);
-                                    
-                                    return (
-                                        <div key={`${fieldArray.field}-${i}`}>
-                                            <input name={`${fieldArray.field}.${i}`}
-                                                style={{width: '100%', height: '30px', marginBottom: '3px',
-                                                    borderColor: isErrorFieldArrayVal(fieldArray, i) ? '#ff8080' : '#e0e0e0',
-                                                }}
-                                                placeholder={fieldArray.placeholder}
-                                                value={formik.values[fieldArray.field][i]}
-                                                onChange={formik.handleChange} onBlur={formik.handleBlur} />
-                                            {/* {
-                                                formik.errors[fieldArray.field] && formik.errors[fieldArray.field][i] &&
-                                                formik.touched[fieldArray.field] && formik.touched[fieldArray.field][i] ?
-                                                <div>{formik.errors[fieldArray.field][i]}</div> :
-                                                null
-                                            } */}
-                                        </div>
-                                    );
-                                })
-                            }</div>
+                            <div>
+                                <div style={{paddingLeft: '15px', fontWeight: 'bold', }}>
+                                    {fieldArray.placeholder ? fieldArray.placeholder : null}
+                                </div>
+                                {
+                                    formik.values[fieldArray.field].map((val, i) => {
+                                        // console.log('IsErrorFieldArrayVal: ', isErrorFieldArrayVal(fieldArray, i), 
+                                        //     ', field: ', fieldArray.field, ', index: ', i);
+                                        
+                                        return (
+                                            <div key={`${fieldArray.field}-${i}`}>
+                                                <input name={`${fieldArray.field}.${i}`}
+                                                    style={{width: '100%', height: '30px', marginBottom: '3px',
+                                                        borderColor: isErrorFieldArrayVal(fieldArray, i) ? '#ff8080' : '#e0e0e0',
+                                                    }}
+                                                    placeholder={fieldArray.placeholder}
+                                                    value={formik.values[fieldArray.field][i]}
+                                                    onChange={formik.handleChange} onBlur={formik.handleBlur} />
+                                                {/* {
+                                                    formik.errors[fieldArray.field] && formik.errors[fieldArray.field][i] &&
+                                                    formik.touched[fieldArray.field] && formik.touched[fieldArray.field][i] ?
+                                                    <div>{formik.errors[fieldArray.field][i]}</div> :
+                                                    null
+                                                } */}
+                                            </div>
+                                        );
+                                    })
+                                }
+                            </div>
                         );
                     }}
                 </FieldArray>
@@ -359,34 +412,48 @@ function AddItem() {
 
     function addInsertBtns(fieldArrays) {
         return (
-            formik.values[fieldArrays[0].field].map((val, i) => (
-                <Icon
-                    name='plus circle' size='large' color='blue'
-                    style={{margin: '4.5px 0 7.5px 0'}}
-                    onClick={() => {
-                        fieldArrays.forEach(fa => {
-                            fa.insert(i+1, '');
-                        });
-                    }} />
-            ))
+            <div>
+                <div>
+                    {fieldArrays[0].placeholder ? <div style={{height: '19.99px', }}> </div> : null}
+                </div>
+                {
+                    formik.values[fieldArrays[0].field].map((val, i) => (
+                        <Icon className='link' 
+                            name='plus circle' size='large' color='blue'
+                            style={{margin: '4.5px 0 7.5px 0'}}
+                            onClick={() => {
+                                fieldArrays.forEach(fa => {
+                                    fa.insert(i+1, '');
+                                });
+                            }} />
+                    ))
+                }
+            </div>
         );
     }
 
     function addRemoveBtns(fieldArrays, bUpdateRadioBtn) {
         return (
-            formik.values[fieldArrays[0].field].map((val, i) => (
-                <Icon
-                    name='minus circle' size='large' color='red' disabled={i === 0}
-                    style={{margin: '4.5px 0 7.5px 0'}}
-                    onClick={() => {
-                        fieldArrays.forEach(fa => {
-                            fa.remove(i);
-                        });
+            <div>
+                <div>
+                    {fieldArrays[0].placeholder ? <div style={{height: '19.99px', }}> </div> : null}
+                </div>
+                {
+                    formik.values[fieldArrays[0].field].map((val, i) => (
+                        <Icon className='link' 
+                            name='minus circle' size='large' color='red' disabled={i === 0}
+                            style={{margin: '4.5px 0 7.5px 0'}}
+                            onClick={() => {
+                                fieldArrays.forEach(fa => {
+                                    fa.remove(i);
+                                });
 
-                        if (bUpdateRadioBtn && formik.values.default_item_idx === i)
-                            formik.setFieldValue('default_item_idx', i-1);
-                    }} />
-            ))
+                                if (bUpdateRadioBtn && formik.values.default_item_idx === i)
+                                    formik.setFieldValue('default_item_idx', i-1);
+                            }} />
+                    ))
+                }
+            </div>
         );
     }
 

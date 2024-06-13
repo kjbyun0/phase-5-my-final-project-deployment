@@ -68,6 +68,10 @@ const routes = [
                 element: <AddItem />,
             },
             {
+                path: '/additem/:id',
+                element: <AddItem />,
+            },
+            {
                 path: '/signin',
                 element: <Signin />,
             },

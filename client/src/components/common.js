@@ -334,7 +334,32 @@ function dispRating(itemId, review, user, reviews, onSetReviews) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
+function handleDeleteItem(itm, cbFunc) {
+    // console.log('in handleDeleteItem');
+    
+    fetch(`/items/${itm.id}`, {
+        method: 'DELETE',
+    })
+    .then(r => {
+        if (r.ok) {
+            cbFunc(itm);
+        } else {
+            r.json().then(data => {
+                if (r.status === 401 || r.status === 403) {
+                    console.log(data);
+                    alert(data.message);
+                } else {
+                    console.log("Server Error - Can't delete the item: ", data);
+                    alert(`Server Error - Can't delete the item: ${data.message}`);
+                }
+            });
+        }
+    });
+}
+
+
 export { setUserInfo, dispPrice, dispListPrice, 
     handleCItemDelete, handleCItemAdd, handleCItemChange, 
     formatDate, convertUTCDate, applyUTCToOrder, 
-    handleReviewDelete, handleReviewAdd, handleReviewChange, handleStarClick, dispRating };
+    handleReviewDelete, handleReviewAdd, handleReviewChange, handleStarClick, dispRating,
+    handleDeleteItem };

@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
 import { useSearchParams, useOutletContext, useNavigate } from 'react-router-dom';
-import { dispPrice, dispListPrice, handleCItemChange, handleCItemAdd, handleCItemDelete, } from '../components/common';
+import { dispPrice, dispListPrice, handleCItemChange, handleCItemAdd, handleCItemDelete, 
+    handleDeleteItem, } from '../components/common';
 import { ItemContext } from '../components/ItemProvider';
 import { CardGroup, Card, CardContent, CardHeader, Label, Dropdown, 
     Button, } from 'semantic-ui-react';
@@ -33,9 +34,9 @@ function SearchResult() {
     ];
 
     // console.log('Before useEffect, searchParams: ', searchParams.get('query'));
-    // console.log('In SearchResult, searchItems: ', searchItems);
+    console.log('In SearchResult, searchItems: ', searchItems);
     // console.log('In SearchResult, cartItemsDict: ', cartItemsDict);
-    // console.log('In SearchResult, itemsInCart: ', itemsInCart);
+    console.log('In SearchResult, itemsInCart: ', itemsInCart);
 
     useEffect(() => {
         console.log('In useEffect, searchParams: ', searchParams.get('query'));
@@ -121,10 +122,15 @@ function SearchResult() {
         navigate(`/items/${itm.id}`);
     }
 
-    function handleDeleteItem(itm) {
-        console.log('in handleDeleteItem');
 
+    function removeDeletedItem(itm) {
+        setSearchItems(searchItems => searchItems.filter(sitm => sitm.id !== itm.id));
+
+        const itemsInCartTmp = {...itemsInCart};
+        delete itemsInCartTmp[itm.id];
+        setItemsInCart(itemsInCart => itemsInCartTmp);
     }
+
     
     let sortedItems;
     switch(sort) {
@@ -184,9 +190,9 @@ function SearchResult() {
                             user.seller.id === itm.seller_id ? 
                             <div style={{marginTop: '10px', }}>
                                 <Button basic icon='edit outline' 
-                                     />
+                                    onClick={() => { setItem(itm); navigate(`/additem/${itm.id}`);}} />
                                 <Button color='red' icon='trash alternate outline' 
-                                    onClick={() => handleDeleteItem(itm)} />
+                                    onClick={() => handleDeleteItem(itm, removeDeletedItem)} />
                             </div> : 
                             null
                         }

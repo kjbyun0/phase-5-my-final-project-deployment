@@ -161,7 +161,7 @@ function Item() {
     function dispThumbnails() {
         return item.images.map((thumbnail, i) =>    // image change from thumbnails
             <Image key={i} className='item-thumbnail' 
-                src={thumbnail}
+                src={thumbnail} alt='product thumbnail' 
                 onMouseEnter={() => handleThumnailMouseEnter(i)}
             />
         );
@@ -400,7 +400,7 @@ function Item() {
                                 {dispThumbnails()}
                             </div>
                             <div style={{padding: '0', marginLeft: '5px', }}>
-                                {activeImageIdx !== null ? <Image src={item.images[activeImageIdx]} /> : null}
+                                {activeImageIdx !== null ? <Image src={item.images[activeImageIdx]} alt='product image'/> : null}
                                 
                             </div>
                         </div>

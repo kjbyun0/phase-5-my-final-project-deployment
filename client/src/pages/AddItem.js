@@ -25,7 +25,7 @@ function AddItem() {
         }
 
         // Editing an existing item.
-        if (id && id == item.id) {
+        if (id && item && parseInt(id) === item.id) {
             formik.setFieldValue('name', item.name);
             formik.setFieldValue('brand', item.brand);
             formik.setFieldValue('default_item_idx', item.default_item_idx);
@@ -54,6 +54,7 @@ function AddItem() {
             formik.setFieldValue('details_2_val', details_2_val);
 
             formik.setFieldValue('images', item.images);
+            setImgFiles(item.images);
 
             // category_id: null,
             // seller_id: null,
@@ -133,21 +134,25 @@ function AddItem() {
             const uploadedImages = [];
             const cloudName = 'dfsqyivhu';
             for (const file of imgFiles) {
-                const publicId = file.name.split('.').slice(0, -1).join('.');
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('upload_preset', 'flatiron_p5_pjt_imgs');
-                formData.append('public_id', publicId);
+                if (typeof(file) === 'string') {
+                    uploadedImages.push(file);
+                } else {
+                    const publicId = file.name.split('.').slice(0, -1).join('.');
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('upload_preset', 'flatiron_p5_pjt_imgs');
+                    formData.append('public_id', publicId);
 
-                try {
-                    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
-                        method: 'POST',
-                        body: formData,
-                    });
-                    const data = await response.json();
-                    uploadedImages.push(data.secure_url);
-                } catch (error) {
-                    console.log('Cloudinary Image Upload Error: ', error);
+                    try {
+                        const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
+                            method: 'POST',
+                            body: formData,
+                        });
+                        const data = await response.json();
+                        uploadedImages.push(data.secure_url);
+                    } catch (error) {
+                        console.log('Cloudinary Image Upload Error: ', error);
+                    }
                 }
             };
             values.images = uploadedImages;
@@ -198,8 +203,13 @@ function AddItem() {
             console.log('postValues: ', postValues);
 
             console.log('***** before item POST fetch, values: ', values);
-            await fetch('/items', {
-                method: 'POST',
+            console.log('Edit mode: ', id && item && parseInt(id) === item.id);
+
+            const url = id && item && parseInt(id) === item.id ? `/items/${id}` : '/items'
+            console.log('url: ', url);
+            
+            await fetch(url, {
+                method: id && item && parseInt(id) === item.id ? 'PATCH' : 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -209,6 +219,7 @@ function AddItem() {
                 await r.json().then(data => {
                     if (r.ok) {
                         console.log('New item is sucessfully posted: ', data);
+                        setItem(data);
                         alert('New item is sucessfully posted.');
                         navigate(`/items/${data.id}`);
                     } else {
@@ -250,22 +261,30 @@ function AddItem() {
         console.log('in handleImgDrop, acceptedFiles: ', acceptedFiles);
 
         const imgFilesDict = {};
-        imgFiles.forEach(file => imgFilesDict[file.name] = file);
+        imgFiles.forEach(file => {
+            if (typeof(file) === 'string') {
+                const urlStrs = file.split('/');
+                imgFilesDict[urlStrs[urlStrs.length-1]] = file;
+            } else
+                imgFilesDict[file.name] = file;
+        });
 
         const imgFilesTmp = [...imgFiles];
-        // console.log('in handleImgDrop, imgFilesDict: ', imgFilesDict, ', imgFilesTmp: ', imgFilesTmp);
         acceptedFiles.forEach(file => {
             if (!(file.name in imgFilesDict)) {
                 imgFilesDict[file.name] = file;
                 imgFilesTmp.push(Object.assign(file, {preview: URL.createObjectURL(file)}));
             }
         });
+        console.log('in handleImgDrop, imgFilesDict: ', imgFilesDict, ', imgFilesTmp: ', imgFilesTmp);
         formik.setFieldValue('images', imgFilesTmp);
         setImgFiles(imgFilesTmp);
     };
 
     function removeImgFile(imgFile) {
-        const imgFilesTmp = imgFiles.filter(file => file.name !== imgFile.name);
+        const imgFilesTmp = typeof(imgFile) === 'string' ? 
+            imgFiles.filter(file => typeof(file) !== 'string' || file !== imgFile) : 
+            imgFiles.filter(file => typeof(file) === 'string' || file.name !== imgFile.name);
         formik.setFieldValue('images', imgFilesTmp);
         setImgFiles(files => imgFilesTmp);
     }
@@ -476,8 +495,13 @@ function AddItem() {
                                     return (
                                         <div key={i} style={{margin: 'auto', }} >
                                             <IconGroup size='big'>
-                                                <img src={imgFile.preview} alt={imgFile.name}
-                                                    style={{width: '200px', height: '200px', objectFit: 'cover',}} />
+                                                {
+                                                    typeof(imgFile) === 'string' ? 
+                                                    <img src={imgFile} alt='product image'
+                                                        style={{width: '200px', height: '200px', objectFit: 'cover',}} /> : 
+                                                    <img src={imgFile.preview} alt='product image'
+                                                        style={{width: '200px', height: '200px', objectFit: 'cover',}} />
+                                                }
                                                 <Icon name='delete' color='red' circular corner='top right' fitted
                                                     className='link'
                                                     onClick={() => removeImgFile(imgFile)}/>

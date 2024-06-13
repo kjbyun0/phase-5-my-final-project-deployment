@@ -198,7 +198,7 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
         #'-seller.user',
         # '-seller.user.seller',
         # '-seller.user.customer',
-        '-seller.items',
+        # '-seller.items',
         '-cart_items',
         '-order_items',
         '-reviews',

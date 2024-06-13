@@ -16,13 +16,7 @@ function SearchResult() {
     // key: item id and value: boolean value to indicate if corresponding searched item is added to cart.
     const [ itemsInCart, setItemsInCart] = useState({});
     const navigate = useNavigate();
-
-
-    // ??? - testcode for useContext... delete it later on...
     const { item, setItem } = useContext(ItemContext);
-    // console.log('item: ', item);
-    // setItem('itemContext will be assigned.');
-    // ??? - testcode for useContext... delete it later on...
 
 
     const [ sort, setSort ] = useState(1);
@@ -39,8 +33,15 @@ function SearchResult() {
     console.log('In SearchResult, itemsInCart: ', itemsInCart);
 
     useEffect(() => {
-        console.log('In useEffect, searchParams: ', searchParams.get('query'));
-        fetch(`/search/${searchParams.get('query')}`)
+        const key = searchParams.get('query');
+        console.log('In useEffect, searchParams: ', key);
+
+        if (!key) {
+            navigate('/');
+            return;
+        }
+
+        fetch(`/search/${key}`)
         .then(r => {
             r.json().then(data => {
                 if (r.ok) {

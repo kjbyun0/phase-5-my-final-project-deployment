@@ -25,8 +25,8 @@ function NavBar({ user, cartItems }) {
             <Form onSubmit={handleSearchSubmit} 
                 style={{display: 'flex', alignItems: 'center', }} >
                 <Input type='text' action value={searchKey} onChange={handleSearchInput} 
-                    style={{width: '80%', }} >
-                    <Dropdown />
+                    style={{width: '80%', marginLeft: '15px', }} >
+                    {/* <Dropdown /> */}
                     <input />
                     <Button type='submit' icon='search' />
                 </Input>

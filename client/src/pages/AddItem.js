@@ -203,11 +203,8 @@ function AddItem() {
             console.log('postValues: ', postValues);
 
             console.log('***** before item POST fetch, values: ', values);
-            console.log('Edit mode: ', id && item && parseInt(id) === item.id);
 
             const url = id && item && parseInt(id) === item.id ? `/items/${id}` : '/items'
-            console.log('url: ', url);
-            
             await fetch(url, {
                 method: id && item && parseInt(id) === item.id ? 'PATCH' : 'POST',
                 headers: {
@@ -218,9 +215,9 @@ function AddItem() {
             .then(async r => {
                 await r.json().then(data => {
                     if (r.ok) {
-                        console.log('New item is sucessfully posted: ', data);
+                        console.log('Item is sucessfully updated: ', data);
                         setItem(data);
-                        alert('New item is sucessfully posted.');
+                        alert('Item is sucessfully updated.');
                         navigate(`/items/${data.id}`);
                     } else {
                         if (r.status === 401 || r.status === 403) {

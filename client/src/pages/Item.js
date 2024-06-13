@@ -388,6 +388,7 @@ function Item() {
     if (!item || item.id !== parseInt(id))
         return;
 
+    // maxWidth: '630px', maxHeight: '630px', 
     return (
         <div style={{ padding: '15px', minWidth: '850px', }}>
             <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', }} >
@@ -400,8 +401,12 @@ function Item() {
                                 {dispThumbnails()}
                             </div>
                             <div style={{padding: '0', marginLeft: '5px', }}>
-                                {activeImageIdx !== null ? <Image src={item.images[activeImageIdx]} alt='product image'/> : null}
-                                
+                                {
+                                    activeImageIdx !== null ? 
+                                        <Image style={{objectFit: 'contain', width: '100%', height: '100%', maxWidth: '630px', maxHeight: '630px', margin: '0 auto', }} 
+                                            src={item.images[activeImageIdx]} alt='product image'/> : 
+                                        null
+                                }
                             </div>
                         </div>
                     </div>

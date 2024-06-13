@@ -269,8 +269,8 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
             return json.dumps(value)
         elif key == 'images':
             self.validate_list(key, value, [str])
-            if len(value) == 0 or len(value) > 6:
-                raise ValueError(f'{key} must be a list of image links upto 6.')
+            if len(value) == 0 or len(value) > 10:
+                raise ValueError(f'{key} must be a list of image links upto 10.')
             return json.dumps(value)
 
         return value

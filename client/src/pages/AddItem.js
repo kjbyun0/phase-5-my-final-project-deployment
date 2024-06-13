@@ -103,7 +103,7 @@ function AddItem() {
         details_2_val: yup.array().of(
             yup.string().required('required')
         ),
-        images: yup.array().min(1, 'At least one image must be uploaded.').max(6, 'Upto 6 images are allowed to upload.')
+        images: yup.array().min(1, 'At least one image must be uploaded.').max(10, 'Upto 10 images are allowed to upload.')
     });
 
     const formik = useFormik({

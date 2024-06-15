@@ -32,21 +32,21 @@ if __name__ == '__main__':
         # Users
         ############################################################################
         users = []
-        for i in range(10):
+        for i in range(15):
             users.append(User(
-                username=f'cust0{i}' if i < 5 else f'sell0{i-5}',
-                password_hash=f'cust0{i}' if i < 5 else f'sell0{i-5}',
-                phone=f'{i}00){i}00-{i}000',
-                email=f'cust0{i}@gmail.com' if i < 5 else f'sell0{i-5}@gmail.com',
-                street_1=f'{i}0000 Palmer Blvd',
+                username=f'cust0{i}' if i < 10 else f'sell0{i-10}',
+                password_hash=f'cust0{i}' if i < 10 else f'sell0{i-10}',
+                phone=f'{i%10}00){i%10}00-{i%10}000',
+                email=f'cust0{i}@gmail.com' if i < 10 else f'sell0{i-10}@gmail.com',
+                street_1=f'{i%10}0000 Palmer Blvd',
                 street_2='',
                 city='Huston',
                 state='TX',
-                zip_code=f'{i}1111'
+                zip_code=f'{i%10}1111'
             ))
 
         customers = []
-        for i in range(5):
+        for i in range(10):
                 customers.append(Customer(
                 first_name=fake.first_name(),
                 last_name=fake.last_name(),
@@ -59,12 +59,13 @@ if __name__ == '__main__':
         for i in range(5):
             sellers.append(Seller(
                 name=fake.company(),
-                user = users[i+5]
+                user = users[i+10]
             ))
         
         db.session.add_all(users)
         db.session.add_all(customers)
         db.session.add_all(sellers)
+        db.session.commit()
 
         ############################################################################
         # Categories
@@ -787,5 +788,30 @@ if __name__ == '__main__':
         # ))
 
         db.session.add_all(items)
+        db.session.commit()
+
+
+        ############################################################################
+        # Reviews
+        ############################################################################
+
+        stars = [1, 2, 3, 4, 5]
+
+
+        reviews = []
+        for i in range(1, 10):
+            for item in items: 
+                reviews.append(Review(
+                    rating = rc(stars), 
+                    headline = fake.sentence(nb_words=6),
+                    content = fake.paragraph(nb_sentences=3),
+                    images = '',
+                    review_done = 1,
+                    item = item, 
+                    customer = customers[i]
+                ))
+                
+        db.session.add_all(reviews)
+
 
         db.session.commit()

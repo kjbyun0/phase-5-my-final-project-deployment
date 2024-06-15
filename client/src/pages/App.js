@@ -31,11 +31,9 @@ function App() {
 
     return (
         <div style={{display: 'grid', gridTemplateRows: 'max-content 1fr', }}>
-            {/* <header style={{minWidth: '0', minHeight: '0',}}> */}
             <header>
                 <NavBar user={user} cartItems={cartItems} />
             </header>
-            {/* <main style={{minWidth: '0', minHeight: '0', }}> */}
             <main>
                 <ItemProvider>
                     <Outlet context={{

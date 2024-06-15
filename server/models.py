@@ -217,6 +217,9 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
     details_1 = db.Column(db.String)    # object: item details
     details_2 = db.Column(db.String)    # object: item details
     images = db.Column(db.String)   # list:
+    accum_sales_cnt = db.Column(db.Integer, default=0)
+    avg_review_rating = db.Column(db.Float, default=0)
+    accum_review_cnt = db.Column(db.Integer, default=0)
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))    # Removal Candidate
     seller_id = db.Column(db.Integer, db.ForeignKey('sellers.id'))
 

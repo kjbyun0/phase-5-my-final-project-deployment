@@ -456,6 +456,14 @@ class OrderItems(Resource):
                 order_id = req.get('order_id')
             )
             db.session.add(oi)
+
+            # To update total_sales_cnt of Item model class
+            item = Item.query.filter_by(id=oi.item_id).first()
+            item_dict = item.to_dict()
+            apply_json_loads_to_item(item_dict)
+            item.accum_sales_cnt += oi.quantity * item_dict['packs'][oi.item_idx]
+            db.session.add(item)
+
             db.session.commit()
         except Exception as exc:
             return make_response({
@@ -475,13 +483,33 @@ class OrderItem_by_id(Resource):
         oi = OrderItem.query.filter_by(id=id).first()
         if oi:
             try:
+                # To update total_sales_cnt of Item model class
+                item_id = oi.item_id
+                item = Item.query.filter_by(id=item_id).first()
+                item_dict = item.to_dict()
+                apply_json_loads_to_item(item_dict)
+                sales_cnt = oi.quantity * item_dict['packs'][oi.item_idx]
+
                 for key in req:
                     if key != 'processed_date':
                         setattr(oi, key, req[key])
                     else:
                         d = datetime.strptime(req[key], '%Y-%m-%d %H:%M:%S')
-                        # setattr(oi, key, db.func.now())
                         setattr(oi, key, d)
+
+                # To update total_sales_cnt of Item model class
+                if oi.item_id == item_id:
+                    updated_sales_cnt = oi.quantity * item_dict['packs'][oi.item_idx]
+                    if updated_sales_cnt != sales_cnt:
+                        item.accum_sales_cnt += updated_sales_cnt - sales_cnt
+                    db.session.add(item)
+                else:
+                    new_item = Item.query.filter_by(id=oi.item_id).first()
+                    new_item_dict = new_item.to_dict()
+                    apply_json_loads_to_item(new_item_dict)
+                    new_item.accum_sales_cnt += (oi.quantity * new_item_dict['packs'][oi.item_idx])
+                    db.session.add(new_item)
+
                 db.session.commit()
             except Exception as exc:
                 return make_response({

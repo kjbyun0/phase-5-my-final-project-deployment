@@ -71,8 +71,10 @@ function Item() {
                     setItemReviews(data);
                     setAvgRating(
                         Math.round(data.reduce((avg, review, i) => 
-                            avg + (review.rating - avg) / (i+1), 0) * 10) 
-                        / 10);
+                            review.review_done ? 
+                            avg + (review.rating - avg) / (i+1) :
+                            avg
+                        , 0) * 10) / 10);
                     const starCountsTmp = [0, 0, 0, 0, 0];
                     data.forEach(review => starCountsTmp[review.rating-1] += 1);
                     setStarCounts(starCountsTmp);
@@ -240,6 +242,7 @@ function Item() {
     function dispReviews() {
         return (
             itemReviews.map(review => 
+                review.review_done ? 
                 <div key={review.id} style={{margin: '15px 0', fontSize: '1.1em', }}>
                     <div>
                         <Icon name='user circle outline' size='big' 
@@ -258,7 +261,8 @@ function Item() {
                     <div style={{margin: '5px 0', }}>
                         <p>{review.content}</p>
                     </div>
-                </div>
+                </div> : 
+                null
             )
         );
     }

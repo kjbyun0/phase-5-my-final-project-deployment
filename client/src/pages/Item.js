@@ -43,12 +43,12 @@ function Item() {
     useEffect(() => {
 
         // if the id of the item in ItemContext is same id from useParam, no need to fetch it again.
-        if (item && item.id === parseInt(id)) {
-            console.log('Already has the item data in ItemContext');
+        // if (item && item.id === parseInt(id)) {
+        //     console.log('Already has the item data in ItemContext');
 
-            if (item.default_item_idx >= 0 && item.default_item_idx < item.prices.length)
-                setActiveItemIdx(item.default_item_idx);
-        } else {
+        //     if (item.default_item_idx >= 0 && item.default_item_idx < item.prices.length)
+        //         setActiveItemIdx(item.default_item_idx);
+        // } else {
             fetch(`/items/${id}`)
             .then(r => {
                 r.json().then(data => {
@@ -62,7 +62,7 @@ function Item() {
                     }
                 });
             })
-        }
+        // }
 
         fetch(`/reviews/items/${id}`)
         .then(r => {

@@ -795,23 +795,20 @@ if __name__ == '__main__':
         # Reviews
         ############################################################################
 
-        stars = [1, 2, 3, 4, 5]
+        # stars = [1, 2, 3, 4, 5]
 
-
-        reviews = []
-        for i in range(1, 10):
-            for item in items: 
-                reviews.append(Review(
-                    rating = rc(stars), 
-                    headline = fake.sentence(nb_words=6),
-                    content = fake.paragraph(nb_sentences=3),
-                    images = '',
-                    review_done = 1,
-                    item = item, 
-                    customer = customers[i]
-                ))
+        # reviews = []
+        # for i in range(1, 10):
+        #     for item in items: 
+        #         reviews.append(Review(
+        #             rating = rc(stars), 
+        #             headline = fake.sentence(nb_words=6),
+        #             content = fake.paragraph(nb_sentences=3),
+        #             images = '',
+        #             review_done = 1,
+        #             item = item, 
+        #             customer = customers[i]
+        #         ))
                 
-        db.session.add_all(reviews)
-
-
-        db.session.commit()
+        # db.session.add_all(reviews)
+        # db.session.commit()

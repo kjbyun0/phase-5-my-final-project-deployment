@@ -39,6 +39,8 @@ def check_if_signed_in():
         and request.endpoint != 'search' \
         and not (request.endpoint == 'items' and request.method == 'GET') \
         and not (request.endpoint == 'item_by_id' and request.method == 'GET') \
+        and request.endpoint != 'items_by_rating' \
+        and request.endpoint != 'items_by_sales' \
         and request.endpoint != 'reviews_by_itemid':
         return make_response({
             'message': 'User is not signed in',
@@ -300,6 +302,22 @@ class Item_by_id(Resource):
             'message': f'Item {id} not found.',
         }, 404)
 
+
+class Items_by_rating(Resource):
+    def get(self):
+        items = Item.query.order_by(Item.avg_review_rating.desc()).limit(4).all()
+        items_dict = [apply_json_loads_to_item(item.to_dict()) for item in items]
+        return make_response(items_dict, 200)
+
+class Items_by_sales(Resource):
+    def get(self):
+        items = Item.query.order_by(Item.accum_sales_cnt.desc()).limit(4).all()
+        items_dict = [apply_json_loads_to_item(item.to_dict()) for item in items]
+        return make_response(items_dict, 200)
+
+
+
+
 class CartItems(Resource):
     def post(self): 
         req = request.get_json()
@@ -456,15 +474,16 @@ class OrderItems(Resource):
                 order_id = req.get('order_id')
             )
             db.session.add(oi)
+            db.session.commit()
 
-            # To update total_sales_cnt of Item model class
+            # To update accumulated sales count of Item model class
             item = Item.query.filter_by(id=oi.item_id).first()
             item_dict = item.to_dict()
             apply_json_loads_to_item(item_dict)
             item.accum_sales_cnt += oi.quantity * item_dict['packs'][oi.item_idx]
             db.session.add(item)
-
             db.session.commit()
+
         except Exception as exc:
             return make_response({
                 'message': f'{exc}',
@@ -483,7 +502,7 @@ class OrderItem_by_id(Resource):
         oi = OrderItem.query.filter_by(id=id).first()
         if oi:
             try:
-                # To update total_sales_cnt of Item model class
+                # To update accumulated sales count of Item model class
                 item_id = oi.item_id
                 item = Item.query.filter_by(id=item_id).first()
                 item_dict = item.to_dict()
@@ -496,8 +515,9 @@ class OrderItem_by_id(Resource):
                     else:
                         d = datetime.strptime(req[key], '%Y-%m-%d %H:%M:%S')
                         setattr(oi, key, d)
+                db.session.commit()
 
-                # To update total_sales_cnt of Item model class
+                # To update accumulated sales count of Item model class
                 if oi.item_id == item_id:
                     updated_sales_cnt = oi.quantity * item_dict['packs'][oi.item_idx]
                     if updated_sales_cnt != sales_cnt:
@@ -509,7 +529,6 @@ class OrderItem_by_id(Resource):
                     apply_json_loads_to_item(new_item_dict)
                     new_item.accum_sales_cnt += (oi.quantity * new_item_dict['packs'][oi.item_idx])
                     db.session.add(new_item)
-
                 db.session.commit()
             except Exception as exc:
                 return make_response({
@@ -532,12 +551,20 @@ class Reviews(Resource):
                 headline = req.get('headline'),
                 content = req.get('content'),
                 images = req.get('images'), # ??? need to implement it later.
-                review_done = 0,
+                review_done = req.get('review_done'),
                 item_id = req.get('item_id'),
                 customer_id = req.get('customer_id')
             )
             db.session.add(r)
             db.session.commit()
+
+            # To update accumulated review count and avg review rating of Item model class
+            if r.review_done and (1 <= r.rating <= 5):
+                item = Item.query.filter_by(id=r.item_id).first()
+                item.accum_review_cnt += 1
+                item.avg_review_rating += (r.rating - item.avg_review_rating) / item.accum_review_cnt
+                db.session.add(item)
+                db.session.commit()
         except Exception as exc:
             return make_response({
                 'message': f'{exc}',
@@ -555,9 +582,36 @@ class Review_by_id(Resource):
         r = Review.query.filter_by(id=id).first()
         if r:
             try:
+                # To update accumulated review count and avg review rating of Item model class
+                prev_review_done = r.review_done
+                prev_rating = r.rating
+
                 for key in req:
                     setattr(r, key, req[key])
                 db.session.commit()
+
+                # To update accumulated review count and avg review rating of Item model class
+                item = Item.query.filter_by(id=r.item_id).first()
+                if r.review_done and (1 <= r.rating <= 5):
+                    if prev_review_done:
+                        if r.rating != prev_rating:
+                            item.accum_review_cnt -= 1
+                            item.avg_review_rating -= (prev_rating - item.avg_review_rating) / item.accum_review_cnt
+                            item.accum_review_cnt += 1
+                            item.avg_review_rating += (r.rating - item.avg_review_rating) / item.accum_review_cnt
+                            db.session.add(item)
+                            db.session.commit()
+                    else:
+                        item.accum_review_cnt += 1
+                        item.avg_review_rating += (r.rating - item.avg_review_rating) / item.accum_review_cnt
+                        db.session.add(item)
+                        db.session.commit()
+                else:
+                    if prev_review_done:
+                        item.accum_review_cnt -= 1
+                        item.avg_review_rating -= (prev_rating - item.avg_review_rating) / item.accum_review_cnt
+                        db.session.add(item)
+                        db.session.commit()
             except Exception as exc:
                 return make_response({
                     'message': f'{exc}',
@@ -576,6 +630,13 @@ class Review_by_id(Resource):
         r = Review.query.filter_by(id=id).first()
         if r:
             try:
+                # To update accumulated review count and avg review rating of Item model class
+                if r.review_done and (1 <= r.rating <= 5):
+                    item = Item.query.filter_by(id=r.item_id).first()
+                    item.accum_review_cnt -= 1
+                    item.avg_review_rating -= (r.rating - item.avg_review_rating) / item.accum_review_cnt
+                    db.session.add(item)
+
                 db.session.delete(r)
                 db.session.commit()
             except Exception as exc:
@@ -604,6 +665,8 @@ api.add_resource(Customer_by_id, '/customers/<int:id>') # Authentication require
 api.add_resource(Search, '/search/<string:keys>', endpoint='search')
 api.add_resource(Items, '/items', endpoint='items') # Authentication required because we are using it to post an item... ???*** Think about checking authentication only for POST request.
 api.add_resource(Item_by_id, '/items/<int:id>', endpoint='item_by_id') # Authentication required for patch and delete operation.
+api.add_resource(Items_by_rating, '/items/rating', endpoint='items_by_rating')
+api.add_resource(Items_by_sales, '/items/sales', endpoint='items_by_sales')
 api.add_resource(CartItems, '/cartitems', endpoint='cartitems') # Authentication required
 api.add_resource(CartItem_by_id, '/cartitems/<int:id>', endpoint='cartitem_by_id') # Authentication required
 api.add_resource(Orders, '/orders') # Authentication required

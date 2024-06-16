@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
 import { useParams, useOutletContext, useNavigate, } from 'react-router-dom'; 
 import { dispPrice, dispListPrice, handleCItemAdd, handleCItemChange, 
-    formatDate, convertUTCDate, handleDeleteItem, } from '../components/common';
+    formatDate, convertUTCDate, handleDeleteItem, dispAvgRating, } from '../components/common';
 import { ItemContext } from '../components/ItemProvider';
 import { Divider, Table, TableBody, TableRow, TableCell, 
     Image, ButtonGroup, Button, Dropdown, Icon, Progress, } from 'semantic-ui-react';
@@ -169,34 +169,34 @@ function Item() {
         );
     }
 
-    function dispAvgRating(starWidth, starHeight) {
-        const stars = [];
-        const maxFilled = starWidth, minFilled = 0;
+    // function dispAvgRating(starWidth, starHeight) {
+    //     const stars = [];
+    //     const maxFilled = starWidth, minFilled = 0;
 
-        for (let i = 1; i <= 5; i++) {
-            const width = avgRating >= i ? maxFilled : 
-                avgRating <= i - 1 ? minFilled :
-                (avgRating - (i - 1)) * (maxFilled - minFilled);
-            stars.push(
-                <div key={i} style={{width: `${starWidth}px`, height: `${starHeight}px`, }}>
-                    <div style={{position: 'absolute', zIndex: '1', backgroundColor: '#ffbd59', 
-                        height: `${starHeight}px`, width: `${width}px`, 
-                        }} />
-                    <img src='/star_tp.png' alt='transparent star image for rating' 
-                        style={{position: 'absolute', zIndex: '2', 
-                            width: `${starWidth}px`, height: `${starHeight}px`, }} />
-                </div>
-            );
-        }
+    //     for (let i = 1; i <= 5; i++) {
+    //         const width = avgRating >= i ? maxFilled : 
+    //             avgRating <= i - 1 ? minFilled :
+    //             (avgRating - (i - 1)) * (maxFilled - minFilled);
+    //         stars.push(
+    //             <div key={i} style={{width: `${starWidth}px`, height: `${starHeight}px`, }}>
+    //                 <div style={{position: 'absolute', zIndex: '1', backgroundColor: '#ffbd59', 
+    //                     height: `${starHeight}px`, width: `${width}px`, 
+    //                     }} />
+    //                 <img src='/star_tp.png' alt='transparent star image for rating' 
+    //                     style={{position: 'absolute', zIndex: '2', 
+    //                         width: `${starWidth}px`, height: `${starHeight}px`, }} />
+    //             </div>
+    //         );
+    //     }
 
-        return (
-            <div style={{display: 'grid', 
-                gridTemplateColumns: 'max-content max-content max-content max-content max-content', 
-                alignItems: 'center', }}>
-                {stars}
-            </div>
-        );
-    }
+    //     return (
+    //         <div style={{display: 'grid', 
+    //             gridTemplateColumns: 'max-content max-content max-content max-content max-content', 
+    //             alignItems: 'center', }}>
+    //             {stars}
+    //         </div>
+    //     );
+    // }
 
     function dispStarDistribution() {
         return (
@@ -422,9 +422,9 @@ function Item() {
                     <div style={{display: 'grid', gridTemplateColumns: 'max-content max-content 1fr', 
                         alignItems: 'center', }}>
                         <div>{avgRating.toFixed(1)}</div>
-                        <div style={{marginLeft: '5px', }}>{dispAvgRating(17, 17)}</div>
+                        <div style={{marginLeft: '5px', }}>{dispAvgRating(item, 17, 17)}</div>
                         <a href='#customer_reviews' className='link1 link' style={{marginLeft: '20px', }}>
-                            {itemReviews.length.toLocaleString('en-US')}  rating{itemReviews.length > 1 ? 's' : null}
+                            {item.accum_review_cnt.toLocaleString('en-US')}  rating{item.accum_review_cnt > 1 ? 's' : null}
                         </a>
                     </div>
 
@@ -546,11 +546,14 @@ function Item() {
                     </div>
                     <div style={{display: 'grid', gridTemplateColumns: 'max-content 1fr', 
                         alignItems: 'center', marginTop: '10px', }}>
-                        <div>{dispAvgRating(20,20)}</div>
+                        <div>{dispAvgRating(item, 20,20)}</div>
                         <div style={{fontSize: '1.5em', marginLeft: '15px', }}>{avgRating.toFixed(1)} out of 5</div>
                     </div>
-                    <div style={{marginTop: '15px', fontSize: '1.1em', }}>
+                    {/* <div style={{marginTop: '15px', fontSize: '1.1em', }}>
                         {itemReviews.length.toLocaleString('en-US')} rating{itemReviews.length > 1 ? 's' : null}
+                    </div> */}
+                    <div style={{marginTop: '15px', fontSize: '1.1em', }}>
+                        {item.accum_review_cnt.toLocaleString('en-US')} rating{item.accum_review_cnt > 1 ? 's' : null}
                     </div>
                     <div style={{marginTop: '20px', }}>
                         {dispStarDistribution()}

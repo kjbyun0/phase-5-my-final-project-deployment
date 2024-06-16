@@ -332,6 +332,35 @@ function dispRating(itemId, review, user, reviews, onSetReviews) {
     return stars;
 }
 
+function dispAvgRating(item, starWidth, starHeight) {
+    const stars = [];
+    const maxFilled = starWidth, minFilled = 0;
+
+    for (let i = 1; i <= 5; i++) {
+        const width = item.avg_review_rating >= i ? maxFilled : 
+            item.avg_review_rating <= i - 1 ? minFilled :
+            (item.avg_review_rating - (i - 1)) * (maxFilled - minFilled);
+        stars.push(
+            <div key={i} style={{width: `${starWidth}px`, height: `${starHeight}px`, }}>
+                <div style={{position: 'absolute', zIndex: '1', backgroundColor: '#ffbd59', 
+                    height: `${starHeight}px`, width: `${width}px`, 
+                    }} />
+                <img src='/star_tp.png' alt='transparent star image for rating' 
+                    style={{position: 'absolute', zIndex: '2', 
+                        width: `${starWidth}px`, height: `${starHeight}px`, }} />
+            </div>
+        );
+    }
+
+    return (
+        <div style={{display: 'grid', 
+            gridTemplateColumns: 'max-content max-content max-content max-content max-content', 
+            alignItems: 'center', }}>
+            {stars}
+        </div>
+    );
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 function handleDeleteItem(itm, cbFunc) {
@@ -361,5 +390,5 @@ function handleDeleteItem(itm, cbFunc) {
 export { setUserInfo, dispPrice, dispListPrice, 
     handleCItemDelete, handleCItemAdd, handleCItemChange, 
     formatDate, convertUTCDate, applyUTCToOrder, 
-    handleReviewDelete, handleReviewAdd, handleReviewChange, handleStarClick, dispRating,
+    handleReviewDelete, handleReviewAdd, handleReviewChange, handleStarClick, dispRating, dispAvgRating, 
     handleDeleteItem };

@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
 import { useSearchParams, useOutletContext, useNavigate } from 'react-router-dom';
 import { dispPrice, dispListPrice, handleCItemChange, handleCItemAdd, handleCItemDelete, 
-    handleDeleteItem, } from '../components/common';
+    handleDeleteItem, dispAvgRating, } from '../components/common';
 import { ItemContext } from '../components/ItemProvider';
 import { CardGroup, Card, CardContent, CardHeader, Label, Dropdown, 
     Button, } from 'semantic-ui-react';
@@ -136,14 +136,13 @@ function SearchResult() {
     let sortedItems;
     switch(sort) {
         case 2:
-            sortedItems = searchItems.toSorted((itm1, itm2) => itm1.discount_prices[itm1.default_item_idx] - itm2.discount_prices[itm2.default_item_idx])
+            sortedItems = searchItems.toSorted((itm1, itm2) => itm1.discount_prices[itm1.default_item_idx] - itm2.discount_prices[itm2.default_item_idx]);
             break;
         case 3:
-            sortedItems = searchItems.toSorted((itm1, itm2) => itm2.discount_prices[itm2.default_item_idx] - itm1.discount_prices[itm1.default_item_idx])
+            sortedItems = searchItems.toSorted((itm1, itm2) => itm2.discount_prices[itm2.default_item_idx] - itm1.discount_prices[itm1.default_item_idx]);
             break;
         case 4:
-            // need to implement it after reviews feature is implemented. the following code is temporary.
-            sortedItems = searchItems;
+            sortedItems = searchItems.toSorted((itm1, itm2) => itm2.avg_review_rating - itm1.avg_review_rating);
             break;
         default:
             sortedItems = searchItems;
@@ -171,7 +170,13 @@ function SearchResult() {
                         }
                     </span>
                 </Label>
-                <div className='link' onClick={() => handleNavigateItem(itm)}>
+                <div style={{display: 'grid', gridTemplateColumns: 'max-content max-content', alignItems: 'center', 
+                    marginTop: '5px', }}>
+                    <div style={{marginLeft: '5px', }}>{dispAvgRating(itm, 17, 17)}</div>
+                    <div style={{marginLeft: '10px', }}>{itm.accum_review_cnt.toLocaleString('en-US')}  rating{itm.accum_review_cnt > 1 ? 's' : null}</div>
+                </div>
+
+                <div className='link' style={{marginTop: '15px', }} onClick={() => handleNavigateItem(itm)}>
                     {dispPrice(itm, itm.default_item_idx)}
                 </div>
                 <div className='link' onClick={() => handleNavigateItem(itm)}>

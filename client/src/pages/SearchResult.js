@@ -25,6 +25,7 @@ function SearchResult() {
         { key: 2, text: 'Price: Low to Hight', value: 2 },
         { key: 3, text: 'Price: High to Low', value: 3 },
         { key: 4, text: 'Avg. Customer Review', value: 4 },
+        { key: 5, text: 'Best Sellers', value: 5 },
     ];
 
     // console.log('Before useEffect, searchParams: ', searchParams.get('query'));
@@ -144,6 +145,9 @@ function SearchResult() {
         case 4:
             sortedItems = searchItems.toSorted((itm1, itm2) => itm2.avg_review_rating - itm1.avg_review_rating);
             break;
+        case 5: 
+            sortedItems = searchItems.toSorted((itm1, itm2) => itm2.accum_sales_cnt - itm1.accum_sales_cnt);
+            break;
         default:
             sortedItems = searchItems;
             break;
@@ -236,7 +240,7 @@ function SearchResult() {
                     <div style={{display: 'inline-block', fontSize: '1.2em', margin: '10px 10px 10px 0'}}>"</div>
                 </div>
                 {/* <Menu compact size='tiny' style={{float: 'inline-end', }}> */}
-                <Dropdown options={sortOptions} simple item button 
+                <Dropdown options={sortOptions} simple item button style={{borderRadius: '20px', padding: '5px 10px'}}
                     text={`Sort by: ${sortOptions[sort-1].text}`} value={sort} onChange={(e, d) => setSort(d.value)} />
             </div>
             <hr style={{boxShadow: '0 2px 6px 1px lightgray'}}/>

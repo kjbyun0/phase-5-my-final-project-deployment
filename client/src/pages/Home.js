@@ -59,15 +59,17 @@ function Home() {
 
     return (
         <div>
-            <div style={{position: 'absolute', zIndex: '1', 
+            <div className='gradient-img' style={{position: 'absolute', zIndex: '1', 
                 width: '100%', height: '100%', 
-                backgroundImage: `url(/61uNj76JeeL._SX3000_.jpg)`,     // image change from card_thumbnail
+                backgroundImage: 'linear-gradient(to bottom, rgba(245, 245, 245, 0), rgba(245, 245, 245, 1)), url(/61uNj76JeeL._SX3000_.jpg)',
                 backgroundSize: 'cover', backgroundRepeat: 'no-repeat', 
-                backgroundPosition: 'center', border: '1px solid gainsboro', }} 
+                backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center',  }} 
             />
-            <div style={{position: 'absolute', zIndex: '2', width: '100%', marginTop: '430px', }}>
+            <div style={{position: 'absolute', zIndex: '2', width: '100%', marginTop: '420px', 
+                background: 'linear-gradient(to bottom, rgba(245, 245, 245, 0) 0%, rgba(245, 245, 245, 1) 50%)', 
+            }}>
                 <div style={{ display:'grid', gridTemplateColumns: '1fr max-content max-content 1fr', 
-                    alignItems: 'center', backgroundColor: 'whitesmoke', 
+                    alignItems: 'center',  
                 }}>
                     <div />
                     <div style={{padding: '10px', margin: '10px', backgroundColor: 'white', }}>

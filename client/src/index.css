@@ -158,12 +158,3 @@ body {
   width: 100%;
   height: auto;
 } */
-
-
-.section1 {
-  background: linear-gradient(to bottom, #000000 100%, whitesmoke 100%);
-}
-
-.section2 {
-  background: linear-gradient(to top, #000000 100%, whitesmoke 0%);
-}

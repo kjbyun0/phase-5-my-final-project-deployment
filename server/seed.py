@@ -836,10 +836,10 @@ if __name__ == '__main__':
         #     seller = sellers[1],
         # ))
 
-        for _ in range(20):
+        for _ in range(30):
             items.append(Item(
                 name = fake.catch_phrase(),
-                brand = '',
+                brand = 'Dove',
                 default_item_idx = 0,
                 prices = [20.50, ],
                 discount_prices = [15.79, ],

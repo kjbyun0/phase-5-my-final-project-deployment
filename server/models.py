@@ -206,7 +206,7 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    brand = db.Column(db.String)    # Removal Candidate
+    brand = db.Column(db.String)
     default_item_idx = db.Column(db.Integer, nullable=False)
     prices = db.Column(db.String)   # list: price by package type
     discount_prices = db.Column(db.String)  # list: discount price by package type
@@ -235,7 +235,7 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
 
     def validate_list(self, key, value, allowed_types):
         if not isinstance(value, list):
-            raise TypeError(f'{key} must be a non-empty list.')
+            raise TypeError(f'{key} must be a list.')
         elif len(value) == 0: 
             raise ValueError(f'{key} must be a non-empty list.')
         else: 

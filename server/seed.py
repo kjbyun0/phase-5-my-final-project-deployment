@@ -600,7 +600,7 @@ if __name__ == '__main__':
             avg_review_rating = 0,
             accum_review_cnt = 0,
             category = cats[1], 
-            seller = sellers[1],
+            seller = sellers[0],
         ))
 
         items.append(Item(
@@ -646,7 +646,7 @@ if __name__ == '__main__':
             avg_review_rating = 0,
             accum_review_cnt = 0,
             category = cats[1], 
-            seller = sellers[1],
+            seller = sellers[0],
         ))
 
         items.append(Item(
@@ -694,7 +694,7 @@ if __name__ == '__main__':
             avg_review_rating = 0,
             accum_review_cnt = 0,
             category = cats[1], 
-            seller = sellers[1],
+            seller = sellers[0],
         ))
 
         items.append(Item(
@@ -739,7 +739,7 @@ if __name__ == '__main__':
             avg_review_rating = 0,
             accum_review_cnt = 0,
             category = cats[1], 
-            seller = sellers[1],
+            seller = sellers[0],
         ))
 
         items.append(Item(
@@ -785,7 +785,7 @@ if __name__ == '__main__':
             avg_review_rating = 0,
             accum_review_cnt = 0,
             category = cats[1], 
-            seller = sellers[1],
+            seller = sellers[0],
         ))
 
         # items.append(Item(
@@ -882,7 +882,7 @@ if __name__ == '__main__':
                 avg_review_rating = 0,
                 accum_review_cnt = 0,
                 category = cats[0], 
-                seller = sellers[0],
+                seller = sellers[1],
             ))
 
         # db.session.add_all(items)

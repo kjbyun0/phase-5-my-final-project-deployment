@@ -203,12 +203,15 @@ class Search(Resource):
             # print(f'keys: {keys}')
             result_obj, count = Item.search(keys, 1, 500)
             # print(f'result_obj: {result_obj}, count: {count}')
-            results = [apply_json_loads_to_item(result.to_dict()) for result in result_obj.all()]
         except Exception as exc:
             return make_response({
                 'message': f'{exc}',
             }, 500)
-        return make_response(results, 200)
+        if count == 0:
+            return make_response([], 200)
+        return make_response(
+            [apply_json_loads_to_item(result.to_dict()) for result in result_obj.all()], 
+            200)
 
 
 class Items(Resource): 
@@ -223,15 +226,6 @@ class Items(Resource):
                 name = req.get('name'),
                 brand = req.get('brand'),
                 default_item_idx = req.get('default_item_idx'),
-                # prices = json.dumps(req.get('prices')),
-                # discount_prices = json.dumps(req.get('discount_prices')),
-                # amounts = json.dumps(req.get('amounts')),
-                # units = json.dumps(req.get('units')),
-                # packs = json.dumps(req.get('packs')),
-                # about_item = json.dumps(req.get('about_item')),
-                # details_1 = json.dumps(req.get('details_1')),
-                # details_2 = json.dumps(req.get('details_2')),
-                # images = json.dumps(req.get('images')),
                 prices = req.get('prices'),
                 discount_prices = req.get('discount_prices'),
                 amounts = req.get('amounts'),

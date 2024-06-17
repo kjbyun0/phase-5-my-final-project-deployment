@@ -4,12 +4,13 @@ import { useFormik, FormikProvider, FieldArray, } from 'formik';
 import * as yup from 'yup';
 import ImgDropzone from '../components/ImgDropzone';
 import { ItemContext } from '../components/ItemProvider';
+import { setUserInfo } from '../components/common';
 import { Divider, Form, TextArea, Button, Icon, IconGroup, Radio, } from 'semantic-ui-react';
 
 
 function AddItem() {
     const [ imgFiles, setImgFiles ] = useState([]);
-    const { user,  } = useOutletContext();
+    const { user,  onSetUser, onSetCartItems, onSetOrders, onSetReviews, onSetSellerItems } = useOutletContext();
     const navigate = useNavigate();
     const { id } = useParams();
     const { item, setItem } = useContext(ItemContext);
@@ -212,15 +213,28 @@ function AddItem() {
                 },
                 body: JSON.stringify(postValues),
             })
-            .then(async r => {
-                await r.json().then(data => {
-                    if (r.ok) {
+            .then(async r1 => {
+                await r1.json().then(async data => {
+                    if (r1.ok) {
                         console.log('Item is sucessfully updated: ', data);
                         setItem(data);
+
+                        await fetch('/authenticate')
+                        .then(async r2 => 
+                            await r2.json().then(userData => {
+                                if (r2.ok) {
+                                    console.log('Updated full user data: ', userData);
+                                    setUserInfo(userData, onSetUser, onSetCartItems, onSetOrders, onSetReviews, onSetSellerItems);
+                                } else {
+                                    console.log('In App, error: ', data.message);
+                                }
+                            })
+                        )
+
                         alert('Item is sucessfully updated.');
                         navigate(`/items/${data.id}`);
                     } else {
-                        if (r.status === 401 || r.status === 403) {
+                        if (r1.status === 401 || r1.status === 403) {
                             console.log(data);
                             alert(data.message);
                         } else {

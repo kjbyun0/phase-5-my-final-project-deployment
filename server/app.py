@@ -59,8 +59,6 @@ class Authenticate(Resource):
             user_dict = user.to_dict()
             if user_dict.get('customer'):
                 for ci in user_dict['customer']['cart_items']:
-                    # I don't think I need to check this... My opinion applies to the other codes below.
-                    # add nullable=False constraint.
                     if ci.get('item'):  
                         apply_json_loads_to_item(ci['item'])
 
@@ -190,7 +188,7 @@ class Customer_by_id(Resource):
                     'message': f'{exc}',
                 }, 400)
             
-            return make_response(customer.to_dict(), 200)   # Customer rules out all the relationships.
+            return make_response(customer.to_dict(), 200)
         
         return make_response({
             'message': f'Customer {id} not found.',
@@ -303,13 +301,12 @@ class Items_by_rating(Resource):
         items_dict = [apply_json_loads_to_item(item.to_dict()) for item in items]
         return make_response(items_dict, 200)
 
+
 class Items_by_sales(Resource):
     def get(self):
         items = Item.query.order_by(Item.accum_sales_cnt.desc()).limit(4).all()
         items_dict = [apply_json_loads_to_item(item.to_dict()) for item in items]
         return make_response(items_dict, 200)
-
-
 
 
 class CartItems(Resource):
@@ -484,7 +481,6 @@ class OrderItems(Resource):
             }, 400)
         
         oi_dict = oi.to_dict()
-        # it is tested indirectly when authenticating user.
         if oi_dict.get('item'):
             apply_json_loads_to_item(oi_dict['item'])
         return make_response(oi_dict, 201)

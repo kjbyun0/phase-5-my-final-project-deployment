@@ -8,7 +8,7 @@ function ReviewList() {
     const [ itemsReviewed, setItemsReviewed ] = useState({});
     const navigate = useNavigate()
     
-    console.log('in ReviewList, user: ', user, ', orders: ', orders, ', reviews: ', reviews);
+    // console.log('in ReviewList, user: ', user, ', orders: ', orders, ', reviews: ', reviews);
 
     useEffect(() => {
         const itemsReviewedTmp = {};
@@ -34,8 +34,6 @@ function ReviewList() {
     const itemsInList = {};
     ordersLocalTime.forEach(order => {
         order.order_items.forEach(oi => {
-            // oi.review_done must be fixed
-            // if (!oi.review_done && !itemsInList.hasOwnProperty(oi.id)) {
             if (!itemsInList.hasOwnProperty(oi.item_id) &&
                 (!itemsReviewed.hasOwnProperty(oi.item_id) || !itemsReviewed[oi.item_id].review_done)) {
                 itemsNotReviewed.push(oi.item);
@@ -43,14 +41,14 @@ function ReviewList() {
             }
         });
     });
-    console.log('itemsNotReviewed: ', itemsNotReviewed);
+    // console.log('itemsNotReviewed: ', itemsNotReviewed);
 
     const dispReviewCards = itemsNotReviewed.map(item => {
 
         return (
             <Card key={item.id} style={{minWidth: '200px', borderWidth: '0', alignItems: 'center', }}>
                 <div className='link' style={{width: '90%', height: '250px', margin: 'auto', 
-                    backgroundImage: `url(${item.images[0]})`,     // image change from card_thumbnail
+                    backgroundImage: `url(${item.images[0]})`,
                     backgroundSize: 'contain', backgroundRepeat: 'no-repeat', 
                     backgroundPosition: 'center', }} 
                     onClick={() => handleNavigateReview(item.id)} />

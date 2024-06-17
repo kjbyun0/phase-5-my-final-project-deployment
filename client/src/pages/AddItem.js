@@ -15,8 +15,7 @@ function AddItem() {
     const { id } = useParams();
     const { item, setItem } = useContext(ItemContext);
 
-    console.log('in AddItem, id: ', id, ', item: ', item);
-
+    // console.log('in AddItem, id: ', id, ', item: ', item);
 
     //RBAC
     useEffect(() => {
@@ -56,9 +55,6 @@ function AddItem() {
 
             formik.setFieldValue('images', item.images);
             setImgFiles(item.images);
-
-            // category_id: null,
-            // seller_id: null,
         }
     }, []);
 
@@ -110,7 +106,7 @@ function AddItem() {
     const formik = useFormik({
         initialValues: {
             name: '',
-            brand: '',  // It is not needed because brand is already included in the name.
+            brand: '',
             default_item_idx: 0,
             prices: [''],
             discount_prices: [''],
@@ -118,10 +114,8 @@ function AddItem() {
             units: [''],
             packs: [''],
             about_item: [''], // bullet points
-            // details_1: {},
             details_1_key: [''],
             details_1_val: [''],
-            // details_2: {},
             details_2_key: [''],
             details_2_val: [''],
             images: [],
@@ -130,7 +124,7 @@ function AddItem() {
         },
         validationSchema: formSchema,
         onSubmit: async values => {
-            console.log('OnSubmit: formik.values: ', values);
+            // console.log('OnSubmit: formik.values: ', values);
             
             const uploadedImages = [];
             const cloudName = 'dfsqyivhu';
@@ -157,7 +151,7 @@ function AddItem() {
                 }
             };
             values.images = uploadedImages;
-            console.log('values.images: ', values.images);
+            // console.log('values.images: ', values.images);
 
 
             if (values.prices[values.prices.length-1] === '')
@@ -181,7 +175,7 @@ function AddItem() {
             if (values.details_2_val[values.details_2_val.length-1] === '')
                 values.details_2_val.pop();
 
-            console.log('values: ', values);
+            // console.log('values: ', values);
             const details_1 = values.details_1_key.map((key, i) => key + ';-;' + values.details_1_val[i]);
             const details_2 = values.details_2_key.map((key, i) => key + ';-;' + values.details_2_val[i]);
 
@@ -201,9 +195,9 @@ function AddItem() {
                 category_id: null,
                 seller_id: user.seller.id,
             };
-            console.log('postValues: ', postValues);
+            // console.log('postValues: ', postValues);
 
-            console.log('***** before item POST fetch, values: ', values);
+            // console.log('***** before item POST fetch, values: ', values);
 
             const url = id && item && parseInt(id) === item.id ? `/items/${id}` : '/items'
             await fetch(url, {
@@ -216,14 +210,14 @@ function AddItem() {
             .then(async r1 => {
                 await r1.json().then(async data => {
                     if (r1.ok) {
-                        console.log('Item is sucessfully updated: ', data);
+                        // console.log('Item is sucessfully updated: ', data);
                         setItem(data);
 
                         await fetch('/authenticate')
                         .then(async r2 => 
                             await r2.json().then(userData => {
                                 if (r2.ok) {
-                                    console.log('Updated full user data: ', userData);
+                                    // console.log('Updated full user data: ', userData);
                                     setUserInfo(userData, onSetUser, onSetCartItems, onSetOrders, onSetReviews, onSetSellerItems);
                                 } else {
                                     console.log('In App, error: ', data.message);
@@ -269,7 +263,7 @@ function AddItem() {
 
 
     function handleImgDrop(acceptedFiles) {
-        console.log('in handleImgDrop, acceptedFiles: ', acceptedFiles);
+        // console.log('in handleImgDrop, acceptedFiles: ', acceptedFiles);
 
         const imgFilesDict = {};
         imgFiles.forEach(file => {
@@ -287,7 +281,7 @@ function AddItem() {
                 imgFilesTmp.push(Object.assign(file, {preview: URL.createObjectURL(file)}));
             }
         });
-        console.log('in handleImgDrop, imgFilesDict: ', imgFilesDict, ', imgFilesTmp: ', imgFilesTmp);
+        // console.log('in handleImgDrop, imgFilesDict: ', imgFilesDict, ', imgFilesTmp: ', imgFilesTmp);
         formik.setFieldValue('images', imgFilesTmp);
         setImgFiles(imgFilesTmp);
     };
@@ -300,9 +294,8 @@ function AddItem() {
         setImgFiles(files => imgFilesTmp);
     }
 
-    console.log('imgFiles: ', imgFiles);
-    console.log('in AddItem, formik values: ', formik.values);
-    // console.log('In Item, user: ', user, ', cartItems: ', cartItems, ', orders: ', orders);
+    // console.log('imgFiles: ', imgFiles);
+    // console.log('in AddItem, formik values: ', formik.values);
 
 
     function getFirstErrorInFieldArrays(fieldArrays) {

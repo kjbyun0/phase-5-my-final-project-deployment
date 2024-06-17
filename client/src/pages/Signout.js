@@ -8,7 +8,7 @@ function Signout() {
             method: 'DELETE',
         })
         .then(r => {
-            console.log('In Signout, signout successfully.');
+            // console.log('In Signout, signout successfully.');
             // ??? - is this right??? I think I need to use setUserInfo(...). Check it out later...
             onSetUser(null);
             onSetCartItems([]);

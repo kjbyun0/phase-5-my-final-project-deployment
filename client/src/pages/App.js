@@ -26,8 +26,8 @@ function App() {
         )
     }, []);
 
-    console.log('In App, user: ', user, ', cartItems: ', cartItems, ', orders: ', 
-        orders, ', reviews: ', reviews, ', sellerItems: ', sellerItems);
+    // console.log('In App, user: ', user, ', cartItems: ', cartItems, ', orders: ', 
+    //     orders, ', reviews: ', reviews, ', sellerItems: ', sellerItems);
 
     return (
         <div style={{display: 'grid', gridTemplateRows: 'max-content 1fr', }}>

@@ -35,7 +35,7 @@ function Signin() {
             .then(r => 
                 r.json().then(data => {
                     if (r.ok) {
-                        console.log('In Signin, data: ', data);
+                        // console.log('In Signin, data: ', data);
                         // onSetUser(data);
                         setUserInfo(data, onSetUser, onSetCartItems, onSetOrders, onSetReviews, onSetSellerItems);
                         navigate('/');

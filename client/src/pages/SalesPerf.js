@@ -13,8 +13,8 @@ function SalesPerf() {
     const [ periodEnd, setPeriodEnd] = useState(initEndDate());
     const navigate = useNavigate();
 
-    console.log('in SalesPerf, periodStart: ', periodStart, ', periodEnd: ', periodEnd);
-    console.log('in SalesPerf, sellerItems: ', sellerItems);
+    // console.log('in SalesPerf, periodStart: ', periodStart, ', periodEnd: ', periodEnd);
+    // console.log('in SalesPerf, sellerItems: ', sellerItems);
 
     //RBAC
     useEffect(() => {
@@ -47,8 +47,6 @@ function SalesPerf() {
             if (oi.processed_date) {
                 const processed_dateUTC = convertUTCDate(oi.processed_date);
                 // console.log('oi: ', oi, ', processed_dateUTC: ', processed_dateUTC);
-                // if ((periodStart && periodEnd && processed_dateUTC >= periodStart && processed_dateUTC <= periodEnd) || 
-                //     (!periodStart || !periodEnd)) {
                 if (processed_dateUTC >= periodStart && processed_dateUTC <= periodEnd) {
                     acc.netSales += (oi.price * oi.quantity);
                     acc.salesCnt += 1;

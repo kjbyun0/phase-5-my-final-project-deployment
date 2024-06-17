@@ -13,14 +13,14 @@ function Home() {
         fetch('/items/sales')
         .then(r => r.json())
         .then(data => {
-            console.log('in Home, top sales items: ', data);
+            // console.log('in Home, top sales items: ', data);
             setTopSalesItems(data);
         });
 
         fetch('/items/rating')
         .then(r => r.json())
         .then(data => {
-            console.log('in Home, top reviewed items: ', data);
+            // console.log('in Home, top reviewed items: ', data);
             setTopReviewedItems(data);
         })
     }, []);

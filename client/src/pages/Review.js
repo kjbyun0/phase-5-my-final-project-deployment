@@ -17,9 +17,8 @@ function Review() {
     const iid = parseInt(itemId);
     const navigate = useNavigate();
 
-    console.log('itemId: ', itemId, 'reviews: ', reviews, 'itemReview: ', itemReview);
-    console.log('itemReview, item: ', itemReview.item, ', review: ', itemReview.review);
-    // console.log('validateOnChange: ', formik.validateOnChange);
+    // console.log('itemId: ', itemId, 'reviews: ', reviews, 'itemReview: ', itemReview);
+    // console.log('itemReview, item: ', itemReview.item, ', review: ', itemReview.review);
 
     useEffect(() => {
         const reviewTmp = reviews.find(r => r.item_id === iid && !r.review_done);
@@ -47,7 +46,6 @@ function Review() {
                         } else {
                             console.log("Server Error - Can't retrieve this item: ", data);
                             alert(`Server Error - Can't retrieve this item: ${data.message}`);
-                            // ??? - navigate to a diffierent page?
                         }
                     }
                 });
@@ -60,8 +58,7 @@ function Review() {
             .min(1, 'Your rating should be in between 1 and 5.')
             .max(5, 'Your rating should be in between 1 and 5.'),
         headline: yup.string().required('Please enter your headline.'),
-        // images: , Please add a video, photo, or a written review.
-        content: yup.string().required('Please add a written review.'),
+        content: yup.string().required('Please add a review.'),
     });
 
     const formik = useFormik({

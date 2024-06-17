@@ -51,17 +51,15 @@ function Cart() {
         {key: 10, text: '10+', value: 10},
     ];
 
-
-    console.log('In Cart, user: ', user, ', cartItems: ', cartItems, ', orders: ', orders);
-    console.log('In Cart, qInputs: ', qInputs);
-
+    // console.log('In Cart, user: ', user, ', cartItems: ', cartItems, ', orders: ', orders);
+    // console.log('In Cart, qInputs: ', qInputs);
 
     function handleNavigateItem(itemId) {
         navigate(`/items/${itemId}`);
     }
 
     function handleCItemMassQuantityChange(e, d, cItem) {
-        console.log('in handleDropdown, e: ', e, ', d: ', d, ', cItem: ', cItem);
+        // console.log('in handleDropdown, e: ', e, ', d: ', d, ', cItem: ', cItem);
 
         if (/^([1-9]{1}[0-9]{0,2})|([0]{0,1})$/.test(d.value)) {
             const qInput = qInputs[cItem.id];
@@ -71,7 +69,7 @@ function Cart() {
     }
 
     function handleCItemQuantityChange(e, d, cItem) {
-        console.log('in handleDropdown, e: ', e, ', d: ', d, ', cItem: ', cItem);
+        // console.log('in handleDropdown, e: ', e, ', d: ', d, ', cItem: ', cItem);
 
         if (d.value === 10) {
             const qInput = qInputs[cItem.id];
@@ -89,11 +87,6 @@ function Cart() {
 
     async function handleSelect() {
         for (const cartItem of cartItems) {
-            // console.log('in handleSelect, cartItem will be: ', {
-            //     ...cartItem,
-            //     checked: selectStatus === 2 ? 0 : 1,
-            // });
-
             if ((selectStatus === 2 && cartItem.checked) || 
                 (selectStatus !== 2 && !cartItem.checked)) {
                 await handleCItemChange({
@@ -131,7 +124,6 @@ function Cart() {
             })
         })
         .then(async r => {
-            console.log('### 1 ###');
             await r.json().then(async data1 => {
                 if (r.ok) {
                     //console.log('in handlePlaceOrder new order: ', data1);
@@ -139,7 +131,6 @@ function Cart() {
                     const orderTmp = data1;
                     const checedCartItems = cartItems.filter(cItem => cItem.checked);
                     for (const cItem of checedCartItems) {
-                    // cartItems.filter(cItem => cItem.checked).forEach(async cItem => {
                         await fetch('/orderitems', {
                             method: 'POST',
                             headers: {
@@ -154,7 +145,6 @@ function Cart() {
                             })
                         })
                         .then(async r => {
-                            console.log('### 2 ###');
                             await r.json().then(async data2 => {
                                 if (r.ok) {
                                     
@@ -163,20 +153,16 @@ function Cart() {
                                     orderTmp.order_items.push(orderItemTmp);
                                 } else {
                                     if (r.status === 401 || r.status === 403) {
-                                        console.log(data2); // it won't occur
+                                        console.log(data2);
                                         alert(data2.message);
                                     } else {
                                         console.log("Server Error - Can't add an order item: ", data2);
                                         alert(`Server Error - Can't add an order item: ${data2.message}`);
 
-                                        // delete this order. Don't need to take care of promise.
-                                        // ??? - I don't think it works... check it out again....
-                                        // To check, set 'processed_data = None,' in class OrderItems of app.py
                                         await fetch(`/orders/${orderTmp.id}`, {
                                             method: 'DELETE',
                                         })
                                         .then(r => {
-                                            console.log('### 3 ###');
                                             return;
                                         })
                                     }
@@ -185,8 +171,7 @@ function Cart() {
                         })
                     }
 
-                    console.log('### 4 ###');
-                    console.log('in handlePlaceOrder, new order: ', orderTmp);
+                    // console.log('in handlePlaceOrder, new order: ', orderTmp);
                     onSetOrders([
                         ...orders,
                         orderTmp,

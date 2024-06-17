@@ -24,7 +24,7 @@ function Orders() {
         }
     }, []);
 
-    console.log('in Orders, user: ', user, ', orders: ', orders);
+    // console.log('in Orders, user: ', user, ', orders: ', orders);
 
     function handleNavigateItem(itemId) {
         navigate(`/items/${itemId}`);

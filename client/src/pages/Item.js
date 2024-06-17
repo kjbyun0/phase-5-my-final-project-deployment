@@ -16,9 +16,6 @@ function Item() {
     const [ quantity, setQuantity ] = useState(1);
     const [ itemReviews, setItemReviews ] = useState([]);
 
-    // I made these two states and updated them in useEffect 
-    // because I didn't want them to be updated every time this page is updated.
-    // but I need to reconsider if it is the best choice....
     const [ avgRating, setAvgRating ] = useState(0);
     const [ starCounts, setStarCounts ] = useState([0, 0, 0, 0, 0]);
     
@@ -34,21 +31,21 @@ function Item() {
             value: i
         });
 
-    console.log('In Item, user: ', user, ', item: ', item, ', cartItems: ', cartItems, 
-        ', orders: ', orders, ', itemReviews: ', itemReviews);
-    console.log('quantity: ', quantity);
-    console.log('avgRating: ', avgRating, ', starCounts: ', starCounts);
-    console.log('id from useParam: ', id);
+    // console.log('In Item, user: ', user, ', item: ', item, ', cartItems: ', cartItems, 
+    //     ', orders: ', orders, ', itemReviews: ', itemReviews);
+    // console.log('quantity: ', quantity);
+    // console.log('avgRating: ', avgRating, ', starCounts: ', starCounts);
+    // console.log('id from useParam: ', id);
 
     useEffect(() => {
 
         // if the id of the item in ItemContext is same id from useParam, no need to fetch it again.
-        // if (item && item.id === parseInt(id)) {
-        //     console.log('Already has the item data in ItemContext');
+        if (item && item.id === parseInt(id)) {
+            // console.log('Already has the item data in ItemContext');
 
-        //     if (item.default_item_idx >= 0 && item.default_item_idx < item.prices.length)
-        //         setActiveItemIdx(item.default_item_idx);
-        // } else {
+            if (item.default_item_idx >= 0 && item.default_item_idx < item.prices.length)
+                setActiveItemIdx(item.default_item_idx);
+        } else {
             fetch(`/items/${id}`)
             .then(r => {
                 r.json().then(data => {
@@ -62,7 +59,7 @@ function Item() {
                     }
                 });
             })
-        // }
+        }
 
         fetch(`/reviews/items/${id}`)
         .then(r => {
@@ -156,7 +153,7 @@ function Item() {
     }
 
     function handleThumnailMouseEnter(idx) {
-        console.log('handleThumnailMouseEnter, idx: ', idx);
+        // console.log('handleThumnailMouseEnter, idx: ', idx);
         setActiveImageIdx(idx);
     }
 
@@ -326,7 +323,7 @@ function Item() {
         .then(r => {
             r.json().then(data1 => {
                 if (r.ok) {
-                    console.log('in handlePlaceOrder new order: ', data1);
+                    // console.log('in handlePlaceOrder new order: ', data1);
                     const orderTmp = data1;
                     fetch('/orderitems', {
                         method: 'POST',
@@ -344,7 +341,7 @@ function Item() {
                     .then(r => {
                         r.json().then(data2 => {
                             if (r.ok) {
-                                console.log('in handlePlaceOrder new order item: ', data2);
+                                // console.log('in handlePlaceOrder new order item: ', data2);
                                 const orderItemTmp = data2;
                                 orderItemTmp.item = item;
                                 orderTmp.order_items.push(orderItemTmp);

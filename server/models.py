@@ -334,9 +334,6 @@ class OrderItem(db.Model, SerializerMixin):
     order = db.relationship('Order', back_populates='order_items')
     item = db.relationship('Item', back_populates='order_items')
 
-    # association proxy may be needed later
-    # from Order model class to Item model class and vice versa
-
     @validates('quantity')
     def validate(self, key, value):
         if key == 'quantity':
@@ -360,8 +357,6 @@ class Order(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     ordered_date = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
-    # date = db.Column(db.Integer, nullable=False, server_default=func.now())
-    # date = db.Column(db.Integer, nullable=False, server_default=datetime.now().strftime('%s'))
     closed_date = db.Column(db.DateTime)
     street_1 = db.Column(db.String)
     street_2 = db.Column(db.String)
@@ -406,10 +401,10 @@ class Review(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
-    rating = db.Column(db.Integer, nullable=False) # ??? it must be 0 <=  <= 5. Add it to constraints and validates.
+    rating = db.Column(db.Integer, nullable=False)
     headline = db.Column(db.String)
     content = db.Column(db.String)
-    images = db.Column(db.String) # ??? need to implement it later.
+    images = db.Column(db.String)
     review_done = db.Column(db.Integer)
     item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'))

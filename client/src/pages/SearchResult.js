@@ -28,14 +28,12 @@ function SearchResult() {
         { key: 5, text: 'Best Sellers', value: 5 },
     ];
 
-    // console.log('Before useEffect, searchParams: ', searchParams.get('query'));
-    console.log('In SearchResult, searchItems: ', searchItems);
-    // console.log('In SearchResult, cartItemsDict: ', cartItemsDict);
-    console.log('In SearchResult, itemsInCart: ', itemsInCart);
+    // console.log('In SearchResult, searchItems: ', searchItems);
+    // console.log('In SearchResult, itemsInCart: ', itemsInCart);
 
     useEffect(() => {
         const key = searchParams.get('query');
-        console.log('In useEffect, searchParams: ', key);
+        // console.log('In useEffect, searchParams: ', key);
 
         if (!key) {
             navigate('/');
@@ -46,7 +44,7 @@ function SearchResult() {
         .then(r => {
             r.json().then(data => {
                 if (r.ok) {
-                    console.log('In SearchResult, useEffect, searchItems: ', data)
+                    // console.log('In SearchResult, useEffect, searchItems: ', data)
                     setSearchItems(data)
 
                     // Initializing itemsInCart state.
@@ -96,7 +94,7 @@ function SearchResult() {
         // const cItem = cartItems.find(cItem => 
         //     cItem.item_id === item.id && cItem.item_idx === item.default_item_idx);
         const cItem = cartItemsDict.hasOwnProperty(itm.id) ? cartItemsDict[itm.id] : null;
-        console.log('In handleAddToCart, cItem: ', cItem);
+        // console.log('In handleAddToCart, cItem: ', cItem);
         
         let res = false;
         if (cItem) {

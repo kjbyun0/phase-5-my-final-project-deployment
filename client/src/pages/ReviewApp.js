@@ -16,7 +16,7 @@ function ReviewApp() {
     }, []);
 
     function handleNickNameChange() {
-        console.log('In handleNicknameChange');
+        // console.log('In handleNicknameChange');
     
         fetch(`/customers/${user.customer.id}`, {
             method: 'PATCH',

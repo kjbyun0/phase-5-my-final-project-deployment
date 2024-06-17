@@ -190,7 +190,7 @@ class Category(db.Model, SerializerMixin):
 
 class Item(db.Model, SerializerMixin, SearchableMixin):
     __tablename__ = 'items'
-    __searchable__ = ['name', 'details_2', ]
+    __searchable__ = ['name', 'details_1', 'details_2', 'about_item', ]
 
     serialize_rules = (
         '-category',

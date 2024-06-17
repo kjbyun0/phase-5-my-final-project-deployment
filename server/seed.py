@@ -10,6 +10,7 @@ from faker import Faker
 from app import app
 from models import db, User, Seller, Customer, Category, Item, CartItem, OrderItem, Order, Review
 import json
+import copy
 
 if __name__ == '__main__':
     fake = Faker()
@@ -32,12 +33,12 @@ if __name__ == '__main__':
         # Users
         ############################################################################
         users = []
-        for i in range(15):
+        for i in range(25):
             users.append(User(
-                username=f'cust0{i}' if i < 10 else f'sell0{i-10}',
-                password_hash=f'cust0{i}' if i < 10 else f'sell0{i-10}',
+                username=f'cust{i}' if i < 20 else f'sell{i-20}',
+                password_hash=f'cust{i}' if i < 20 else f'sell{i-20}',
                 phone=f'{i%10}00){i%10}00-{i%10}000',
-                email=f'cust0{i}@gmail.com' if i < 10 else f'sell0{i-10}@gmail.com',
+                email=f'cust{i}@gmail.com' if i < 20 else f'sell{i-20}@gmail.com',
                 street_1=f'{i%10}0000 Palmer Blvd',
                 street_2='',
                 city='Huston',
@@ -46,7 +47,7 @@ if __name__ == '__main__':
             ))
 
         customers = []
-        for i in range(10):
+        for i in range(20):
                 customers.append(Customer(
                 first_name=fake.first_name(),
                 last_name=fake.last_name(),
@@ -59,7 +60,7 @@ if __name__ == '__main__':
         for i in range(5):
             sellers.append(Seller(
                 name=fake.company(),
-                user = users[i+10]
+                user = users[i+20]
             ))
         
         db.session.add_all(users)
@@ -131,6 +132,9 @@ if __name__ == '__main__':
                  'https://m.media-amazon.com/images/I/61PtStpsLxL._SX679_.jpg',
                  'https://m.media-amazon.com/images/I/71K7V0lKJ0L._SX679_.jpg',
             ],
+            accum_sales_cnt = 0,
+            avg_review_rating = 0,
+            accum_review_cnt = 0,
             category = cats[0],
             seller = sellers[0],
         ))
@@ -172,6 +176,9 @@ if __name__ == '__main__':
                 'https://m.media-amazon.com/images/I/71LJewiZu0L._AC_SX679_.jpg', 
                 'https://m.media-amazon.com/images/I/71YrWM4gBiL._AC_SX679_.jpg', 
             ],
+            accum_sales_cnt = 0,
+            avg_review_rating = 0,
+            accum_review_cnt = 0,
             category = cats[0],
             seller = sellers[0],
         ))
@@ -212,6 +219,9 @@ if __name__ == '__main__':
                 'https://m.media-amazon.com/images/I/51xCmWZSLNL._SX679_.jpg',
                 'https://m.media-amazon.com/images/I/51r-23IdTAL._SX679_.jpg',
             ],
+            accum_sales_cnt = 0,
+            avg_review_rating = 0,
+            accum_review_cnt = 0,
             category = cats[0],
             seller = sellers[0],
         ))
@@ -255,6 +265,9 @@ if __name__ == '__main__':
                 'https://m.media-amazon.com/images/I/71nVhZCbloL._SX679_.jpg', 
                 'https://m.media-amazon.com/images/I/81YVWL-0KwL._SX679_.jpg', 
             ],
+            accum_sales_cnt = 0,
+            avg_review_rating = 0,
+            accum_review_cnt = 0,
             category = cats[0],
             seller = sellers[0],
         ))
@@ -296,6 +309,9 @@ if __name__ == '__main__':
                 'https://m.media-amazon.com/images/I/81SsiBfFjSS._SX679_.jpg', 
                 'https://m.media-amazon.com/images/I/61krT0BrqoS._SY879_.jpg', 
             ],
+            accum_sales_cnt = 0,
+            avg_review_rating = 0,
+            accum_review_cnt = 0,
             category = cats[0],
             seller = sellers[0],
         ))
@@ -338,6 +354,9 @@ if __name__ == '__main__':
                 'https://m.media-amazon.com/images/I/71qTYYvrpML._SX679_.jpg',
                 'https://m.media-amazon.com/images/I/71TpO-lGNWL._SX679_.jpg',
             ],
+            accum_sales_cnt = 0,
+            avg_review_rating = 0,
+            accum_review_cnt = 0,
             category = cats[0],
             seller = sellers[0],
         ))
@@ -385,6 +404,9 @@ if __name__ == '__main__':
                 'https://m.media-amazon.com/images/I/616eU83jddL._AC_SX679_.jpg', 
                 'https://m.media-amazon.com/images/I/7134qvocBUL._AC_SX679_.jpg',
             ],
+            accum_sales_cnt = 0,
+            avg_review_rating = 0,
+            accum_review_cnt = 0,
             category = cats[0],
             seller = sellers[0],
         ))
@@ -429,6 +451,9 @@ if __name__ == '__main__':
                 'https://m.media-amazon.com/images/I/51xCmWZSLNL._SX679_.jpg', 
                 'https://m.media-amazon.com/images/I/61aqCDtb3mL._SX679_.jpg', 
             ],
+            accum_sales_cnt = 0,
+            avg_review_rating = 0,
+            accum_review_cnt = 0,
             category = cats[0],
             seller = sellers[0],
         ))
@@ -475,6 +500,9 @@ if __name__ == '__main__':
                 'https://m.media-amazon.com/images/I/81U-OaRCCYL._AC_SX679_.jpg', 
                 'https://m.media-amazon.com/images/I/710Y6G6egPL._AC_SX679_.jpg', 
             ],
+            accum_sales_cnt = 0,
+            avg_review_rating = 0,
+            accum_review_cnt = 0,
             category = cats[0], 
             seller = sellers[0],
         ))
@@ -518,6 +546,9 @@ if __name__ == '__main__':
                 'https://m.media-amazon.com/images/I/71A+Z7nS0WL._SX679_.jpg', 
                 'https://m.media-amazon.com/images/I/61mxcHuwF-L._SX679_.jpg', 
             ],
+            accum_sales_cnt = 0,
+            avg_review_rating = 0,
+            accum_review_cnt = 0,
             category = cats[0], 
             seller = sellers[0],
         ))
@@ -565,6 +596,9 @@ if __name__ == '__main__':
                 'https://m.media-amazon.com/images/I/9147i+V7q3L._AC_SX679_.jpg', 
                 'https://m.media-amazon.com/images/I/81v8jApAVvL._AC_SX679_.jpg', 
             ],
+            accum_sales_cnt = 0,
+            avg_review_rating = 0,
+            accum_review_cnt = 0,
             category = cats[1], 
             seller = sellers[1],
         ))
@@ -608,6 +642,9 @@ if __name__ == '__main__':
                 'https://m.media-amazon.com/images/I/71bcrtXCZfL._AC_SX679_.jpg', 
                 'https://m.media-amazon.com/images/I/818mBHyiciL._AC_SX679_.jpg', 
             ],
+            accum_sales_cnt = 0,
+            avg_review_rating = 0,
+            accum_review_cnt = 0,
             category = cats[1], 
             seller = sellers[1],
         ))
@@ -653,6 +690,9 @@ if __name__ == '__main__':
                 'https://m.media-amazon.com/images/I/81Lb5I6XiyL._AC_SX679_.jpg', 
                 'https://m.media-amazon.com/images/I/819t1oTSL-L._AC_SX679_.jpg',
             ],
+            accum_sales_cnt = 0,
+            avg_review_rating = 0,
+            accum_review_cnt = 0,
             category = cats[1], 
             seller = sellers[1],
         ))
@@ -695,6 +735,9 @@ if __name__ == '__main__':
                 'https://m.media-amazon.com/images/I/81t-LaaC8sL._AC_SX679_.jpg', 
                 'https://m.media-amazon.com/images/I/81vaWKTXUOL._AC_SX679_.jpg', 
             ],
+            accum_sales_cnt = 0,
+            avg_review_rating = 0,
+            accum_review_cnt = 0,
             category = cats[1], 
             seller = sellers[1],
         ))
@@ -738,6 +781,9 @@ if __name__ == '__main__':
                 'https://m.media-amazon.com/images/I/81Kg+SrcnKL._AC_SX679_.jpg', 
                 'https://m.media-amazon.com/images/I/81vb9HhKB1L._AC_SX679_.jpg', 
             ],
+            accum_sales_cnt = 0,
+            avg_review_rating = 0,
+            accum_review_cnt = 0,
             category = cats[1], 
             seller = sellers[1],
         ))
@@ -783,32 +829,89 @@ if __name__ == '__main__':
         #         '', 
         #         '', 
         #     ],
+        #     accum_sales_cnt = 0,
+        #     avg_review_rating = 0,
+        #     accum_review_cnt = 0,
         #     category = cats[1], 
         #     seller = sellers[1],
         # ))
 
-        db.session.add_all(items)
-        db.session.commit()
+        for _ in range(20):
+            items.append(Item(
+                name = fake.catch_phrase(),
+                brand = '',
+                default_item_idx = 0,
+                prices = [20.50, ],
+                discount_prices = [15.79, ],
+                amounts = [1, ],
+                units = ['Count', ],
+                packs = [3, ],
+                about_item = [
+                    "REFRESHES SKIN: Dove Cool Moisture Beauty Bar combines the refreshing scents of cucumber and green tea with Dove mild cleansers for skin care to revitalize both your senses and your skin",
+                    "#1 DERMATOLOGIST RECOMMENDED: Dove Beauty Bar is the #1 dermatologist-recommended Beauty Bar in the U.S",
+                    "MILD & MOISTURIZING: With ¼ moisturizing cream, Dove Beauty Bar helps your skin maintain its natural moisture barrier and keeps skin hydrated as part of your skin care routine",
+                    "VERSATILE CLEANSER: The unique formulation for effective skin care can be enjoyed by the entire family as this all-in-one cleanser nourishes your face, body, and hands for beautiful skin",
+                    "EFFECTIVE CLEANSING: Wash away dirt and germs, without drying your skin like ordinary bath soap can. This beauty bar is gentle enough to use every day on your body and your face",
+                    "THOUGHTFULLY MADE SKIN CARE: This Beauty Bar is Certified Cruelty-Free by PETA and sulfate free cleansers, so you can feel good about switching from ordinary bar soap to Dove",
+                ],
+                details_1 = [
+                    'Brand;-;Dove',
+                    'Item Weight;-;0.57 Grams',
+                    'Item dimensions L x W x H;-;4.13 x 2.5 x 725 inches',
+                    'Scent;-;Cucumber, Green Tea',
+                    'Age Range (Description);-;Adult',
+                ],
+                details_2 = [
+                    'Is Discontinued By Manufacturer;-;No',
+                    'Product Dimensions;-;4.13 x 2.5 x 725 inches; 0.02 ounces',
+                    'Item model number;-;011111611177',
+                    'UPC;-;011111611177',
+                    'Manufacturer;-;Unilever',
+                    'ASIN;-;B0016FWFDI',
+                    'Country of Origin;-;USA',
+                ],
+                images = [
+                    'https://m.media-amazon.com/images/I/71P6h4i-EHL._SX679_.jpg',
+                    'https://m.media-amazon.com/images/I/71Z4oxHuxpL._SX679_.jpg',
+                    'https://m.media-amazon.com/images/I/81dEJSdQasL._SX679_.jpg',
+                    'https://m.media-amazon.com/images/I/71am83eSw9L._SX679_.jpg',
+                    'https://m.media-amazon.com/images/I/61PtStpsLxL._SX679_.jpg',
+                    'https://m.media-amazon.com/images/I/71K7V0lKJ0L._SX679_.jpg',
+                ],
+                accum_sales_cnt = 0,
+                avg_review_rating = 0,
+                accum_review_cnt = 0,
+                category = cats[0], 
+                seller = sellers[0],
+            ))
+
+        # db.session.add_all(items)
+        # db.session.commit()
 
 
         ############################################################################
         # Reviews
         ############################################################################
 
-        # stars = [1, 2, 3, 4, 5]
+        stars = [1, 2, 3, 4, 5]
 
-        # reviews = []
-        # for i in range(1, 10):
-        #     for item in items: 
-        #         reviews.append(Review(
-        #             rating = rc(stars), 
-        #             headline = fake.sentence(nb_words=6),
-        #             content = fake.paragraph(nb_sentences=3),
-        #             images = '',
-        #             review_done = 1,
-        #             item = item, 
-        #             customer = customers[i]
-        #         ))
-                
-        # db.session.add_all(reviews)
-        # db.session.commit()
+        reviews = []
+        for i in range(1, 20):
+            for item in items: 
+                review = Review(
+                    rating = rc(stars), 
+                    headline = fake.sentence(nb_words=6),
+                    content = fake.paragraph(nb_sentences=3),
+                    images = '',
+                    review_done = 1,
+                    item = item, 
+                    customer = customers[i]
+                )
+
+                reviews.append(review)
+                item.accum_review_cnt += 1
+                item.avg_review_rating += (review.rating - item.avg_review_rating) / item.accum_review_cnt
+        
+        db.session.add_all(items)
+        db.session.add_all(reviews)
+        db.session.commit() 

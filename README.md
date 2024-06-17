@@ -19,7 +19,7 @@ The frontend application is developed using react, formik, yup, react-dropzone, 
  . $ npm run start --prefix client<br>
 
 ## Demo
-![](https://github.com/kjbyun0/phase-4-my-final-project/blob/main/ForREADME.gif)
+![](https://github.com/kjbyun0/phase-5-my-final-project/blob/main/ForREADME.gif)
 
 ## Credits
 I reviewed Amazon site and tried to follow its main designs.

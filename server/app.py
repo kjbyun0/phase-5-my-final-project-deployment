@@ -207,20 +207,22 @@ class Search(Resource):
             }, 500)
         if count == 0:
             return make_response([], 200)
+        results_dict = [apply_json_loads_to_item(result.to_dict()) for result in result_obj.all() if result.active]
         return make_response(
-            [apply_json_loads_to_item(result.to_dict()) for result in result_obj.all()], 
+            results_dict, 
             200)
 
 
 class Items(Resource): 
     def get(self):
-        items = [apply_json_loads_to_item(item.to_dict()) for item in Item.query.all()]
+        items = [apply_json_loads_to_item(item.to_dict()) for item in Item.query.all() if item.active]
         return make_response(items, 200)
 
     def post(self):
         req = request.get_json()
         try:
             item = Item(
+                active = 1,
                 name = req.get('name'),
                 brand = req.get('brand'),
                 default_item_idx = req.get('default_item_idx'),
@@ -249,7 +251,7 @@ class Items(Resource):
 class Item_by_id(Resource):
     def get(self, id):
         item = Item.query.filter_by(id=id).first()
-        if item: 
+        if item and item.active: 
             item_dict = item.to_dict()
             apply_json_loads_to_item(item_dict)
             return make_response(item_dict, 200)
@@ -297,14 +299,14 @@ class Item_by_id(Resource):
 
 class Items_by_rating(Resource):
     def get(self):
-        items = Item.query.order_by(Item.avg_review_rating.desc()).limit(4).all()
+        items = Item.query.filter(Item.active == 1).order_by(Item.avg_review_rating.desc()).limit(4).all()
         items_dict = [apply_json_loads_to_item(item.to_dict()) for item in items]
         return make_response(items_dict, 200)
 
 
 class Items_by_sales(Resource):
     def get(self):
-        items = Item.query.order_by(Item.accum_sales_cnt.desc()).limit(4).all()
+        items = Item.query.filter(Item.active == 1).order_by(Item.accum_sales_cnt.desc()).limit(4).all()
         items_dict = [apply_json_loads_to_item(item.to_dict()) for item in items]
         return make_response(items_dict, 200)
 

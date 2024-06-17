@@ -32,12 +32,14 @@ function ReviewList() {
     // Get a list of ordered items, that are not reviewed, in descending order.
     const itemsNotReviewed = [];
     const itemsInList = {};
+
     ordersLocalTime.forEach(order => {
         order.order_items.forEach(oi => {
             if (!itemsInList.hasOwnProperty(oi.item_id) &&
-                (!itemsReviewed.hasOwnProperty(oi.item_id) || !itemsReviewed[oi.item_id].review_done)) {
+                (!itemsReviewed.hasOwnProperty(oi.item_id) || !itemsReviewed[oi.item_id].review_done) && 
+                oi.item.active) {
                 itemsNotReviewed.push(oi.item);
-                itemsInList[oi.item_id] = oi;   //this value is not used.
+                itemsInList[oi.item_id] = oi;
             }
         });
     });

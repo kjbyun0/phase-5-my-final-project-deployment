@@ -205,6 +205,7 @@ class Item(db.Model, SerializerMixin, SearchableMixin):
     )
 
     id = db.Column(db.Integer, primary_key=True)
+    active = db.Column(db.Integer, default=1)
     name = db.Column(db.String, nullable=False)
     brand = db.Column(db.String)
     default_item_idx = db.Column(db.Integer, nullable=False)

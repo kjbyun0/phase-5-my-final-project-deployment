@@ -363,11 +363,17 @@ function dispAvgRating(item, starWidth, starHeight) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-function handleDeleteItem(itm, cbFunc) {
+function handleInactvateItem(itm, cbFunc) {
     // console.log('in handleDeleteItem');
     
     fetch(`/items/${itm.id}`, {
-        method: 'DELETE',
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            active: 0,
+        }),
     })
     .then(r => {
         if (r.ok) {
@@ -391,4 +397,4 @@ export { setUserInfo, dispPrice, dispListPrice,
     handleCItemDelete, handleCItemAdd, handleCItemChange, 
     formatDate, convertUTCDate, applyUTCToOrder, 
     handleReviewDelete, handleReviewAdd, handleReviewChange, handleStarClick, dispRating, dispAvgRating, 
-    handleDeleteItem };
+    handleInactvateItem };

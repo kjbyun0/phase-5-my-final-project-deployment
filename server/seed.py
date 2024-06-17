@@ -92,6 +92,7 @@ if __name__ == '__main__':
         ############################################################################
         items = []
         items.append(Item(
+            active = 1,
             name = "Dove Skin Care Beauty Bar For Softer Skin Cucumber and Green Tea More Moisturizing Than Bar Soap 3.75 oz, 14 Bars",
             brand = 'Dove',
             default_item_idx = 2,
@@ -140,6 +141,7 @@ if __name__ == '__main__':
         ))
     
         items.append(Item(
+            active = 1,
             name = 'BodyRefresh Shower Steamers Aromatherapy - 8 Pack Shower Bombs with Essential Oils. Self Care Birthday Gifts for Women, Gifts for Her, Mothers Day Gifts for Wife Mom from Daughter',
             brand = 'BodyRefresh',
             default_item_idx = 0,
@@ -184,6 +186,7 @@ if __name__ == '__main__':
         ))
 
         items.append(Item(
+            active = 1,
             name = "eos Shea Better Body Lotion- Jasmine Peach, 24-Hour Moisture Skin Care, Lightweight & Non-Greasy, Made with Natural Shea, Vegan, 16 fl oz",
             brand = 'eos',
             default_item_idx = 0,
@@ -227,6 +230,7 @@ if __name__ == '__main__':
         ))
 
         items.append(Item(
+            active = 1,
             name = 'CeraVe Cleansing Balm for Sensitive Skin | Hydrating Makeup Remover with Ceramides and Plant-based Jojoba Oil for Face | Non-Comedogenic Fragrance Free Non-Greasy |1.3 Ounces',
             brand = 'CeraVe',
             default_item_idx = 0,
@@ -273,6 +277,7 @@ if __name__ == '__main__':
         ))
 
         items.append(Item(
+            active = 1,
             name = 'Dove Nourishing Body Care, Face, Hand, and Body Beauty Cream for Normal to Dry Skin Lotion for Women with 24-Hour Moisturization, 4-Pack, 2.53 Oz Each Jar',
             brand = 'Dove',
             default_item_idx = 0,
@@ -317,6 +322,7 @@ if __name__ == '__main__':
         ))
 
         items.append(Item(
+            active = 1,
             name = 'Under Eye Patches - 60 Pcs - 24K Gold Eye Mask- Puffy Eyes & Dark Circles Treatments,Reduce Under Eye Bags and Smooth Wrinkles,Eye Skin Care Pads With Collagen,Hyaluronic Acid & Castor Oil',
             brand = 'NAZANO',
             default_item_idx = 0,
@@ -362,6 +368,7 @@ if __name__ == '__main__':
         ))
 
         items.append(Item(
+            active = 1,
             name = 'Cordless Water Flosser Teeth Cleaner, Nicefeel 300ML 2 Tip Cases Portable and USB Rechargeable Oral Irrigator for Travel, IPX7 Waterproof, 3-Mode Water Flossing with 4 Jet Tips for Home Blue',
             brand = 'Nicefeel',
             default_item_idx = 0,
@@ -412,6 +419,7 @@ if __name__ == '__main__':
         ))
 
         items.append(Item(
+            active = 1,
             name = "eos Shea Better Shaving Cream- Pomegranate Raspberry, Women's Shave Cream, Skin Care, Doubles as an In-Shower Lotion, 24-Hour Hydration, 7 fl oz",
             brand = 'eos',
             default_item_idx = 0,
@@ -459,6 +467,7 @@ if __name__ == '__main__':
         ))
 
         items.append(Item(
+            active = 1,
             name = 'Bio-Oil Skincare Body Oil, Vitamin E, Serum for Scars & Stretchmarks, Face & Body Moisturizer, 2 oz, All Skin Types',
             brand = 'Bio-Oil',
             default_item_idx = 0,
@@ -508,6 +517,7 @@ if __name__ == '__main__':
         ))
 
         items.append(Item(
+            active = 1,
             name = 'Crest 3D Whitestrips, Professional Effects, Teeth Whitening Strip Kit, 44 Strips (22 Count Pack)',
             brand = 'Crest',
             default_item_idx = 0,
@@ -558,6 +568,7 @@ if __name__ == '__main__':
         ############################################################################
 
         items.append(Item(
+            active = 1,
             name = 'Clorox Disinfecting Wipes Value Pack, Bleach Free Cleaning Wipes, 75 Count Each, Pack of 2, Packaging May Vary',
             brand = 'Clorox',
             default_item_idx = 0,
@@ -604,6 +615,7 @@ if __name__ == '__main__':
         ))
 
         items.append(Item(
+            active = 1,
             name = 'Electric Spin Scrubber Cordless, Electric Scrubber for Cleaning Bathroom with Long Handle, Electric Shower Scrubber, Power Cleaning Brush with 9 Brush Heads for Bathtub Tile Floor Car',
             brand = 'yorraka',
             default_item_idx = 0,
@@ -650,6 +662,7 @@ if __name__ == '__main__':
         ))
 
         items.append(Item(
+            active = 1,
             name = 'Clorox Toilet Bowl Cleaner, Clinging Bleach Gel, Ocean Mist - 24 Ounces, Pack of 2',
             brand = 'Clorox',
             default_item_idx = 0,
@@ -698,6 +711,7 @@ if __name__ == '__main__':
         ))
 
         items.append(Item(
+            active = 1,
             name = 'Lysol Multi-Surface Cleaner, Sanitizing and Disinfecting Pour, to Clean and Deodorize, Sparkling Lemon and Sunflower Essence, 90 Fl Oz',
             brand = 'Lysol',
             default_item_idx = 1,
@@ -743,6 +757,7 @@ if __name__ == '__main__':
         ))
 
         items.append(Item(
+            active = 1,
             name = 'Windex Glass and Window Cleaner Spray Bottle, New Packaging Designed to Prevent Leakage and Breaking, Original Blue, 23 fl oz',
             brand = 'Windex',
             default_item_idx = 0,
@@ -789,6 +804,7 @@ if __name__ == '__main__':
         ))
 
         # items.append(Item(
+        #     active = 1,
         #     name = '',
         #     brand = '',
         #     default_item_idx = 0,
@@ -838,6 +854,7 @@ if __name__ == '__main__':
 
         for _ in range(30):
             items.append(Item(
+                active = 1,
                 name = fake.catch_phrase(),
                 brand = 'Dove',
                 default_item_idx = 0,

@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
 import { useSearchParams, useOutletContext, useNavigate } from 'react-router-dom';
 import { dispPrice, dispListPrice, handleCItemChange, handleCItemAdd, handleCItemDelete, 
-    handleDeleteItem, dispAvgRating, } from '../components/common';
+    handleInactvateItem, dispAvgRating, } from '../components/common';
 import { ItemContext } from '../components/ItemProvider';
 import { CardGroup, Card, CardContent, CardHeader, Label, Dropdown, 
     Button, } from 'semantic-ui-react';
@@ -122,8 +122,7 @@ function SearchResult() {
         navigate(`/items/${itm.id}`);
     }
 
-
-    function removeDeletedItem(itm) {
+    function removeInactivateItem(itm) {
         setSearchItems(searchItems => searchItems.filter(sitm => sitm.id !== itm.id));
 
         const itemsInCartTmp = {...itemsInCart};
@@ -200,7 +199,7 @@ function SearchResult() {
                                 <Button basic icon='edit outline' 
                                     onClick={() => { setItem(itm); navigate(`/additem/${itm.id}`);}} />
                                 <Button color='red' icon='trash alternate outline' 
-                                    onClick={() => handleDeleteItem(itm, removeDeletedItem)} />
+                                    onClick={() => handleInactvateItem(itm, removeInactivateItem)} />
                             </div> : 
                             null
                         }

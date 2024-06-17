@@ -1,7 +1,8 @@
 import { useEffect, useState, useContext } from 'react';
 import { useParams, useOutletContext, useNavigate, } from 'react-router-dom'; 
+//bkj - active
 import { dispPrice, dispListPrice, handleCItemAdd, handleCItemChange, 
-    formatDate, convertUTCDate, handleDeleteItem, dispAvgRating, } from '../components/common';
+    formatDate, convertUTCDate, handleInactvateItem, dispAvgRating, } from '../components/common';
 import { ItemContext } from '../components/ItemProvider';
 import { Divider, Table, TableBody, TableRow, TableCell, 
     Image, ButtonGroup, Button, Dropdown, Icon, Progress, } from 'semantic-ui-react';
@@ -480,7 +481,7 @@ function Item() {
                                             </Button>
                                             <Button color='red' size='medium' 
                                                 style={{display: 'block', borderRadius: '20px', width: '220px', margin: '5px', 
-                                                    color: 'white', }} onClick={() => handleDeleteItem(item, removeItemNavigateHome)} >
+                                                    color: 'white', }} onClick={() => handleInactvateItem(item, removeItemNavigateHome)} >
                                                 <Icon name='trash alternate outline'/> Delete
                                             </Button>
                                                 

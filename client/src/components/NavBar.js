@@ -8,13 +8,13 @@ function NavBar({ user, cartItems }) {
     const navigate = useNavigate();
 
     function handleSearchInput(e, d) {
-        console.log('in handleSearchInput, e: ', e, ', d: ', d);
+        // console.log('in handleSearchInput, e: ', e, ', d: ', d);
         setSearchKey(d.value);
     }
 
     function handleSearchSubmit(e, d) {
-        console.log('in handleSearchInputClick, e: ', e, ', d: ', d);
-        console.log('searchKey: ', searchKey);
+        // console.log('in handleSearchInputClick, e: ', e, ', d: ', d);
+        // console.log('searchKey: ', searchKey);
 
         navigate(`/search?query=${searchKey}`);
     }

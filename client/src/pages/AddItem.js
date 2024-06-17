@@ -15,11 +15,13 @@ function AddItem() {
     const { id } = useParams();
     const { item, setItem } = useContext(ItemContext);
 
-    // console.log('in AddItem, id: ', id, ', item: ', item);
+    console.log('in AddItem, id: ', id, ', item: ', item);
 
     //RBAC
     useEffect(() => {
+        console.log('in Additem, user: ', user);
         if (!user || !user.seller) {
+            console.log("herer?????");
             navigate('/signin');
             return;
         }

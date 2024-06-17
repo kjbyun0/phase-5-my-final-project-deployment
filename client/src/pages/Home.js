@@ -42,7 +42,7 @@ function Home() {
                     alignItems: 'center',
                 }}>
                     <div />
-                    <div style={{padding: '10px', margin: '10px', backgroundColor: 'white', }}>
+                    <div style={{padding: '10px', margin: '10px', backgroundColor: 'white', width: '360px', height: '479.97px', }}>
                         <div style={{fontSize: '1.5em', fontWeight: 'bold', padding: '5px', margin: '5px', }}>Best Sellers</div>
                         <div style={{display:'grid',
                             gridTemplateColumns: '1fr 1fr',
@@ -62,7 +62,7 @@ function Home() {
                             }
                         </div>
                     </div>
-                    <div style={{padding: '10px', margin: '10px', backgroundColor: 'white', }}>
+                    <div style={{padding: '10px', margin: '10px', backgroundColor: 'white', width: '360px', height: '479.97px', }}>
                         <div style={{fontSize: '1.5em', fontWeight: 'bold', padding: '5px', margin: '5px', }}>Best Reviewed Products</div>
                         <div style={{display:'grid',
                             gridTemplateColumns: '1fr 1fr',

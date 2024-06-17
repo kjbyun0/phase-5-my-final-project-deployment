@@ -15,6 +15,7 @@ import Signout from './pages/Signout';
 import Signup from './pages/Signup';
 import ErrorPage from './pages/ErrorPage';
 
+
 const routes = [
     {
         path: '/', 
@@ -86,5 +87,6 @@ const routes = [
         ],
     },
 ]
+
 
 export default routes;

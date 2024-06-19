@@ -17,7 +17,7 @@ function ImgDropzone({ onDrop }) {
       'image/*': []
     },
     maxSize: 1024 * 100,
-    maxFiles: 1,
+    multiple: false,
   });
 
   return (

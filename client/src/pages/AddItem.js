@@ -65,12 +65,12 @@ function AddItem() {
             .max(200, 'Please, enter name upto 200 characters.'),
         prices: yup.array().of(
             yup.string().required('Required')
-                .matches(/^[0-9]*([.]{1}[0-9]{2})?$/, 
+                .matches(/^[0-9]*([.]{1}[0-9]{1,2})?$/, 
                     'Please, enter a decimal number with two digits of fractional part. ')
         ),
         discount_prices: yup.array().of(
             yup.string().required('Required')
-                .matches(/^[0-9]*([.]{1}[0-9]{2})?$/, 
+                .matches(/^[0-9]*([.]{1}[0-9]{1,2})?$/, 
                     'Please, enter a decimal number with two digits of fractional part. ')
         ),
         amounts: yup.array().of(

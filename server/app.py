@@ -3,7 +3,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request, session, make_response
+from flask import request, session, make_response, render_template
 from flask_restful import Resource
 
 # Local imports
@@ -48,8 +48,9 @@ def check_if_signed_in():
 
 
 @app.route('/')
-def index():
-    return '<h1>Project Server</h1>'
+@app.route('/<int:id>')
+def index(id=0):
+    return render_template("index.html")
 
 
 class Authenticate(Resource):

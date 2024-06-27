@@ -14,6 +14,10 @@ flask-restful = "*"
 flask-cors = "*"
 faker = "*"
 flask-bcrypt = "*"
+gunicorn = "*"
+python-dotenv = "*"
+honcho = "*"
+psycopg2-binary = "*"
 
 [requires]
 python_full_version = "3.8.13"

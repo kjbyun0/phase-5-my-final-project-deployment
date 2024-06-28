@@ -49,3 +49,4 @@ print("app.config[ELASTICSEARCH_URL]: ", app.config['ELASTICSEARCH_URL'])
 
 app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
     if app.config['ELASTICSEARCH_URL'] else None
+print('app.elasticsearch: ', app.elasticsearch)

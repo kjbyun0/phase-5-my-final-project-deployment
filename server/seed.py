@@ -22,10 +22,10 @@ if __name__ == '__main__':
         OrderItem.query.delete()
         Order.query.delete()
         CartItem.query.delete()
+        Item.query.delete()
         Seller.query.delete()
         Customer.query.delete()
         User.query.delete()
-        Item.query.delete()
         Category.query.delete()
         db.session.commit()
 

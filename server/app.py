@@ -41,7 +41,9 @@ def check_if_signed_in():
         and not (request.endpoint == 'item_by_id' and request.method == 'GET') \
         and request.endpoint != 'items_by_rating' \
         and request.endpoint != 'items_by_sales' \
-        and request.endpoint != 'reviews_by_itemid':
+        and request.endpoint != 'reviews_by_itemid' \
+        and request.endpoint != 'index' \
+        and request.endpoint != 'static':
         return make_response({
             'message': 'User is not signed in',
         }, 401)

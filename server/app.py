@@ -47,14 +47,14 @@ def check_if_signed_in():
         }, 401)
 
 
-# @app.route('/')
-# @app.route('/<int:id>')
-# def index(id=0):
-#     return render_template("index.html")
-
 @app.route('/')
-def index():
-    return '<h1>Project Server</h1>'
+@app.route('/<int:id>')
+def index(id=0):
+    return render_template("index.html")
+
+# @app.route('/')
+# def index():
+#     return '<h1>Project Server</h1>'
 
 
 class Authenticate(Resource):
